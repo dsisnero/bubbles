@@ -1,0 +1,19 @@
+name: bubbles
+version: 0.1.0
+
+authors:
+  - Dom <dom@example.com>
+
+crystal: '>= 1.19.1'
+
+license: MIT
+
+dependencies:
+  concurrent:
+    github: crystal-lang/concurrent
+    version: ~> 1.0
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.0
