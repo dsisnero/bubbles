@@ -9,9 +9,8 @@ crystal: '>= 1.19.1'
 license: MIT
 
 dependencies:
-  concurrent:
-    github: crystal-lang/concurrent
-    version: ~> 1.0
+  bubbletea:
+    github: dsisnero/bubbletea.cr
 
 development_dependencies:
   ameba:

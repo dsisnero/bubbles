@@ -6,3 +6,4 @@ end
 
 # Require all component modules
 require "./bubbles/key"
+require "./bubbles/textinput"
