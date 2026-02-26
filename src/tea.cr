@@ -59,7 +59,7 @@ module Tea
     def self.tick(delay : Time::Span, &block : -> Msg) : Cmd
       -> {
         sleep(delay)
-        block.call
+        block.call.as(Msg?)
       }
     end
 

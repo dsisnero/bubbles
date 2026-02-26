@@ -1,4 +1,4 @@
-[submodule "vendor"]
-	path = vendor
+[submodule "vendor/bubbles"]
+	path = vendor/bubbles
 	url = https://github.com/charmbracelet/bubbles.git
-	branch = v2-exp
+	branch = main

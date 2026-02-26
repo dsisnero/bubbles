@@ -2,6 +2,40 @@ require "./spec_helper"
 require "../src/bubbles/textinput"
 
 describe Bubbles::TextInput do
+  it "Test_CurrentSuggestion" do
+    textinput = Bubbles::TextInput.new
+    textinput.show_suggestions = true
+
+    suggestion = textinput.current_suggestion
+    suggestion.should eq("")
+
+    textinput.set_suggestions(["test1", "test2", "test3"])
+    textinput.current_suggestion.should eq("")
+
+    textinput.set_value("test")
+    textinput.current_suggestion.should eq("")
+
+    textinput.blur
+    textinput.view.ends_with?("test2").should be_false
+  end
+
+  it "Test_SlicingOutsideCap" do
+    textinput = Bubbles::TextInput.new
+    textinput.placeholder = "作業ディレクトリを指定してください"
+    textinput.width = 32
+    textinput.view
+  end
+
+  pending "TestChinesePlaceholder" do
+    # Upstream Go test is skipped:
+    # TestChinesePlaceholder: "Skipping flaky test, the returned view seems incorrect."
+  end
+
+  pending "TestPlaceholderTruncate" do
+    # Upstream Go test is skipped:
+    # TestPlaceholderTruncate: "Skipping flaky test, the returned view seems incorrect."
+  end
+
   describe "Model" do
     it "creates a new model with default settings" do
       model = Bubbles::TextInput.new

@@ -1,5 +1,5 @@
 require "../tea"
-require "../lipgloss"
+require "lipgloss"
 require "./key"
 require "./cursor"
 require "uniwidth"
@@ -13,6 +13,10 @@ module Bubbles
       Password # displays EchoCharacter mask instead of actual characters
       None     # displays nothing as characters are entered
     end
+
+    EchoNormal   = EchoMode::Normal
+    EchoPassword = EchoMode::Password
+    EchoNone     = EchoMode::None
 
     # ValidateFunc is a function that returns an error if the input is invalid.
     alias ValidateFunc = (String) -> Exception?
@@ -167,7 +171,7 @@ module Bubbles
 
     # DefaultStyles returns the default styles for focused and blurred states for
     # the textarea.
-    def self.default_styles(is_dark : Bool) : Styles
+    def self.default_styles(_dark : Bool) : Styles
       # TODO: implement proper styling with lipgloss
       Styles.new
     end
@@ -228,14 +232,14 @@ module Bubbles
 
       # Private fields
       property value : Array(Char)
-      property focus : Bool
+      property focus : Bool # ameba:disable Naming/QueryBoolMethods
       property pos : Int32
       property offset : Int32
       property offset_right : Int32
       property suggestions : Array(Array(Char))
       property matched_suggestions : Array(Array(Char))
       property current_suggestion_index : Int32
-      property use_virtual_cursor : Bool
+      property use_virtual_cursor : Bool # ameba:disable Naming/QueryBoolMethods
       property virtual_cursor : Cursor::Model
 
       # TODO: rune sanitizer
@@ -269,16 +273,15 @@ module Bubbles
 
       # san initializes or retrieves the rune sanitizer.
       private def san : Sanitizer
-        unless rsan = @rsan
+        unless @rsan
           # Textinput has all its input on a single line so collapse
           # newlines/tabs to single spaces.
           @rsan = Sanitizer.new(
             replace_newline: [' '],
             replace_tab: [' ']
           )
-          rsan = @rsan.not_nil!
         end
-        rsan
+        @rsan.as(Sanitizer)
       end
 
       # Value returns the value of the text input.
@@ -287,13 +290,17 @@ module Bubbles
       end
 
       # SetValue sets the value of the text input.
-      def set_value(s : String)
+      def set_value(s : String) # ameba:disable Naming/AccessorMethodName
         # Clean up any special characters in the input provided by the
         # caller. This avoids bugs due to e.g. tab characters and whatnot.
         runes = s.chars
         sanitized = san.sanitize(runes)
         err = validate(sanitized)
         set_value_internal(sanitized, err)
+      end
+
+      def value=(s : String)
+        set_value(s)
       end
 
       private def set_value_internal(runes : Array(Char), err : Exception?)
@@ -318,9 +325,13 @@ module Bubbles
 
       # SetCursor moves the cursor to the given position. If the position is
       # out of bounds the cursor will be moved to the start or end accordingly.
-      def set_cursor(pos : Int32)
+      def set_cursor(pos : Int32) # ameba:disable Naming/AccessorMethodName
         @pos = clamp(pos, 0, @value.size)
         handle_overflow
+      end
+
+      def cursor=(pos : Int32)
+        set_cursor(pos)
       end
 
       # CursorStart moves the cursor to the start of the input field.
@@ -334,9 +345,13 @@ module Bubbles
       end
 
       # SetSuggestions sets the suggestions for the input.
-      def set_suggestions(suggestions : Array(String))
+      def set_suggestions(suggestions : Array(String)) # ameba:disable Naming/AccessorMethodName
         @suggestions = suggestions.map(&.chars)
         update_suggestions
+      end
+
+      def suggestions=(suggestions : Array(String))
+        set_suggestions(suggestions)
       end
 
       # CurrentSuggestion returns the currently selected suggestion.
@@ -345,9 +360,42 @@ module Bubbles
         @matched_suggestions[@current_suggestion_index].join
       end
 
+      # AvailableSuggestions returns the currently matched suggestions.
+      def available_suggestions : Array(String)
+        @matched_suggestions.map(&.join)
+      end
+
       # Focused returns the focus state on the model.
       def focused? : Bool
         @focus
+      end
+
+      # VirtualCursor returns whether the model is using a virtual cursor.
+      def virtual_cursor : Bool
+        @use_virtual_cursor
+      end
+
+      # SetVirtualCursor sets whether the model should use a virtual cursor.
+      def set_virtual_cursor(v : Bool) # ameba:disable Naming/AccessorMethodName
+        @use_virtual_cursor = v
+      end
+
+      def virtual_cursor=(v : Bool)
+        set_virtual_cursor(v)
+      end
+
+      # Styles returns the current set of styles.
+      def styles : Styles
+        @styles
+      end
+
+      # SetStyles sets the styles for the text input.
+      def set_styles(s : Styles) # ameba:disable Naming/AccessorMethodName
+        @styles = s
+      end
+
+      def styles=(s : Styles)
+        set_styles(s)
       end
 
       # Focus sets the focus state on the model. When the model is in focus it can
@@ -600,23 +648,45 @@ module Bubbles
       end
 
       private def can_accept_suggestion : Bool
-        @focus && @show_suggestions && !@matched_suggestions.empty?
+        !@matched_suggestions.empty?
       end
 
       private def update_suggestions
-        # TODO: implement
-        @matched_suggestions.clear
-        @current_suggestion_index = 0
+        return unless @show_suggestions
+
+        if @value.empty? || @suggestions.empty?
+          @matched_suggestions = [] of Array(Char)
+          return
+        end
+
+        query = @value.join.downcase
+        matches = [] of Array(Char)
+        @suggestions.each do |suggestion_chars|
+          suggestion = suggestion_chars.join
+          if suggestion.downcase.starts_with?(query)
+            matches << suggestion.chars
+          end
+        end
+
+        if matches != @matched_suggestions
+          @current_suggestion_index = 0
+        end
+
+        @matched_suggestions = matches
       end
 
       private def next_suggestion
-        return unless can_accept_suggestion
-        @current_suggestion_index = (@current_suggestion_index + 1) % @matched_suggestions.size
+        @current_suggestion_index += 1
+        if @current_suggestion_index >= @matched_suggestions.size
+          @current_suggestion_index = 0
+        end
       end
 
       private def previous_suggestion
-        return unless can_accept_suggestion
-        @current_suggestion_index = (@current_suggestion_index - 1) % @matched_suggestions.size
+        @current_suggestion_index -= 1
+        if @current_suggestion_index < 0
+          @current_suggestion_index = @matched_suggestions.size - 1
+        end
       end
 
       private def max(a : Int32, b : Int32) : Int32
@@ -635,8 +705,7 @@ module Bubbles
         return "" unless can_accept_suggestion
         suggestion = @matched_suggestions[@current_suggestion_index]
         return "" if @value.size >= suggestion.size
-        # TODO: implement styling
-        suggestion[@value.size + offset..].join
+        active_style.suggestion.inline(true).render(suggestion[@value.size + offset..].join)
       end
 
       private def prompt_view : String
@@ -644,8 +713,40 @@ module Bubbles
       end
 
       private def placeholder_view : String
-        # TODO: implement placeholder view with styling and cursor
-        @placeholder
+        styles = active_style
+        render = ->(s : String) { styles.placeholder.render(s) }
+
+        p = Array(Char).new(max(0, @width) + 1, '\0')
+        placeholder_runes = @placeholder.chars
+        copy_n = min(p.size, placeholder_runes.size)
+        i = 0
+        while i < copy_n
+          p[i] = placeholder_runes[i]
+          i += 1
+        end
+
+        @virtual_cursor.text_style = styles.placeholder
+        @virtual_cursor.set_char(p[0, 1].join)
+        v = @virtual_cursor.view
+
+        if @width < 1 && p.size <= 1
+          return styles.prompt.render(@prompt) + v
+        end
+
+        if @width > 0
+          min_width = Lipgloss.width(@placeholder)
+          avail_width = @width - min_width + 1
+          if avail_width < 0
+            min_width += avail_width
+            avail_width = 0
+          end
+          v += render.call(p[1, Math.max(0, min_width - 1)].join)
+          v += render.call(" " * avail_width)
+        else
+          v += render.call(p[1..].join)
+        end
+
+        styles.prompt.render(@prompt) + v
       end
 
       # Init returns the initial command(s) for the model.
@@ -739,7 +840,7 @@ module Bubbles
 
           # If the cursor position changed, reset the blink state.
           if old_pos != @pos && @virtual_cursor.mode == Cursor::Mode::Blink
-            @virtual_cursor.is_blinked = false
+            @virtual_cursor.blinked = false
             cmds << @virtual_cursor.blink
           end
         end
@@ -761,17 +862,17 @@ module Bubbles
         end
 
         styles = active_style
-        style_text = styles.text.inline(true).render
+        style_text = ->(s : String) { styles.text.inline(true).render(s) }
 
         value = @value[@offset...@offset_right]
         pos = max(0, @pos - @offset)
-        v = style_text(echo_transform(value[0, pos].join))
+        v = style_text.call(echo_transform(value[0, pos].join))
 
         if pos < value.size
           char = echo_transform(value[pos].to_s)
           @virtual_cursor.set_char(char)
           v += @virtual_cursor.view
-          v += style_text(echo_transform(value[pos + 1..].join))
+          v += style_text.call(echo_transform(value[pos + 1..].join))
           v += completion_view(0)
         else
           if @focus && can_accept_suggestion
@@ -799,7 +900,7 @@ module Bubbles
           if val_width + padding <= @width && pos < value.size
             padding += 1
           end
-          v += style_text(" " * padding)
+          v += style_text.call(" " * padding)
         end
 
         prompt_view + v

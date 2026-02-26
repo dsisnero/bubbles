@@ -12,9 +12,12 @@ module Bubbles
       end
 
       # SetKeys sets the keys for the keybinding.
-      # ameba:disable Naming/AccessorMethodName
-      def set_keys(*keys : String)
+      def set_keys(*keys : String) # ameba:disable Naming/AccessorMethodName
         @keys = keys.to_a
+      end
+
+      def keys=(keys : Array(String))
+        set_keys(*keys)
       end
 
       # Keys returns the keys for the keybinding.
@@ -39,10 +42,19 @@ module Bubbles
         !@disabled && !@keys.nil?
       end
 
+      # Enabled returns whether or not the keybinding is enabled.
+      # Kept for Go parity with key.Binding.Enabled.
+      def enabled : Bool
+        enabled?
+      end
+
       # SetEnabled enables or disables the keybinding.
-      # ameba:disable Naming/AccessorMethodName
-      def set_enabled(v : Bool)
+      def set_enabled(v : Bool) # ameba:disable Naming/AccessorMethodName
         @disabled = !v
+      end
+
+      def enabled=(v : Bool)
+        set_enabled(v)
       end
 
       # Unbind removes the keys and help from this binding, effectively nullifying

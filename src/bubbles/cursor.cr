@@ -1,5 +1,5 @@
 require "../tea"
-require "../lipgloss"
+require "lipgloss"
 require "./context"
 require "atomic"
 
@@ -49,7 +49,24 @@ module Bubbles
       Blink
       Static
       Hide
+
+      # String returns the cursor mode in a human-readable format.
+      def string : String
+        case self
+        when Blink
+          "blink"
+        when Static
+          "static"
+        else
+          "hidden"
+        end
+      end
     end
+
+    # Available cursor modes. Kept for upstream Go parity.
+    CursorBlink  = Mode::Blink
+    CursorStatic = Mode::Static
+    CursorHide   = Mode::Hide
 
     # Model is the Bubble Tea model for this cursor element.
     class Model
@@ -64,9 +81,9 @@ module Bubbles
       # unless [CursorMode] is not set to [CursorBlink].
       property blink_speed : Time::Span
 
-      # IsBlinked is the state of the cursor blink. When true, the cursor is
+      # blinked? is the state of the cursor blink. When true, the cursor is
       # hidden.
-      property? is_blinked : Bool
+      property? blinked : Bool
 
       # char is the character under the cursor
       property char : String
@@ -90,7 +107,7 @@ module Bubbles
       def initialize
         @id = Cursor.next_id
         @blink_speed = DEFAULT_BLINK_SPEED
-        @is_blinked = true
+        @blinked = true
         @mode = Mode::Blink
         @style = Lipgloss::Style.new
         @text_style = Lipgloss::Style.new
@@ -129,7 +146,7 @@ module Bubbles
           end
           cmd = nil
           if @mode == Mode::Blink
-            @is_blinked = !@is_blinked
+            @blinked = !@blinked
             cmd = blink
           end
           {self, cmd}
@@ -149,18 +166,21 @@ module Bubbles
       # SetMode sets the model's cursor mode. This method returns a command.
       #
       # For available cursor modes, see type CursorMode.
-      # ameba:disable Naming/AccessorMethodName
-      def set_mode(mode : Mode) : Tea::Cmd
+      def set_mode(mode : Mode) : Tea::Cmd # ameba:disable Naming/AccessorMethodName
         # Adjust the mode value if it's value is out of range
         if mode.value < Mode::Blink.value || mode.value > Mode::Hide.value
           return
         end
         @mode = mode
-        @is_blinked = @mode == Mode::Hide || !@focus
+        @blinked = @mode == Mode::Hide || !@focus
         if mode == Mode::Blink
           return -> { InitialBlinkMsg.new.as(Tea::Msg?) }.as(Tea::Cmd)
         end
         nil
+      end
+
+      def mode=(mode : Mode) : Tea::Cmd
+        set_mode(mode)
       end
 
       # Blink is a command used to manage cursor blinking.
@@ -191,7 +211,7 @@ module Bubbles
       # Focus focuses the cursor to allow it to blink if desired.
       def focus : Tea::Cmd
         @focus = true
-        @is_blinked = @mode == Mode::Hide # show the cursor unless we've explicitly hidden it
+        @blinked = @mode == Mode::Hide # show the cursor unless we've explicitly hidden it
         if @mode == Mode::Blink && @focus
           return blink
         end
@@ -201,18 +221,21 @@ module Bubbles
       # Blur blurs the cursor.
       def blur
         @focus = false
-        @is_blinked = true
+        @blinked = true
       end
 
       # SetChar sets the character under the cursor.
-      # ameba:disable Naming/AccessorMethodName
-      def set_char(char : String)
+      def set_char(char : String) # ameba:disable Naming/AccessorMethodName
         @char = char
+      end
+
+      def char=(char : String)
+        set_char(char)
       end
 
       # View displays the cursor.
       def view : String
-        if @is_blinked
+        if @blinked
           @text_style.inline(true).render(@char)
         else
           @style.inline(true).reverse(true).render(@char)

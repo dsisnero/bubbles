@@ -3,19 +3,22 @@ require "../src/bubbles/key"
 
 describe Bubbles::Key do
   describe "Binding" do
-    it "tests binding enabled" do
+    it "TestBinding_Enabled" do
       binding = Bubbles::Key.new_binding(
         Bubbles::Key.with_keys("k", "up"),
         Bubbles::Key.with_help("↑/k", "move up"),
       )
       binding.enabled?.should be_true
+      binding.enabled.should be_true
 
       binding.set_enabled(false)
       binding.enabled?.should be_false
+      binding.enabled.should be_false
 
       binding.set_enabled(true)
       binding.unbind
       binding.enabled?.should be_false
+      binding.enabled.should be_false
     end
 
     it "creates binding with keys" do
