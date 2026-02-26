@@ -3,7 +3,7 @@
 This is a Crystal port of [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles),
 a collection of components for terminal user interface applications.
 
-The original Go source code is available in the `vendor/` directory. This port
+The original Go source code is available in the `vendor/bubbles/` directory. This port
 aims to provide equivalent functionality in Crystal while following Crystal
 language idioms and conventions.
 
@@ -66,7 +66,7 @@ make test       # Run tests
 This is a Crystal port of Go code. All logic should match the Go implementation
 exactly, differing only in Crystal language idioms and standard library usage.
 
-- The Go code in `vendor/` is the source of truth
+- The Go code in `vendor/bubbles/` is the source of truth
 - Port Go tests to Crystal specs to verify behavior
 - Use Crystal's type system and idioms where appropriate
 - Follow Crystal naming conventions (snake_case for methods, CamelCase for classes)

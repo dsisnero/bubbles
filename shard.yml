@@ -11,6 +11,10 @@ license: MIT
 dependencies:
   bubbletea:
     github: dsisnero/bubbletea.cr
+  golden:
+    github: dsisnero/golden
+  teatest:
+    github: dsisnero/teatest
 
 development_dependencies:
   ameba:

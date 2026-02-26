@@ -11,3 +11,10 @@
 # Backup directories from previous port
 /src.bak/
 /spec.bak/
+/temp
+/.crystal-cache/
+/.gocache/
+/.gomodcache/
+/vendor/.gocache/
+/vendor/.gomodcache/
+/.beads/export-state/

@@ -4,7 +4,7 @@ This is a port of golang https://github.com/charmbracelet/bubbles.git to
 Crystal language. Since it is a port, all logic must match the golang implementation
 only differening in Crystal language idioms and libs. If you have
 a question, the go code is the source of truth. We want to port all go code and
-go tests. The golang src is available at ./vendor/
+go tests. The golang src is available at ./vendor/bubbles/
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
 
@@ -49,7 +49,7 @@ bd close beads-xxx beads-yyy beads-zzz
 
 ## Crystal Development Guidelines
 
-This is a Crystal port of the Go code from `./vendor/`. Follow Crystal idioms and
+This is a Crystal port of the Go code from `./vendor/bubbles/`. Follow Crystal idioms and
 best practices:
 
 - Use Crystal's built-in formatter: `crystal tool format`
@@ -121,4 +121,3 @@ output.
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
-

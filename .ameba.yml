@@ -8,3 +8,10 @@ Excluded:
   - vendor
   - crystal
   - src/**/*.bak
+
+Metrics/CyclomaticComplexity:
+  Excluded:
+    - src/bubbles/cursor.cr
+    - src/bubbles/list.cr
+    - src/bubbles/list/defaultitem.cr
+    - src/bubbles/textinput.cr
