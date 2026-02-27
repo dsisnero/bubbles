@@ -2,6 +2,7 @@ require "../tea"
 require "./key"
 require "ansi"
 require "lipgloss"
+require "./viewport/highlight"
 
 module Bubbles
   module Viewport
@@ -73,7 +74,11 @@ module Bubbles
       property? mouse_wheel_enabled : Bool
       property mouse_wheel_delta : Int32
       property y_position : Int32
+      property style : Lipgloss::Style
       property left_gutter_func : GutterFunc
+      property highlight_style : Lipgloss::Style
+      property selected_highlight_style : Lipgloss::Style
+      property style_line_func : (Int32 -> Lipgloss::Style)?
 
       @width : Int32
       @height : Int32
@@ -82,8 +87,9 @@ module Bubbles
       @horizontal_step : Int32
       @lines : Array(String)
       @longest_line_width : Int32
-      @highlight_indices : Array(Int32)
+      @highlights : Array(HighlightInfo)
       @hi_idx : Int32
+      @initialized : Bool
 
       def initialize
         @width = 0
@@ -97,11 +103,16 @@ module Bubbles
         @x_offset = 0
         @horizontal_step = DEFAULT_HORIZONTAL_STEP
         @y_position = 0
+        @style = Lipgloss::Style.new
         @left_gutter_func = NoGutter
         @lines = [] of String
         @longest_line_width = 0
-        @highlight_indices = [] of Int32
-        @hi_idx = 0
+        @highlights = [] of HighlightInfo
+        @hi_idx = -1
+        @highlight_style = Lipgloss::Style.new
+        @selected_highlight_style = Lipgloss::Style.new
+        @style_line_func = nil
+        @initialized = false
       end
 
       def self.new(*opts : Option) : Model
@@ -282,8 +293,10 @@ module Bubbles
       end
 
       def set_highlights(matches : Array(Array(Int32))) # ameba:disable Naming/AccessorMethodName
-        @highlight_indices = matches.map { |match| match[0] }.to_a
-        @hi_idx = 0
+        return if matches.empty? || @lines.empty?
+        @highlights = Viewport.parse_matches(get_content, matches)
+        @hi_idx = find_nearest_match
+        show_highlight
       end
 
       def highlights=(matches : Array(Array(Int32)))
@@ -291,20 +304,71 @@ module Bubbles
       end
 
       def clear_highlights
-        @highlight_indices.clear
-        @hi_idx = 0
+        @highlights.clear
+        @hi_idx = -1
       end
 
       def highlight_next
-        return if @highlight_indices.empty?
-        @hi_idx = (@hi_idx + 1) % @highlight_indices.size
-        ensure_visible(@highlight_indices[@hi_idx])
+        return if @highlights.empty?
+        @hi_idx = (@hi_idx + 1) % @highlights.size
+        show_highlight
       end
 
       def highlight_previous
-        return if @highlight_indices.empty?
-        @hi_idx = (@hi_idx - 1) % @highlight_indices.size
-        ensure_visible(@highlight_indices[@hi_idx])
+        return if @highlights.empty?
+        @hi_idx = (@hi_idx - 1) % @highlights.size
+        show_highlight
+      end
+
+      private def show_highlight
+        return if @hi_idx == -1
+        line, colstart, colend = @highlights[@hi_idx].coords
+        ensure_visible(line, colstart, colend)
+      end
+
+      private def find_nearest_match : Int32
+        @highlights.each_with_index do |match, i|
+          return i if match.line_start >= @y_offset
+        end
+        -1
+      end
+
+      def ensure_visible(line : Int32, colstart : Int32, colend : Int32)
+        max_width = max_width()
+        if colend <= max_width
+          @x_offset = 0
+        else
+          @x_offset = colstart - @horizontal_step # put one step to the left, feels more natural
+        end
+
+        if line < @y_offset || line >= @y_offset + max_height()
+          @y_offset = line
+        end
+        set_y_offset(@y_offset)
+      end
+
+      private def style_lines(lines : Array(String), offset : Int32) : Array(String)
+        func = @style_line_func
+        return lines unless func
+        lines.map_with_index do |line, i|
+          style = func.call(i + offset)
+          style.render(line)
+        end
+      end
+
+      private def highlight_lines(lines : Array(String), offset : Int32) : Array(String)
+        return lines if @highlights.empty?
+        lines.map_with_index do |line, i|
+          ranges = Viewport.make_highlight_ranges(@highlights, i + offset, @highlight_style)
+          line = Lipgloss.style_ranges(line, ranges)
+          if @hi_idx >= 0
+            sel = @highlights[@hi_idx]
+            if hl = sel.lines[i + offset]?
+              line = Lipgloss.style_ranges(line, [Lipgloss.new_range(hl[0], hl[1], @selected_highlight_style)])
+            end
+          end
+          line
+        end
       end
 
       def view : String
@@ -314,19 +378,106 @@ module Bubbles
       end
 
       private def visible_lines : Array(String)
-        return [] of String if @height <= 0 || @width <= 0 || @lines.empty?
-        slice = @lines[@y_offset, Math.min(@height, @lines.size - @y_offset)]? || [] of String
-        lines = slice.map do |line|
-          if Ansi.string_width(line) <= @x_offset
-            ""
-          else
-            Ansi.cut(line, @x_offset, @x_offset + @width)
-          end
+        max_height = max_height()
+        max_width = max_width()
+
+        if max_height == 0 || max_width == 0
+          return [] of String
         end
-        while @fill_height && lines.size < @height
+
+        total, ridx, voffset = calculate_line(@y_offset)
+        lines = [] of String
+        if total > 0
+          bottom = clamp(ridx + max_height, ridx, @lines.size)
+          lines = @lines[ridx...bottom].dup
+          lines = style_lines(lines, ridx)
+          lines = highlight_lines(lines, ridx)
+        end
+
+        while @fill_height && lines.size < max_height
           lines << ""
         end
-        lines
+
+        # if longest line fit within width, no need to do anything else.
+        if (@x_offset == 0 && @longest_line_width <= max_width) || max_width == 0
+          return setup_gutter(lines, total, ridx)
+        end
+
+        if @soft_wrap
+          return soft_wrap(lines, max_width, max_height, total, ridx, voffset)
+        end
+
+        # Cut the lines to the viewport width.
+        lines.map! do |line|
+          Ansi.cut(line, @x_offset, @x_offset + max_width)
+        end
+        setup_gutter(lines, total, ridx)
+      end
+
+      # setup_gutter sets up the left gutter using Model#left_gutter_func.
+      private def setup_gutter(lines : Array(String), total : Int32, ridx : Int32) : Array(String)
+        return lines unless @left_gutter_func
+        lines.map_with_index do |line, i|
+          @left_gutter_func.call(GutterContext.new(
+            index: i + ridx,
+            total_lines: total,
+            soft: false
+          )) + line
+        end
+      end
+
+      private def soft_wrap(lines : Array(String), max_width : Int32, max_height : Int32,
+                            total : Int32, ridx : Int32, voffset : Int32) : Array(String)
+        # TODO: Implement soft wrap
+        lines.map! do |line|
+          Ansi.cut(line, @x_offset, @x_offset + max_width)
+        end
+        setup_gutter(lines, total, ridx)
+      end
+
+      private def max_width : Int32
+        gutter_size = 0
+        if @left_gutter_func
+          gutter_size = Ansi.string_width(@left_gutter_func.call(GutterContext.new))
+        end
+        Math.max(0, @width - @style.get_horizontal_frame_size - gutter_size)
+      end
+
+      private def max_height : Int32
+        Math.max(0, @height - @style.get_vertical_frame_size)
+      end
+
+      # calculate_line taking soft wrapping into account, returns the total viewable
+      # lines and the real-line index for the given yoffset, as well as the virtual
+      # line offset.
+      private def calculate_line(yoffset : Int32) : Tuple(Int32, Int32, Int32)
+        unless @soft_wrap
+          total = @lines.size
+          ridx = Math.min(yoffset, @lines.size)
+          return {total, ridx, 0}
+        end
+
+        max_width = max_width().to_f
+        total = 0
+        ridx = 0
+        voffset = 0
+
+        @lines.each_with_index do |line, i|
+          line_height = Math.max(1, (Ansi.string_width(line).to_f / max_width).ceil.to_i)
+
+          if yoffset >= total && yoffset < total + line_height
+            ridx = i
+            voffset = yoffset - total
+          end
+          total += line_height
+        end
+
+        if yoffset >= total
+          ridx = @lines.size
+          voffset = 0
+        end
+
+        {total, ridx, voffset}
       end
 
       private def max_y_offset : Int32
