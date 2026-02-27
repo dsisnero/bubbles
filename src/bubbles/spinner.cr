@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "lipgloss"
 require "atomic"
 
@@ -31,7 +31,8 @@ module Bubbles
     Hamburger = SpinnerData.new(["☱", "☲", "☴", "☲"], 333.milliseconds)
     Ellipsis  = SpinnerData.new(["", ".", "..", "..."], 333.milliseconds)
 
-    class TickMsg < Tea::Msg
+    class TickMsg
+      include Tea::Msg
       getter time : Time
       getter id : Int32
       getter tag : Int32
@@ -77,7 +78,7 @@ module Bubbles
         end
       end
 
-      def view : String
+      def view : Tea::View
         if @frame >= @spinner.frames.size
           return "(error)"
         end

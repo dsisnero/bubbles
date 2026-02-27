@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "lipgloss"
 require "./key"
 require "./cursor"
@@ -22,13 +22,15 @@ module Bubbles
     alias ValidateFunc = (String) -> Exception?
 
     # Internal messages for clipboard operations.
-    class PasteMsg < Tea::Msg
+    class PasteMsg
+      include Tea::Msg
       property content : String
 
       def initialize(@content : String); end
     end
 
-    class PasteErrMsg < Tea::Msg
+    class PasteErrMsg
+      include Tea::Msg
       property error : Exception
 
       def initialize(@error : Exception); end
@@ -855,7 +857,7 @@ module Bubbles
       end
 
       # View renders the model's current state as a string for display.
-      def view : String
+      def view : Tea::View
         # Placeholder text
         if @value.empty? && !@placeholder.empty?
           return placeholder_view

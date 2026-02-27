@@ -210,7 +210,7 @@ module Bubbles
         set_height(h)
       end
 
-      def view : String
+      def view : Tea::View
         rendered = @value.map(&.join)
         return @placeholder if rendered.empty? || (rendered.size == 1 && rendered[0].empty? && !@placeholder.empty?)
 

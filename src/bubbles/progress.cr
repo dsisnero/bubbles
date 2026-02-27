@@ -1,6 +1,6 @@
 require "atomic"
 require "math"
-require "../tea"
+require "bubbletea"
 require "lipgloss"
 
 module Bubbles
@@ -86,7 +86,8 @@ module Bubbles
       ->(m : Model) { m.scale_blend = enabled }
     end
 
-    class FrameMsg < Tea::Msg
+    class FrameMsg
+      include Tea::Msg
       getter id : Int32
       getter tag : Int32
 
@@ -208,8 +209,8 @@ module Bubbles
         set_percent(percent - v)
       end
 
-      def view : String
-        view_as(@percent_shown)
+      def view : Tea::View
+        Tea::View.new(view_as(@percent_shown))
       end
 
       def view_as(percent : Float64) : String
@@ -232,7 +233,7 @@ module Bubbles
       end
 
       private def next_frame : Tea::Cmd
-        Tea::Cmds.tick((1000 // FPS).milliseconds) do
+        Tea.tick((1000 // FPS).milliseconds) do
           FrameMsg.new(@id, @tag)
         end
       end

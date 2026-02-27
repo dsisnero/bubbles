@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "./key"
 
 module Bubbles

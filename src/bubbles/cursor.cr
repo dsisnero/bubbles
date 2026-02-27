@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "lipgloss"
 require "./context"
 require "atomic"
@@ -18,12 +18,14 @@ module Bubbles
     end
 
     # initial_blink_msg initializes cursor blinking.
-    class InitialBlinkMsg < Tea::Msg
+    class InitialBlinkMsg
+      include Tea::Msg
     end
 
     # BlinkMsg signals that the cursor should blink. It contains metadata that
     # allows us to tell if the blink message is the one we're expecting.
-    class BlinkMsg < Tea::Msg
+    class BlinkMsg
+      include Tea::Msg
       property id : Int32
       property tag : Int32
 
@@ -32,7 +34,8 @@ module Bubbles
     end
 
     # blink_canceled is sent when a blink operation is canceled.
-    class BlinkCanceled < Tea::Msg
+    class BlinkCanceled
+      include Tea::Msg
     end
 
     # blink_ctx manages cursor blinking.
@@ -234,7 +237,7 @@ module Bubbles
       end
 
       # View displays the cursor.
-      def view : String
+      def view : Tea::View
         if @blinked
           @text_style.inline(true).render(@char)
         else

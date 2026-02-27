@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "lipgloss"
 require "./help"
 require "./key"
@@ -31,7 +31,8 @@ module Bubbles
       end
     end
 
-    class FilterMatchesMsg < Tea::Msg
+    class FilterMatchesMsg
+      include Tea::Msg
       getter matches : Array(FilteredItem)
 
       def initialize(@matches : Array(FilteredItem))
@@ -69,10 +70,12 @@ module Bubbles
 
     alias FilterFunc = Proc(String, Array(String), Array(Rank))
 
-    class StatusMessageTimeoutMsg < Tea::Msg
+    class StatusMessageTimeoutMsg
+      include Tea::Msg
     end
 
-    class QuitMsg < Tea::Msg
+    class QuitMsg
+      include Tea::Msg
     end
 
     def self.default_filter(term : String, targets : Array(String)) : Array(Rank)
@@ -562,7 +565,7 @@ module Bubbles
         kb
       end
 
-      def view : String
+      def view : Tea::View
         sections = [] of String
         avail_height = @height
 

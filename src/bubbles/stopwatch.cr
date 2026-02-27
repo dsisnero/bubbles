@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "atomic"
 
 module Bubbles
@@ -15,7 +15,8 @@ module Bubbles
       ->(m : Model) { m.interval = interval }
     end
 
-    class TickMsg < Tea::Msg
+    class TickMsg
+      include Tea::Msg
       getter id : Int32
       getter tag : Int32
 
@@ -23,7 +24,8 @@ module Bubbles
       end
     end
 
-    class StartStopMsg < Tea::Msg
+    class StartStopMsg
+      include Tea::Msg
       getter id : Int32
       getter running : Bool # ameba:disable Naming/QueryBoolMethods
 
@@ -31,7 +33,8 @@ module Bubbles
       end
     end
 
-    class ResetMsg < Tea::Msg
+    class ResetMsg
+      include Tea::Msg
       getter id : Int32
 
       def initialize(@id : Int32)
@@ -110,7 +113,7 @@ module Bubbles
         {self, nil}
       end
 
-      def view : String
+      def view : Tea::View
         @elapsed.to_s
       end
 

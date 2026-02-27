@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "./key"
 
 module Bubbles
@@ -133,7 +133,7 @@ module Bubbles
         {self, nil}
       end
 
-      def view : String
+      def view : Tea::View
         case @type
         when Type::Dots
           dots_view

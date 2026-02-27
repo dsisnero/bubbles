@@ -1,4 +1,4 @@
-require "../tea"
+require "bubbletea"
 require "./key"
 require "ansi"
 require "lipgloss"
@@ -371,7 +371,7 @@ module Bubbles
         end
       end
 
-      def view : String
+      def view : Tea::View
         return "" if @width <= 0 || @height <= 0
         content = visible_lines.join("\n")
         Lipgloss.new_style.width(@width).height(@height).render(content)

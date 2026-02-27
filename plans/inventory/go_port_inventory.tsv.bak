@@ -1,0 +1,491 @@
+# go_id	kind	status	crystal_refs	notes
+
+cursor/cursor.go::const::CursorBlink	const	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::const::CursorHide	const	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::const::CursorStatic	const	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::func::Blink	func	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::func::New	func	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Mode.String	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.Blink	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.Blur	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.Focus	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.Mode	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.SetChar	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.SetMode	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.Update	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::method::Model.View	method	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::struct::BlinkMsg	struct	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::struct::Model	struct	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor.go::type::Mode	type	ported	src/bubbles/cursor.cr	ported with exact Go parity
+cursor/cursor_test.go::test::TestBlinkCmdDataRace	test	ported	spec/cursor_spec.cr:221	ported with exact Go parity
+filepicker/filepicker.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+filepicker/filepicker.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+filepicker/filepicker.go::func::New	func	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.DidSelectDisabledFile	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.DidSelectFile	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.Height	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.HighlightedPath	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.Init	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.SetHeight	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.Update	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::method::Model.View	method	in_progress		heuristically matched; task created
+filepicker/filepicker.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+filepicker/filepicker.go::struct::Model	struct	in_progress		heuristically matched; task created
+filepicker/filepicker.go::struct::Styles	struct	in_progress		heuristically matched; task created
+filepicker/hidden_unix.go::func::IsHidden	func	missing		remaining backlog
+filepicker/hidden_windows.go::func::IsHidden	func	missing		remaining backlog
+help/help.go::func::DefaultDarkStyles	func	in_progress		heuristically matched; task created
+help/help.go::func::DefaultLightStyles	func	in_progress		heuristically matched; task created
+help/help.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+help/help.go::func::New	func	in_progress		heuristically matched; task created
+help/help.go::method::Model.FullHelpView	method	in_progress		heuristically matched; task created
+help/help.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+help/help.go::method::Model.ShortHelpView	method	in_progress		heuristically matched; task created
+help/help.go::method::Model.Update	method	in_progress		heuristically matched; task created
+help/help.go::method::Model.View	method	in_progress		heuristically matched; task created
+help/help.go::method::Model.Width	method	in_progress		heuristically matched; task created
+help/help.go::struct::Model	struct	in_progress		heuristically matched; task created
+help/help.go::struct::Styles	struct	in_progress		heuristically matched; task created
+help/help.go::type::KeyMap	type	in_progress		heuristically matched; task created
+help/help_test.go::test::TestFullHelp	test	missing		remaining backlog
+internal/memoization/memoization.go::method::HInt.Hash	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::method::HString.Hash	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::method::T].Capacity	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::method::T].Get	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::method::T].Set	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::method::T].Size	method	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::struct::MemoCache[H	struct	missing		remaining backlog
+internal/memoization/memoization.go::type::HInt	type	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::type::HString	type	in_progress		heuristically matched; task created
+internal/memoization/memoization.go::type::Hasher	type	in_progress		heuristically matched; task created
+internal/memoization/memoization_test.go::test::TestCache	test	missing		remaining backlog
+internal/runeutil/runeutil.go::func::NewSanitizer	func	in_progress		heuristically matched; task created
+internal/runeutil/runeutil.go::func::ReplaceNewlines	func	in_progress		heuristically matched; task created
+internal/runeutil/runeutil.go::func::ReplaceTabs	func	in_progress		heuristically matched; task created
+internal/runeutil/runeutil.go::method::sanitizer.Sanitize	method	in_progress		heuristically matched; task created
+internal/runeutil/runeutil.go::type::Option	type	missing		remaining backlog
+internal/runeutil/runeutil.go::type::Sanitizer	type	in_progress		heuristically matched; task created
+internal/runeutil/runeutil_test.go::test::TestSanitize	test	missing		remaining backlog
+key/key.go::func::NewBinding	func	in_progress		heuristically matched; task created
+key/key.go::func::WithDisabled	func	in_progress		heuristically matched; task created
+key/key.go::func::WithHelp	func	in_progress		heuristically matched; task created
+key/key.go::func::WithKeys	func	in_progress		heuristically matched; task created
+key/key.go::method::Binding.Enabled	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.Help	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.Keys	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.SetEnabled	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.SetHelp	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.SetKeys	method	in_progress		heuristically matched; task created
+key/key.go::method::Binding.Unbind	method	in_progress		heuristically matched; task created
+key/key.go::struct::Binding	struct	in_progress		heuristically matched; task created
+key/key.go::struct::Help	struct	in_progress		heuristically matched; task created
+key/key.go::type::BindingOpt	type	missing		remaining backlog
+key/key_test.go::test::TestBinding_Enabled	test	missing		remaining backlog
+list/defaultitem.go::func::NewDefaultDelegate	func	in_progress		heuristically matched; task created
+list/defaultitem.go::func::NewDefaultItemStyles	func	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.FullHelp	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.Height	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.Render	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.SetHeight	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.SetSpacing	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.ShortHelp	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.Spacing	method	in_progress		heuristically matched; task created
+list/defaultitem.go::method::DefaultDelegate.Update	method	in_progress		heuristically matched; task created
+list/defaultitem.go::struct::DefaultDelegate	struct	in_progress		heuristically matched; task created
+list/defaultitem.go::struct::DefaultItemStyles	struct	in_progress		heuristically matched; task created
+list/defaultitem.go::type::DefaultItem	type	in_progress		heuristically matched; task created
+list/keys.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+list/keys.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+list/list.go::const::FilterApplied	const	in_progress		heuristically matched; task created
+list/list.go::const::Filtering	const	in_progress		heuristically matched; task created
+list/list.go::const::Unfiltered	const	in_progress		heuristically matched; task created
+list/list.go::func::DefaultFilter	func	in_progress		heuristically matched; task created
+list/list.go::func::New	func	in_progress		heuristically matched; task created
+list/list.go::func::UnsortedFilter	func	in_progress		heuristically matched; task created
+list/list.go::method::FilterState.String	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Cursor	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.CursorDown	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.CursorUp	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.DisableQuitKeybindings	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.FilterState	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.FilterValue	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.FilteringEnabled	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.FullHelp	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.GlobalIndex	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.GoToEnd	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.GoToStart	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Height	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Index	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.InsertItem	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.IsFiltered	method	missing		remaining backlog
+list/list.go::method::Model.Items	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.MatchesForItem	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.NewStatusMessage	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.NextPage	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.PrevPage	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.RemoveItem	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ResetFilter	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ResetSelected	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Select	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SelectedItem	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetDelegate	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetFilterState	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetFilterText	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetFilteringEnabled	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetHeight	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetItem	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetItems	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetShowFilter	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetShowHelp	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetShowPagination	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetShowStatusBar	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetShowTitle	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetSize	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetSpinner	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetStatusBarItemName	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.SettingFilter	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShortHelp	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShowFilter	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShowHelp	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShowPagination	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShowStatusBar	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ShowTitle	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.StartSpinner	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.StatusBarItemName	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.StopSpinner	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.ToggleSpinner	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Update	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.View	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.VisibleItems	method	in_progress		heuristically matched; task created
+list/list.go::method::Model.Width	method	in_progress		heuristically matched; task created
+list/list.go::struct::Model	struct	in_progress		heuristically matched; task created
+list/list.go::struct::Rank	struct	in_progress		heuristically matched; task created
+list/list.go::type::FilterFunc	type	missing		remaining backlog
+list/list.go::type::FilterMatchesMsg	type	in_progress		heuristically matched; task created
+list/list.go::type::FilterState	type	in_progress		heuristically matched; task created
+list/list.go::type::Item	type	in_progress		heuristically matched; task created
+list/list.go::type::ItemDelegate	type	in_progress		heuristically matched; task created
+list/list_test.go::test::TestCustomStatusBarItemName	test	missing		remaining backlog
+list/list_test.go::test::TestSetFilterState	test	missing		remaining backlog
+list/list_test.go::test::TestSetFilterText	test	missing		remaining backlog
+list/list_test.go::test::TestStatusBarItemName	test	missing		remaining backlog
+list/list_test.go::test::TestStatusBarWithoutItems	test	missing		remaining backlog
+list/style.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+list/style.go::struct::Styles	struct	in_progress		heuristically matched; task created
+paginator/paginator.go::const::Arabic	const	in_progress		heuristically matched; task created
+paginator/paginator.go::const::Dots	const	in_progress		heuristically matched; task created
+paginator/paginator.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+paginator/paginator.go::func::New	func	in_progress		heuristically matched; task created
+paginator/paginator.go::func::WithPerPage	func	in_progress		heuristically matched; task created
+paginator/paginator.go::func::WithTotalPages	func	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.GetSliceBounds	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.ItemsOnPage	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.NextPage	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.OnFirstPage	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.OnLastPage	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.PrevPage	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.SetTotalPages	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.Update	method	in_progress		heuristically matched; task created
+paginator/paginator.go::method::Model.View	method	in_progress		heuristically matched; task created
+paginator/paginator.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+paginator/paginator.go::struct::Model	struct	in_progress		heuristically matched; task created
+paginator/paginator.go::type::Option	type	missing		remaining backlog
+paginator/paginator.go::type::Type	type	in_progress		heuristically matched; task created
+paginator/paginator_test.go::test::TestItemsOnPage	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestNew	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestNextPage	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestOnFirstPage	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestOnLastPage	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestPrevPage	test	missing		remaining backlog
+paginator/paginator_test.go::test::TestSetTotalPages	test	missing		remaining backlog
+progress/progress.go::const::DefaultEmptyCharBlock	const	in_progress		heuristically matched; task created
+progress/progress.go::const::DefaultFullCharFullBlock	const	in_progress		heuristically matched; task created
+progress/progress.go::const::DefaultFullCharHalfBlock	const	in_progress		heuristically matched; task created
+progress/progress.go::func::New	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithColorFunc	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithColors	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithDefaultBlend	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithFillCharacters	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithScaled	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithSpringOptions	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithWidth	func	in_progress		heuristically matched; task created
+progress/progress.go::func::WithoutPercentage	func	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.DecrPercent	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.IncrPercent	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.Init	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.IsAnimating	method	missing		remaining backlog
+progress/progress.go::method::Model.Percent	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.SetPercent	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.SetSpringOptions	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.Update	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.View	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.ViewAs	method	in_progress		heuristically matched; task created
+progress/progress.go::method::Model.Width	method	in_progress		heuristically matched; task created
+progress/progress.go::struct::FrameMsg	struct	in_progress		heuristically matched; task created
+progress/progress.go::struct::Model	struct	in_progress		heuristically matched; task created
+progress/progress.go::type::ColorFunc	type	missing		remaining backlog
+progress/progress.go::type::Option	type	missing		remaining backlog
+progress/progress_test.go::test::TestBlend	test	missing		remaining backlog
+spinner/spinner.go::func::New	func	in_progress		heuristically matched; task created
+spinner/spinner.go::func::WithSpinner	func	in_progress		heuristically matched; task created
+spinner/spinner.go::func::WithStyle	func	in_progress		heuristically matched; task created
+spinner/spinner.go::method::Model.ID	method	in_progress		heuristically matched; task created
+spinner/spinner.go::method::Model.Tick	method	in_progress		heuristically matched; task created
+spinner/spinner.go::method::Model.Update	method	in_progress		heuristically matched; task created
+spinner/spinner.go::method::Model.View	method	in_progress		heuristically matched; task created
+spinner/spinner.go::struct::Model	struct	in_progress		heuristically matched; task created
+spinner/spinner.go::struct::Spinner	struct	in_progress		heuristically matched; task created
+spinner/spinner.go::struct::TickMsg	struct	in_progress		heuristically matched; task created
+spinner/spinner.go::type::Option	type	missing		remaining backlog
+spinner/spinner_test.go::test::TestSpinnerNew	test	missing		remaining backlog
+stopwatch/stopwatch.go::func::New	func	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::func::WithInterval	func	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Elapsed	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.ID	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Init	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Reset	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Running	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Start	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Stop	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Toggle	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.Update	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::method::Model.View	method	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::struct::Model	struct	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::struct::ResetMsg	struct	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::struct::StartStopMsg	struct	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::struct::TickMsg	struct	in_progress		heuristically matched; task created
+stopwatch/stopwatch.go::type::Option	type	missing		remaining backlog
+table/table.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+table/table.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+table/table.go::func::New	func	in_progress		heuristically matched; task created
+table/table.go::func::WithColumns	func	in_progress		heuristically matched; task created
+table/table.go::func::WithFocused	func	in_progress		heuristically matched; task created
+table/table.go::func::WithHeight	func	in_progress		heuristically matched; task created
+table/table.go::func::WithKeyMap	func	in_progress		heuristically matched; task created
+table/table.go::func::WithRows	func	in_progress		heuristically matched; task created
+table/table.go::func::WithStyles	func	in_progress		heuristically matched; task created
+table/table.go::func::WithWidth	func	in_progress		heuristically matched; task created
+table/table.go::method::KeyMap.FullHelp	method	in_progress		heuristically matched; task created
+table/table.go::method::KeyMap.ShortHelp	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Blur	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Columns	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Cursor	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Focus	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Focused	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.FromValues	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.GotoBottom	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.GotoTop	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Height	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.HelpView	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.MoveDown	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.MoveUp	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Rows	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SelectedRow	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetColumns	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetCursor	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetHeight	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetRows	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetStyles	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Update	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.UpdateViewport	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.View	method	in_progress		heuristically matched; task created
+table/table.go::method::Model.Width	method	in_progress		heuristically matched; task created
+table/table.go::struct::Column	struct	in_progress		heuristically matched; task created
+table/table.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+table/table.go::struct::Model	struct	in_progress		heuristically matched; task created
+table/table.go::struct::Styles	struct	in_progress		heuristically matched; task created
+table/table.go::type::Option	type	missing		remaining backlog
+table/table.go::type::Row	type	missing		remaining backlog
+table/table_test.go::test::TestCursorNavigation	test	missing		remaining backlog
+table/table_test.go::test::TestModel_FromValues	test	missing		remaining backlog
+table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	missing		remaining backlog
+table/table_test.go::test::TestModel_RenderRow	test	missing		remaining backlog
+table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	missing		remaining backlog
+table/table_test.go::test::TestModel_SetColumns	test	missing		remaining backlog
+table/table_test.go::test::TestModel_SetRows	test	missing		remaining backlog
+table/table_test.go::test::TestModel_View	test	missing		remaining backlog
+table/table_test.go::test::TestModel_View_CenteredInABox	test	missing		remaining backlog
+table/table_test.go::test::TestNew	test	missing		remaining backlog
+table/table_test.go::test::TestTableAlignment	test	missing		remaining backlog
+textarea/textarea.go::func::Blink	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::DefaultDarkStyles	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::DefaultLightStyles	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::New	func	in_progress		heuristically matched; task created
+textarea/textarea.go::func::Paste	func	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Blur	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Column	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Cursor	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.CursorDown	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.CursorEnd	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.CursorStart	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.CursorUp	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Focus	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Focused	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Height	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.InsertRune	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.InsertString	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Length	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Line	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.LineCount	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.LineInfo	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.MoveToBegin	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.MoveToEnd	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.PageDown	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.PageUp	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Reset	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.ScrollPercent	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.ScrollYOffset	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetCursorColumn	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetHeight	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetPromptFunc	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetStyles	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetValue	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetVirtualCursor	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Styles	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Update	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Value	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.View	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.VirtualCursor	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Width	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::Model.Word	method	in_progress		heuristically matched; task created
+textarea/textarea.go::method::line.Hash	method	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::CursorStyle	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::LineInfo	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::Model	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::PromptInfo	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::StyleState	struct	in_progress		heuristically matched; task created
+textarea/textarea.go::struct::Styles	struct	in_progress		heuristically matched; task created
+textarea/textarea_test.go::test::TestCanHandleEmoji	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestInsertString	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestSetValue	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestValueSoftWrap	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestVerticalNavigationKeepsCursorHorizontalPosition	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestVerticalNavigationShouldRememberPositionWhileTraversing	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestVerticalScrolling	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestView	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestWord	test	missing		remaining backlog
+textarea/textarea_test.go::test::TestWordWrapOverflowing	test	missing		remaining backlog
+textinput/styles.go::func::DefaultDarkStyles	func	in_progress		heuristically matched; task created
+textinput/styles.go::func::DefaultLightStyles	func	in_progress		heuristically matched; task created
+textinput/styles.go::func::DefaultStyles	func	in_progress		heuristically matched; task created
+textinput/styles.go::struct::CursorStyle	struct	in_progress		heuristically matched; task created
+textinput/styles.go::struct::StyleState	struct	in_progress		heuristically matched; task created
+textinput/styles.go::struct::Styles	struct	in_progress		heuristically matched; task created
+textinput/textinput.go::const::EchoNone	const	in_progress		heuristically matched; task created
+textinput/textinput.go::const::EchoNormal	const	in_progress		heuristically matched; task created
+textinput/textinput.go::const::EchoPassword	const	in_progress		heuristically matched; task created
+textinput/textinput.go::func::Blink	func	in_progress		heuristically matched; task created
+textinput/textinput.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+textinput/textinput.go::func::New	func	in_progress		heuristically matched; task created
+textinput/textinput.go::func::Paste	func	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.AvailableSuggestions	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Blur	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.CurrentSuggestion	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.CurrentSuggestionIndex	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Cursor	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.CursorEnd	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.CursorStart	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Focus	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Focused	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.MatchedSuggestions	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Position	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Reset	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetCursor	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetStyles	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetSuggestions	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetValue	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetVirtualCursor	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Styles	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Update	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Value	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.View	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.VirtualCursor	method	in_progress		heuristically matched; task created
+textinput/textinput.go::method::Model.Width	method	in_progress		heuristically matched; task created
+textinput/textinput.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+textinput/textinput.go::struct::Model	struct	in_progress		heuristically matched; task created
+textinput/textinput.go::type::EchoMode	type	in_progress		heuristically matched; task created
+textinput/textinput.go::type::ValidateFunc	type	missing		remaining backlog
+textinput/textinput_test.go::test::TestChinesePlaceholder	test	missing		remaining backlog
+textinput/textinput_test.go::test::TestPlaceholderTruncate	test	missing		remaining backlog
+textinput/textinput_test.go::test::Test_CurrentSuggestion	test	missing		remaining backlog
+textinput/textinput_test.go::test::Test_SlicingOutsideCap	test	missing		remaining backlog
+timer/timer.go::func::New	func	in_progress		heuristically matched; task created
+timer/timer.go::func::WithInterval	func	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.ID	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Init	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Running	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Start	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Stop	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Timedout	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Toggle	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.Update	method	in_progress		heuristically matched; task created
+timer/timer.go::method::Model.View	method	in_progress		heuristically matched; task created
+timer/timer.go::struct::Model	struct	in_progress		heuristically matched; task created
+timer/timer.go::struct::StartStopMsg	struct	in_progress		heuristically matched; task created
+timer/timer.go::struct::TickMsg	struct	in_progress		heuristically matched; task created
+timer/timer.go::struct::TimeoutMsg	struct	in_progress		heuristically matched; task created
+timer/timer.go::type::Option	type	missing		remaining backlog
+viewport/keymap.go::func::DefaultKeyMap	func	in_progress		heuristically matched; task created
+viewport/keymap.go::struct::KeyMap	struct	in_progress		heuristically matched; task created
+viewport/viewport.go::func::New	func	in_progress		heuristically matched; task created
+viewport/viewport.go::func::WithHeight	func	in_progress		heuristically matched; task created
+viewport/viewport.go::func::WithWidth	func	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.AtBottom	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.AtTop	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ClearHighlights	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.EnsureVisible	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.GetContent	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.GotoBottom	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.GotoTop	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.HalfPageDown	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.HalfPageUp	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.Height	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.HighlightNext	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.HighlightPrevious	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.HorizontalScrollPercent	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.Init	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.PageDown	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.PageUp	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.PastBottom	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ScrollDown	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ScrollLeft	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ScrollPercent	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ScrollRight	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.ScrollUp	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetContent	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetContentLines	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetHeight	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetHighlights	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetHorizontalStep	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetWidth	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetXOffset	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.SetYOffset	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.TotalLineCount	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.Update	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.View	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.VisibleLineCount	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.Width	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.XOffset	method	in_progress		heuristically matched; task created
+viewport/viewport.go::method::Model.YOffset	method	in_progress		heuristically matched; task created
+viewport/viewport.go::struct::GutterContext	struct	in_progress		heuristically matched; task created
+viewport/viewport.go::struct::Model	struct	in_progress		heuristically matched; task created
+viewport/viewport.go::type::GutterFunc	type	missing		remaining backlog
+viewport/viewport.go::type::Option	type	missing		remaining backlog
+viewport/viewport_test.go::test::TestMatchesToHighlights	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestMoveLeft	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestMoveRight	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestNew	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestResetIndent	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestRightOverscroll	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestSetHorizontalStep	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestSetInitialValues	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestSizing	test	missing		remaining backlog
+viewport/viewport_test.go::test::TestVisibleLines	test	missing		remaining backlog

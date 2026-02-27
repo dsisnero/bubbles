@@ -1,6 +1,6 @@
 require "ansi"
 require "lipgloss"
-require "../tea"
+require "bubbletea"
 require "./help"
 require "./key"
 require "./viewport"
@@ -196,7 +196,7 @@ module Bubbles
         update_viewport
       end
 
-      def view : String
+      def view : Tea::View
         headers_view + "\n" + @viewport.view
       end
 
