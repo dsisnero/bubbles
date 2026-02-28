@@ -4,6 +4,7 @@ require "./key"
 require "./cursor"
 require "uniwidth"
 require "textseg"
+require "easyclip"
 
 module Bubbles
   module TextInput
@@ -36,9 +37,17 @@ module Bubbles
       def initialize(@error : Exception); end
     end
 
+    # Blink is a command used to initialize cursor blinking.
+    def self.blink : Tea::Msg
+      Cursor.blink
+    end
+
     # Paste is a command for pasting from the clipboard into the text input.
-    def self.paste : Tea::Cmd
-      -> { PasteMsg.new("").as(Tea::Msg?) }
+    def self.paste : Tea::Msg
+      str = EasyClip.paste
+      PasteMsg.new(str)
+    rescue ex
+      PasteErrMsg.new(ex)
     end
 
     # KeyMap is the key bindings for different actions within the textinput.
@@ -173,9 +182,28 @@ module Bubbles
 
     # DefaultStyles returns the default styles for focused and blurred states for
     # the textarea.
-    def self.default_styles(_dark : Bool) : Styles
-      # TODO: implement proper styling with lipgloss
-      Styles.new
+    def self.default_styles(is_dark : Bool) : Styles
+      light_dark = Lipgloss.light_dark(is_dark)
+
+      s = Styles.new
+      s.focused = StyleState.new(
+        placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        suggestion: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        text: Lipgloss::Style.new
+      )
+      s.blurred = StyleState.new(
+        placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        suggestion: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        text: Lipgloss::Style.new.foreground(light_dark.call(Lipgloss.color("245"), Lipgloss.color("7")).as(Lipgloss::Color | Lipgloss::NoColor))
+      )
+      s.cursor = CursorStyle.new(
+        color: "7",
+        shape: "block",
+        blink: true
+      )
+      s
     end
 
     # DefaultLightStyles returns the default styles for a light background.
@@ -268,7 +296,7 @@ module Bubbles
         @virtual_cursor = Cursor::Model.new
         @styles = TextInput.default_dark_styles
         @rsan = nil
-        # TODO: update virtual cursor style
+        update_virtual_cursor_style
       end
 
       # san initializes or retrieves the rune sanitizer.
@@ -360,9 +388,19 @@ module Bubbles
         @matched_suggestions[@current_suggestion_index].join
       end
 
-      # AvailableSuggestions returns the currently matched suggestions.
+      # CurrentSuggestionIndex returns the currently selected suggestion index.
+      def current_suggestion_index : Int32
+        @current_suggestion_index
+      end
+
+      # AvailableSuggestions returns the list of available suggestions.
       def available_suggestions : Array(String)
-        @matched_suggestions.map(&.join)
+        get_suggestions(@suggestions)
+      end
+
+      # MatchedSuggestions returns the list of matched suggestions.
+      def matched_suggestions : Array(String)
+        get_suggestions(@matched_suggestions)
       end
 
       # Focused returns the focus state on the model.
@@ -378,6 +416,7 @@ module Bubbles
       # SetVirtualCursor sets whether the model should use a virtual cursor.
       def set_virtual_cursor(v : Bool) # ameba:disable Naming/AccessorMethodName
         @use_virtual_cursor = v
+        update_virtual_cursor_style
       end
 
       def virtual_cursor=(v : Bool)
@@ -392,10 +431,32 @@ module Bubbles
       # SetStyles sets the styles for the text input.
       def set_styles(s : Styles) # ameba:disable Naming/AccessorMethodName
         @styles = s
+        update_virtual_cursor_style
       end
 
       def styles=(s : Styles)
         set_styles(s)
+      end
+
+      private def update_virtual_cursor_style
+        unless @use_virtual_cursor
+          # Hide the virtual cursor if we're using a real cursor.
+          @virtual_cursor.set_mode(Cursor::Mode::Hide)
+          return
+        end
+
+        @virtual_cursor.style = Lipgloss::Style.new.foreground(Lipgloss.color(@styles.cursor.color))
+
+        # By default, the blink speed of the cursor is set to a default
+        # internally.
+        if @styles.cursor.blink?
+          if @styles.cursor.blink_speed > 0.seconds
+            @virtual_cursor.blink_speed = @styles.cursor.blink_speed
+          end
+          @virtual_cursor.set_mode(Cursor::Mode::Blink)
+        else
+          @virtual_cursor.set_mode(Cursor::Mode::Static)
+        end
       end
 
       # Focus sets the focus state on the model. When the model is in focus it can
@@ -474,7 +535,7 @@ module Bubbles
       private def echo_transform(v : String) : String
         case @echo_mode
         when EchoMode::Password
-          @echo_character.to_s * v.size # TODO: use actual string width
+          @echo_character.to_s * string_width(v)
         when EchoMode::None
           ""
         else
@@ -645,6 +706,14 @@ module Bubbles
         value = head + tail
         input_err = validate(value)
         set_value_internal(value, input_err)
+      end
+
+      private def get_suggestions(sugs : Array(Array(Char))) : Array(String)
+        suggestions = Array(String).new(sugs.size)
+        sugs.each do |suggestion|
+          suggestions << suggestion.join
+        end
+        suggestions
       end
 
       private def can_accept_suggestion : Bool
@@ -852,6 +921,60 @@ module Bubbles
         else
           {self, -> { cmds.each(&.call); nil }}
         end
+      end
+
+      # Cursor returns a Tea::Cursor for rendering a real cursor in a Bubble Tea
+      # program. This requires that virtual_cursor is set to false.
+      #
+      # Note that you will almost certainly also need to adjust the offset cursor
+      # position per the textarea's per the textarea's position in the terminal.
+      #
+      # Example:
+      #
+      #   # In your top-level View function:
+      #   f = Tea::Frame.new(m.textarea.view)
+      #   f.cursor = m.textarea.cursor
+      #   f.cursor.position.x += offset_x
+      #   f.cursor.position.y += offset_y
+      def cursor : Tea::Cursor?
+        return nil if @use_virtual_cursor || !@focus
+
+        prompt_width = Lipgloss.width(prompt_view)
+        x_offset = @pos + prompt_width
+        if @width > 0
+          x_offset = min(x_offset, @width + prompt_width)
+        end
+
+        style = @styles.cursor
+        cursor = Tea::Cursor.new(x: x_offset, y: 0)
+        cursor.color = style.color if style.color && !style.color.empty?
+
+        # Map shape string to CursorStyle enum
+        cursor_style = case style.shape
+                       when "underline"
+                         Tea::CursorStyle::Underline
+                       when "bar"
+                         Tea::CursorStyle::Bar
+                       else
+                         Tea::CursorStyle::Block
+                       end
+
+        # Apply blinking if needed
+        if style.blink
+          cursor_style = case cursor_style
+                         when Tea::CursorStyle::Block
+                           Tea::CursorStyle::BlockBlinking
+                         when Tea::CursorStyle::Underline
+                           Tea::CursorStyle::UnderlineBlinking
+                         when Tea::CursorStyle::Bar
+                           Tea::CursorStyle::BarBlinking
+                         else
+                           cursor_style
+                         end
+        end
+
+        cursor.style = cursor_style
+        cursor
       end
 
       # View renders the model's current state as a string for display.
