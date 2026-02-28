@@ -64,6 +64,12 @@ module Bubbles
           "hidden"
         end
       end
+
+      # String returns the cursor mode in a human-readable format.
+      # This method is provisional and for informational purposes only.
+      def to_s : String
+        string
+      end
     end
 
     # Available cursor modes. Kept for upstream Go parity.
@@ -177,7 +183,7 @@ module Bubbles
         @mode = mode
         @blinked = @mode == Mode::Hide || !@focus
         if mode == Mode::Blink
-          return -> { InitialBlinkMsg.new.as(Tea::Msg?) }.as(Tea::Cmd)
+          return -> { Cursor.blink.as(Tea::Msg?) }.as(Tea::Cmd)
         end
         nil
       end
@@ -191,12 +197,15 @@ module Bubbles
         if @mode != Mode::Blink
           return nil.as(Tea::Cmd?)
         end
+
         @blink_ctx.cancel.try(&.call)
+
         ctx, cancel = Context.with_timeout(@blink_ctx.ctx, @blink_speed)
-        @blink_ctx.ctx = ctx
         @blink_ctx.cancel = cancel
+
         @blink_tag += 1
         blink_msg = BlinkMsg.new(@id, @blink_tag)
+
         -> {
           begin
             ctx.done.receive?
