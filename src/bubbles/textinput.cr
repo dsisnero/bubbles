@@ -889,7 +889,9 @@ module Bubbles
             previous_suggestion
           else
             # Input one or more regular characters.
-            insert_runes_from_user_input(msg.key.chars)
+            if rune = msg.rune
+              insert_runes_from_user_input([rune])
+            end
           end
           update_suggestions
         when Tea::PasteMsg
