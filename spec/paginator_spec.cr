@@ -38,33 +38,61 @@ describe Bubbles::Paginator do
   end
 
   it "TestPrevPage" do
-    model = Bubbles::Paginator.new
-    model.set_total_pages(2)
-    model.page = 1
-    model, _ = model.update(Tea::Key.new(Tea::KeyType::Left))
-    model.page.should eq(0)
+    tests = [
+      {"Go to previous page", 10, 1, 0},
+      {"Stay on first page", 5, 0, 0},
+    ]
+
+    tests.each do |tt|
+      model = Bubbles::Paginator.new
+      model.set_total_pages(tt[1])
+      model.page = tt[2]
+      model, _ = model.update(Tea::Key.new(Tea::KeyType::Left))
+      model.page.should eq(tt[3]), tt[0]
+    end
   end
 
   it "TestNextPage" do
-    model = Bubbles::Paginator.new
-    model.set_total_pages(2)
-    model.page = 0
-    model, _ = model.update(Tea::Key.new(Tea::KeyType::Right))
-    model.page.should eq(1)
+    tests = [
+      {"Go to next page", 2, 0, 1},
+      {"Stay on last page", 2, 1, 1},
+    ]
+
+    tests.each do |tt|
+      model = Bubbles::Paginator.new
+      model.set_total_pages(tt[1])
+      model.page = tt[2]
+      model, _ = model.update(Tea::Key.new(Tea::KeyType::Right))
+      model.page.should eq(tt[3]), tt[0]
+    end
   end
 
   it "TestOnLastPage" do
-    model = Bubbles::Paginator.new
-    model.set_total_pages(2)
-    model.page = 1
-    model.on_last_page?.should be_true
+    tests = [
+      {"On last page", 1, 2, true},
+      {"Not on last page", 0, 2, false},
+    ]
+
+    tests.each do |tt|
+      model = Bubbles::Paginator.new
+      model.set_total_pages(tt[2])
+      model.page = tt[1]
+      model.on_last_page?.should eq(tt[3]), tt[0]
+    end
   end
 
   it "TestOnFirstPage" do
-    model = Bubbles::Paginator.new
-    model.set_total_pages(2)
-    model.page = 0
-    model.on_first_page?.should be_true
+    tests = [
+      {"On first page", 0, 2, true},
+      {"Not on first page", 1, 2, false},
+    ]
+
+    tests.each do |tt|
+      model = Bubbles::Paginator.new
+      model.set_total_pages(tt[2])
+      model.page = tt[1]
+      model.on_first_page?.should eq(tt[3]), tt[0]
+    end
   end
 
   it "TestItemsOnPage" do

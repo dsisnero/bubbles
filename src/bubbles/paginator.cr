@@ -20,6 +20,11 @@ module Bubbles
         @next_page = Bubbles::Key::Binding.new,
       )
       end
+
+      # dup creates a copy of the keymap
+      def dup : KeyMap
+        KeyMap.new(@prev_page.dup, @next_page.dup)
+      end
     end
 
     def self.default_key_map : KeyMap
@@ -93,10 +98,6 @@ module Bubbles
         {start, finish}
       end
 
-      def slice_bounds(length : Int32) : {Int32, Int32}
-        get_slice_bounds(length)
-      end
-
       def prev_page
         @page -= 1 if @page > 0
       end
@@ -121,16 +122,31 @@ module Bubbles
         on_first_page?
       end
 
+      # dup creates a copy of the model for functional updates
+      def dup : Model
+        m = Model.new
+        m.type = @type
+        m.page = @page
+        m.per_page = @per_page
+        m.total_pages = @total_pages
+        m.active_dot = @active_dot.dup
+        m.inactive_dot = @inactive_dot.dup
+        m.arabic_format = @arabic_format.dup
+        m.key_map = @key_map.dup
+        m
+      end
+
       def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
+        m = self.dup
         case msg
         when Tea::KeyPressMsg
-          if Bubbles::Key.matches?(msg, @key_map.next_page)
-            next_page
-          elsif Bubbles::Key.matches?(msg, @key_map.prev_page)
-            prev_page
+          if Bubbles::Key.matches?(msg, m.key_map.next_page)
+            m.next_page
+          elsif Bubbles::Key.matches?(msg, m.key_map.prev_page)
+            m.prev_page
           end
         end
-        {self, nil}
+        {m, nil}
       end
 
       def view : String
