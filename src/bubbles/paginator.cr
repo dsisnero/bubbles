@@ -121,7 +121,7 @@ module Bubbles
         on_first_page?
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
         when Tea::KeyPressMsg
           if Bubbles::Key.matches?(msg, @key_map.next_page)
@@ -133,7 +133,7 @@ module Bubbles
         {self, nil}
       end
 
-      def view : Tea::View
+      def view : String
         case @type
         when Type::Dots
           dots_view

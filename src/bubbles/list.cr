@@ -111,7 +111,6 @@ module Bubbles
     end
 
     class Model
-      include Tea::Model
       include Bubbles::Help::KeyMap
 
       property show_title : Bool        # ameba:disable Naming/QueryBoolMethods
@@ -257,7 +256,7 @@ module Bubbles
         update_pagination
       end
 
-      def set_items(i : Array(Item)) : Tea::Cmd # ameba:disable Naming/AccessorMethodName
+      def set_items(i : Array(Item)) : Tea::Cmd? # ameba:disable Naming/AccessorMethodName
         @items = i
         cmd = nil
         if @filter_state != FilterState::Unfiltered
@@ -510,7 +509,7 @@ module Bubbles
         if cmds.empty?
           {self, nil}
         else
-          {self, Tea::Cmds.batch(cmds)}
+          {self, Tea.batch(cmds)}
         end
       end
 
@@ -565,7 +564,7 @@ module Bubbles
         kb
       end
 
-      def view : Tea::View
+      def view : String
         sections = [] of String
         avail_height = @height
 
@@ -581,22 +580,19 @@ module Bubbles
           avail_height -= Lipgloss.height(v)
         end
 
-        pagination = ""
         if @show_pagination
-          pagination = pagination_view
-          avail_height -= Lipgloss.height(pagination)
-        end
-
-        help_text = ""
-        if @show_help
-          help_text = help_view
-          avail_height -= Lipgloss.height(help_text)
+          v = pagination_view
+          sections << v
+          avail_height -= Lipgloss.height(v)
         end
 
         content = Lipgloss.new_style.height(avail_height).render(populated_view)
         sections << content
-        sections << pagination if @show_pagination
-        sections << help_text if @show_help
+
+        if @show_help
+          sections << help_view
+        end
+
         Lipgloss.join_vertical(Lipgloss::Position::Left, sections)
       end
 
@@ -708,7 +704,7 @@ module Bubbles
 
         update_pagination
         return nil if cmds.empty?
-        Tea::Cmds.batch(cmds)
+        Tea.batch(cmds)
       end
 
       private def title_view : String

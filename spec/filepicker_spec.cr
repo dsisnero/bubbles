@@ -29,7 +29,7 @@ describe Bubbles::Filepicker do
       Bubbles::Key.new_binding(Bubbles::Key.with_keys("enter"))
     )
 
-    selected, path = m.did_select_file(Tea::KeyPressMsg.new("enter"))
+    selected, path = m.did_select_file(Tea::Key.new(Tea::KeyType::Enter))
     selected.should be_true
     path.should eq("/tmp/a.txt")
   end
@@ -43,7 +43,7 @@ describe Bubbles::Filepicker do
       Bubbles::Key.new_binding(Bubbles::Key.with_keys("enter"))
     )
 
-    selected, path = m.did_select_disabled_file(Tea::KeyPressMsg.new("enter"))
+    selected, path = m.did_select_disabled_file(Tea::Key.new(Tea::KeyType::Enter))
     selected.should be_true
     path.should eq("/tmp/a.txt")
   end

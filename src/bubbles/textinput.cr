@@ -217,8 +217,6 @@ module Bubbles
 
     # Model is the Bubble Tea model for this text input element.
     class Model
-      include Tea::Model
-
       property err : Exception?
       property prompt : String
       property placeholder : String
@@ -402,7 +400,7 @@ module Bubbles
 
       # Focus sets the focus state on the model. When the model is in focus it can
       # receive keyboard input and the cursor will be shown.
-      def focus : Tea::Cmd
+      def focus : Tea::Cmd?
         @focus = true
         @virtual_cursor.focus
       end
@@ -857,7 +855,7 @@ module Bubbles
       end
 
       # View renders the model's current state as a string for display.
-      def view : Tea::View
+      def view : String
         # Placeholder text
         if @value.empty? && !@placeholder.empty?
           return placeholder_view

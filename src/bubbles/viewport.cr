@@ -371,7 +371,7 @@ module Bubbles
         end
       end
 
-      def view : Tea::View
+      def view : String
         return "" if @width <= 0 || @height <= 0
         content = visible_lines.join("\n")
         Lipgloss.new_style.width(@width).height(@height).render(content)

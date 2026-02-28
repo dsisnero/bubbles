@@ -96,8 +96,6 @@ module Bubbles
     end
 
     class Model
-      include Tea::Model
-
       property id : Int32
       property tag : Int32
       property width : Int32
@@ -209,8 +207,8 @@ module Bubbles
         set_percent(percent - v)
       end
 
-      def view : Tea::View
-        Tea::View.new(view_as(@percent_shown))
+      def view : String
+        view_as(@percent_shown)
       end
 
       def view_as(percent : Float64) : String

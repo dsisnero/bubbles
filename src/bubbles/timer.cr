@@ -79,30 +79,35 @@ module Bubbles
         tick
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
         when StartStopMsg
           if msg.id != 0 && msg.id != @id
-            return {self, nil}
+            return {self, nil.as(Tea::Cmd?)}
           end
           @running = msg.running
           return {self, tick}
         when TickMsg
           if !running? || (msg.id != 0 && msg.id != @id)
-            return {self, nil}
+            return {self, nil.as(Tea::Cmd?)}
           end
           if msg.tag > 0 && msg.tag != @tag
-            return {self, nil}
+            return {self, nil.as(Tea::Cmd?)}
           end
 
           @timeout -= @interval
-          return {self, Tea::Cmds.batch([tick, timedout_cmd].compact)}
+          cmds = [] of Tea::Cmd
+          cmds << tick
+          if cmd = timedout_cmd
+            cmds << cmd
+          end
+          return {self, Tea.batch(cmds)}
         end
 
-        {self, nil}
+        {self, nil.as(Tea::Cmd?)}
       end
 
-      def view : Tea::View
+      def view : String
         @timeout.to_s
       end
 
@@ -119,13 +124,13 @@ module Bubbles
       end
 
       private def tick : Tea::Cmd
-        Tea::Cmds.tick(@interval) do
+        Tea.tick(@interval) do
           TickMsg.new(@id, timedout?, @tag)
         end
       end
 
-      private def timedout_cmd : Tea::Cmd
-        return nil unless timedout?
+      private def timedout_cmd : Tea::Cmd?
+        return nil.as(Tea::Cmd?) unless timedout?
         -> { TimeoutMsg.new(@id).as(Tea::Msg?) }
       end
 

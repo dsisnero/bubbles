@@ -67,9 +67,9 @@ describe Bubbles::Table do
       Bubbles::Table.with_focused(true)
     )
 
-    table.update(Tea::KeyPressMsg.new("down"))
+    table.update(Tea::Key.new(Tea::KeyType::Down))
     table.cursor.should eq(1)
-    table.update(Tea::KeyPressMsg.new("up"))
+    table.update(Tea::Key.new(Tea::KeyType::Up))
     table.cursor.should eq(0)
     table.goto_bottom
     table.cursor.should eq(4)

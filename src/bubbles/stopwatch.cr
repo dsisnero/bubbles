@@ -91,18 +91,18 @@ module Bubbles
         -> { ResetMsg.new(@id).as(Tea::Msg?) }
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
         when StartStopMsg
-          return {self, nil} if msg.id != @id
+          return {self, nil.as(Tea::Cmd?)} if msg.id != @id
           @running = msg.running
         when ResetMsg
-          return {self, nil} if msg.id != @id
+          return {self, nil.as(Tea::Cmd?)} if msg.id != @id
           @elapsed = 0.seconds
         when TickMsg
-          return {self, nil} if !running? || msg.id != @id
+          return {self, nil.as(Tea::Cmd?)} if !running? || msg.id != @id
           if msg.tag > 0 && msg.tag != @tag
-            return {self, nil}
+            return {self, nil.as(Tea::Cmd?)}
           end
 
           @elapsed += @interval
@@ -110,15 +110,15 @@ module Bubbles
           return {self, tick(@id, @tag, @interval)}
         end
 
-        {self, nil}
+        {self, nil.as(Tea::Cmd?)}
       end
 
-      def view : Tea::View
+      def view : String
         @elapsed.to_s
       end
 
       private def tick(id : Int32, tag : Int32, d : Time::Span) : Tea::Cmd
-        Tea::Cmds.tick(d) do
+        Tea.tick(d) do
           TickMsg.new(id, tag)
         end
       end

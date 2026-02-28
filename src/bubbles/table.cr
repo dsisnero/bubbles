@@ -155,7 +155,7 @@ module Bubbles
         m
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         return {self, nil} unless @focus
 
         if kmsg = msg.as?(Tea::KeyPressMsg)
@@ -196,7 +196,7 @@ module Bubbles
         update_viewport
       end
 
-      def view : Tea::View
+      def view : String
         headers_view + "\n" + @viewport.view
       end
 

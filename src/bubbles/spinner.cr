@@ -78,7 +78,7 @@ module Bubbles
         end
       end
 
-      def view : Tea::View
+      def view : String
         if @frame >= @spinner.frames.size
           return "(error)"
         end
@@ -90,7 +90,7 @@ module Bubbles
       end
 
       private def tick(id : Int32, tag : Int32) : Tea::Cmd
-        Tea::Cmds.tick(@spinner.fps) do
+        Tea.tick(@spinner.fps) do
           TickMsg.new(Time.local, id, tag)
         end
       end
