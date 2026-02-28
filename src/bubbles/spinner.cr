@@ -56,6 +56,16 @@ module Bubbles
         @tag = 0
       end
 
+      def dup : Model
+        m = Model.new
+        m.spinner = @spinner
+        m.style = @style.dup
+        m.frame = @frame
+        m.id = @id
+        m.tag = @tag
+        m
+      end
+
       def update(msg : Tea::Msg) : {Model, Tea::Cmd}
         case msg
         when TickMsg
@@ -66,13 +76,14 @@ module Bubbles
             return {self, nil}
           end
 
-          @frame += 1
-          if @frame >= @spinner.frames.size
-            @frame = 0
+          m = self.dup
+          m.frame += 1
+          if m.frame >= m.spinner.frames.size
+            m.frame = 0
           end
 
-          @tag += 1
-          {self, tick(@id, @tag)}
+          m.tag += 1
+          {m, tick(m.id, m.tag)}
         else
           {self, nil}
         end
