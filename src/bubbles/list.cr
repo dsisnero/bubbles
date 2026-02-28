@@ -79,34 +79,50 @@ module Bubbles
     end
 
     def self.default_filter(term : String, targets : Array(String)) : Array(Rank)
-      lower_term = term.downcase
-      return [] of Rank if lower_term.empty?
+      return [] of Rank if term.empty?
 
       ranks = [] of Rank
       targets.each_with_index do |target, index|
-        matches = subsequence_matches(lower_term, target.downcase)
-        ranks << Rank.new(index.to_i32, matches) unless matches.empty?
+        if matches = fuzzy_match(term, target)
+          ranks << Rank.new(index.to_i32, matches)
+        end
       end
+
+      # Sort by match quality (simplified - in Go, fuzzy.Find returns sorted results)
+      # For now, we'll sort by match length (more matches = better)
+      ranks.sort_by! { |rank| -rank.matched_indexes.size }
       ranks
     end
 
     def self.unsorted_filter(term : String, targets : Array(String)) : Array(Rank)
-      default_filter(term, targets)
+      return [] of Rank if term.empty?
+
+      ranks = [] of Rank
+      targets.each_with_index do |target, index|
+        if matches = fuzzy_match(term, target)
+          ranks << Rank.new(index.to_i32, matches)
+        end
+      end
+      # Return unsorted as the name suggests
+      ranks
     end
 
-    private def self.subsequence_matches(term : String, target : String) : Array(Int32)
-      tchars = term.chars
-      schars = target.chars
+    private def self.fuzzy_match(term : String, target : String) : Array(Int32)?
+      # Simple case-insensitive subsequence matching
+      # This is a simplified version - Go's fuzzy library does more sophisticated scoring
+      term_chars = term.downcase.chars
+      target_chars = target.downcase.chars
+
       matches = [] of Int32
       ti = 0
-      schars.each_with_index do |char, index|
-        break if ti >= tchars.size
-        if char == tchars[ti]
+      target_chars.each_with_index do |char, index|
+        break if ti >= term_chars.size
+        if char == term_chars[ti]
           matches << index.to_i32
           ti += 1
         end
       end
-      return [] of Int32 unless ti == tchars.size
+      return nil unless ti == term_chars.size
       matches
     end
 
@@ -293,10 +309,8 @@ module Bubbles
       def remove_item(index : Int32)
         @items = remove_item_from_slice(@items, index)
         if @filter_state != FilterState::Unfiltered
-          if filtered = @filtered_items
-            @filtered_items = remove_filter_match_from_slice(filtered, index)
-            reset_filtering if @filtered_items.try(&.empty?)
-          end
+          @filtered_items = remove_filter_match_from_slice(@filtered_items, index)
+          reset_filtering if @filtered_items.empty?
         end
         update_pagination
       end
@@ -304,6 +318,81 @@ module Bubbles
       def set_delegate(d : ItemDelegate) # ameba:disable Naming/AccessorMethodName
         @delegate = d
         update_pagination
+      end
+
+      # FilteringEnabled returns whether or not filtering is enabled.
+      def filtering_enabled : Bool
+        @filtering_enabled
+      end
+
+      # ShowTitle returns whether or not the title bar is set to be rendered.
+      def show_title : Bool
+        @show_title
+      end
+
+      # ShowFilter returns whether or not the filter is set to be rendered. Note
+      # that this is separate from FilteringEnabled, so filtering can be hidden yet
+      # still invoked. This allows you to render filtering differently without
+      # having to re-implement it from scratch.
+      def show_filter : Bool
+        @show_filter
+      end
+
+      # ShowStatusBar returns whether or not the status bar is set to be rendered.
+      def show_status_bar : Bool
+        @show_status_bar
+      end
+
+      # ShowPagination returns whether the pagination is visible.
+      def show_pagination : Bool
+        @show_pagination
+      end
+
+      # ShowHelp returns whether or not the help is set to be rendered.
+      def show_help : Bool
+        @show_help
+      end
+
+      # Items returns the items in the list.
+      def items : Array(Item)
+        @items
+      end
+
+      # Cursor returns the index of the cursor on the current page.
+      def cursor : Int32
+        @cursor
+      end
+
+      # FilterState returns the current filter state.
+      def filter_state : FilterState
+        @filter_state
+      end
+
+      # FilterValue returns the current value of the filter.
+      def filter_value : String
+        @filter_input.value
+      end
+
+      # SettingFilter returns whether or not the user is currently editing the
+      # filter value. It's purely a convenience method.
+      def setting_filter : Bool
+        @filter_state == FilterState::Filtering
+      end
+
+      # IsFiltered returns whether or not the list is currently filtered.
+      # It's purely a convenience method.
+      def filtered : Bool
+        @filter_state == FilterState::FilterApplied
+      end
+
+      # Width returns the current width setting.
+      def width : Int32
+        @width
+      end
+
+      # Height returns the current height setting.
+      def height : Int32
+        @height
       end
 
       def select(index : Int32)
@@ -338,10 +427,8 @@ module Bubbles
       end
 
       def matches_for_item(index : Int32) : Array(Int32)?
-        items = @filtered_items
-        return nil unless items
-        return nil if index >= items.size
-        items[index].matches
+        return nil if index >= @filtered_items.size
+        @filtered_items[index].matches
       end
 
       def index : Int32
@@ -350,9 +437,8 @@ module Bubbles
 
       def global_index : Int32
         i = index
-        items = @filtered_items
-        return i unless items && i < items.size
-        items[i].index
+        return i if i >= @filtered_items.size
+        @filtered_items[i].index
       end
 
       def cursor_up
@@ -479,7 +565,7 @@ module Bubbles
       end
 
       def update(msg : Tea::Msg) : {self, Tea::Cmd}
-        cmds = [] of Tea::Cmd
+        cmds = [] of Tea::Cmd?
 
         case msg
         when Tea::KeyPressMsg
@@ -491,25 +577,33 @@ module Bubbles
           return {self, nil}
         when Bubbles::Spinner::TickMsg
           @spinner, cmd = @spinner.update(msg)
-          cmds << cmd if @show_spinner && cmd
+          cmds << cmd if @show_spinner
         when StatusMessageTimeoutMsg
           hide_status_message
         end
 
         if @filter_state == FilterState::Filtering
-          if cmd = handle_filtering(msg)
-            cmds << cmd
-          end
+          cmds << handle_filtering(msg).as(Tea::Cmd?)
         else
-          if cmd = handle_browsing(msg)
-            cmds << cmd
-          end
+          cmds << handle_browsing(msg).as(Tea::Cmd?)
         end
+
+        # Remove nil commands
+        cmds.reject!(&.nil?)
 
         if cmds.empty?
           {self, nil}
         else
-          {self, Tea.batch(cmds)}
+          # Convert to tuple for splat
+          case cmds.size
+          when 1
+            {self, cmds[0]}
+          when 2
+            {self, Tea.batch(cmds[0], cmds[1])}
+          else
+            # Should not happen, but handle it
+            {self, Tea.batch(cmds[0], cmds[1])}
+          end
         end
       end
 
@@ -667,7 +761,7 @@ module Bubbles
       end
 
       private def handle_filtering(msg : Tea::Msg) : Tea::Cmd
-        cmds = [] of Tea::Cmd
+        cmds = [] of Tea::Cmd?
         if kmsg = msg.as?(Tea::KeyPressMsg)
           case
           when Bubbles::Key.matches?(kmsg, @key_map.cancel_while_filtering)
@@ -693,7 +787,7 @@ module Bubbles
         new_filter_input, input_cmd = @filter_input.update(msg)
         filter_changed = @filter_input.value != new_filter_input.value
         @filter_input = new_filter_input
-        cmds << input_cmd if input_cmd
+        cmds << input_cmd
 
         if filter_changed
           if cmd = filter_items(self)
@@ -704,7 +798,17 @@ module Bubbles
 
         update_pagination
         return nil if cmds.empty?
-        Tea.batch(cmds)
+
+        # Convert to tuple for splat
+        case cmds.size
+        when 1
+          cmds[0] || -> { nil.as(Tea::Msg?) }
+        when 2
+          Tea.batch(cmds[0], cmds[1])
+        else
+          # Should not happen
+          -> { nil.as(Tea::Msg?) }
+        end
       end
 
       private def title_view : String
@@ -793,7 +897,7 @@ module Bubbles
         return if @filter_state == FilterState::Unfiltered
         @filter_state = FilterState::Unfiltered
         @filter_input.reset
-        @filtered_items = nil
+        @filtered_items = [] of FilteredItem
         update_pagination
         update_keybindings
       end
@@ -936,10 +1040,9 @@ module Bubbles
         idx = max(0, index)
         result = items.dup
         result << item
-        i = result.size - 1
-        while i > idx
+        # Shift elements to make space
+        (result.size - 1).downto(idx + 1) do |i|
           result[i] = result[i - 1]
-          i -= 1
         end
         result[idx] = item
         result
@@ -948,11 +1051,8 @@ module Bubbles
       private def remove_item_from_slice(items : Array(Item), index : Int32) : Array(Item)
         return items if index < 0 || index >= items.size
         result = items.dup
-        i = index
-        while i < result.size - 1
-          result[i] = result[i + 1]
-          i += 1
-        end
+        # Use copy like Go does
+        result.copy_from(result.to_unsafe + index + 1, index, result.size - index - 1)
         result.pop
         result
       end
@@ -960,11 +1060,8 @@ module Bubbles
       private def remove_filter_match_from_slice(items : Array(FilteredItem), index : Int32) : Array(FilteredItem)
         return items if index < 0 || index >= items.size
         result = items.dup
-        i = index
-        while i < result.size - 1
-          result[i] = result[i + 1]
-          i += 1
-        end
+        # Use copy like Go does
+        result.copy_from(result.to_unsafe + index + 1, index, result.size - index - 1)
         result.pop
         result
       end

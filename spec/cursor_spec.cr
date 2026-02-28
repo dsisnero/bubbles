@@ -221,19 +221,37 @@ describe Bubbles::Cursor do
   it "TestBlinkCmdDataRace" do
     m = Bubbles::Cursor::Model.new
     cmd = m.blink
+    cmd.should_not be_nil
+
+    # Capture initial blink_tag
+    initial_blink_tag = m.blink_tag
+
     # In Crystal, we don't have goroutines but we can spawn fibers
     # The test simulates concurrent access to blinkTag
     channel = Channel(Nil).new
+
+    # First fiber: execute the original command after delay
+    # This simulates the command being executed late by handleCommands
     spawn do
-      sleep(m.blink_speed * 3)
-      cmd.try(&.call)
+      sleep(10.milliseconds) # Shorter delay for faster tests
+      if command = cmd
+        result = command.call
+        # The command should return either BlinkMsg or BlinkCanceled
+        result.should be_a(Tea::Msg)
+      end
       channel.send(nil)
     end
+
+    # Second fiber: call blink again after shorter delay
+    # This simulates blink being called again before the first command executes
     spawn do
-      sleep(m.blink_speed * 2)
+      sleep(5.milliseconds) # Shorter delay
       m.blink
+      # blink_tag should have been incremented
+      m.blink_tag.should eq(initial_blink_tag + 1)
       channel.send(nil)
     end
+
     # Wait for both fibers to complete
     2.times { channel.receive }
   end

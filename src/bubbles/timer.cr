@@ -96,12 +96,12 @@ module Bubbles
           end
 
           @timeout -= @interval
-          cmds = [] of Tea::Cmd
-          cmds << tick
+          # Call batch with commands
           if cmd = timedout_cmd
-            cmds << cmd
+            return {self, Tea.batch(tick.as(Tea::Cmd?), cmd)}
+          else
+            return {self, tick}
           end
-          return {self, Tea.batch(cmds)}
         end
 
         {self, nil.as(Tea::Cmd?)}
