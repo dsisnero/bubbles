@@ -96,7 +96,7 @@ module Bubbles
     end
 
     def self.with_height(h : Int32) : Option
-      ->(m : Model) { m.viewport.set_height(h - 1) }
+      ->(m : Model) { m.set_height(h) }
     end
 
     def self.with_width(w : Int32) : Option
