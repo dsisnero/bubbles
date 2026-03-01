@@ -19,6 +19,8 @@ dependencies:
     github: dsisnero/harmonica
   easyclip:
     github: kojix2/easyclip
+  nucleoc:
+    github: dsisnero/nucleoc
 
 development_dependencies:
   ameba:

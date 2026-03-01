@@ -1,5 +1,6 @@
 require "bubbletea"
 require "lipgloss"
+require "nucleoc"
 require "./help"
 require "./key"
 require "./paginator"
@@ -78,20 +79,44 @@ module Bubbles
       include Tea::Msg
     end
 
+    # Temporary struct to hold score and indices before sorting
+    private struct ScoredRank
+      property index : Int32
+      property score : UInt16
+      property indices : Array(Int32)
+
+      def initialize(@index : Int32, @score : UInt16, @indices : Array(Int32))
+      end
+    end
+
     def self.default_filter(term : String, targets : Array(String)) : Array(Rank)
       return [] of Rank if term.empty?
 
-      ranks = [] of Rank
+      scored_ranks = [] of ScoredRank
       targets.each_with_index do |target, index|
-        if matches = fuzzy_match(term, target)
-          ranks << Rank.new(index.to_i32, matches)
+        if result = Nucleoc.fuzzy_match_indices(target, term)
+          score, indices = result
+          # Convert UInt32 indices to Int32 for compatibility
+          int_indices = indices.map(&.to_i32)
+          scored_ranks << ScoredRank.new(index.to_i32, score, int_indices)
         end
       end
 
-      # Sort by match quality (simplified - in Go, fuzzy.Find returns sorted results)
-      # For now, we'll sort by match length (more matches = better)
-      ranks.sort_by! { |rank| -rank.matched_indexes.size }
-      ranks
+      # Sort by score descending (higher score = better match)
+      # Use stable sort to preserve original order when scores are equal
+      scored_ranks.sort! do |a, b|
+        # Compare scores first (higher is better)
+        score_cmp = b.score <=> a.score
+        if score_cmp != 0
+          score_cmp
+        else
+          # When scores are equal, preserve original order (lower index first)
+          a.index <=> b.index
+        end
+      end
+
+      # Convert to Rank struct (without score)
+      scored_ranks.map { |scored_rank| Rank.new(scored_rank.index, scored_rank.indices) }
     end
 
     def self.unsorted_filter(term : String, targets : Array(String)) : Array(Rank)
@@ -99,31 +124,15 @@ module Bubbles
 
       ranks = [] of Rank
       targets.each_with_index do |target, index|
-        if matches = fuzzy_match(term, target)
-          ranks << Rank.new(index.to_i32, matches)
+        if result = Nucleoc.fuzzy_match_indices(target, term)
+          _, indices = result
+          # Convert UInt32 indices to Int32 for compatibility
+          int_indices = indices.map(&.to_i32)
+          ranks << Rank.new(index.to_i32, int_indices)
         end
       end
       # Return unsorted as the name suggests
       ranks
-    end
-
-    private def self.fuzzy_match(term : String, target : String) : Array(Int32)?
-      # Simple case-insensitive subsequence matching
-      # This is a simplified version - Go's fuzzy library does more sophisticated scoring
-      term_chars = term.downcase.chars
-      target_chars = target.downcase.chars
-
-      matches = [] of Int32
-      ti = 0
-      target_chars.each_with_index do |char, index|
-        break if ti >= term_chars.size
-        if char == term_chars[ti]
-          matches << index.to_i32
-          ti += 1
-        end
-      end
-      return nil unless ti == term_chars.size
-      matches
     end
 
     class Model
