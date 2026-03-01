@@ -942,7 +942,7 @@ module Bubbles
 
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)
-          cmds << cmd if cmd
+          cmds << cmd
 
           # If the cursor position changed, reset the blink state.
           if old_pos != @pos && @virtual_cursor.mode == Cursor::Mode::Blink
@@ -952,12 +952,7 @@ module Bubbles
         end
 
         handle_overflow
-
-        if cmds.empty?
-          {self, nil}
-        else
-          {self, Tea.batch(*cmds)}
-        end
+        {self, Tea.batch(*cmds)}
       end
 
       # Cursor returns a Tea::Cursor for rendering a real cursor in a Bubble Tea
