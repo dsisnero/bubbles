@@ -20,12 +20,12 @@ module Bubbles
     DEFAULT_FREQUENCY = 18.0
     DEFAULT_DAMPING   =  1.0
 
-    DEFAULT_BLEND_START = "#5A56E0"
-    DEFAULT_BLEND_END   = "#EE6FF8"
-    DEFAULT_FULL_COLOR  = "#7571F9"
-    DEFAULT_EMPTY_COLOR = "#606060"
+    DEFAULT_BLEND_START = Lipgloss.color("#5A56E0")
+    DEFAULT_BLEND_END   = Lipgloss.color("#EE6FF8")
+    DEFAULT_FULL_COLOR  = Lipgloss.color("#7571F9")
+    DEFAULT_EMPTY_COLOR = Lipgloss.color("#606060")
 
-    alias Color = String
+    alias Color = Lipgloss::Color | Lipgloss::NoColor
     alias ColorFunc = Float64, Float64 -> Color
     alias Option = Proc(Model, Nil)
 
@@ -241,10 +241,72 @@ module Bubbles
         fw = (tw * clamp(percent, 0.0, 1.0)).round.to_i
         fw = Math.max(0, Math.min(tw, fw))
 
-        # Color rendering is currently a no-op in Lipgloss; preserve fill math.
-        full_part = @full.to_s * fw
-        empty_part = @empty.to_s * Math.max(0, tw - fw)
-        full_part + empty_part
+        is_half_block = @full == DefaultFullCharHalfBlock
+
+        if color_func = @color_func
+          # Color function rendering
+          result = String::Builder.new
+          half_block_perc = 0.5 / tw.to_f
+          fw.times do |i|
+            current = i.to_f / tw.to_f
+            style = Lipgloss::Style.new.foreground(color_func.call(percent, current))
+            if is_half_block
+              style = style.background(color_func.call(percent, Math.min(current + half_block_perc, 1.0)))
+            end
+            result << style.render(@full.to_s)
+          end
+          # Empty fill - need to handle empty string case for ANSI codes
+          result << render_empty_fill(tw - fw)
+          result.to_s
+        elsif !@blend.empty?
+          # Blend rendering
+          result = String::Builder.new
+
+          multiplier = is_half_block ? 2 : 1
+
+          # Get blend array - need to handle array-to-varargs conversion
+          # Filter out NoColor values since blend1d doesn't accept them
+          valid_colors = @blend.compact_map do |color|
+            color.as?(Lipgloss::Color)
+          end
+
+          blend_array = if @scale_blend
+                          Lipgloss.blend1d(fw * multiplier, valid_colors)
+                        else
+                          Lipgloss.blend1d(tw * multiplier, valid_colors)
+                        end
+
+          return result.to_s unless blend_array
+
+          # blend_array is now Array(Color), no conversion needed
+          if !is_half_block
+            # Full block rendering
+            fw.times do |i|
+              result << Lipgloss::Style.new.foreground(blend_array[i]).render(@full.to_s)
+            end
+          else
+            # Half block rendering
+            blend_index = 0
+            fw.times do
+              result << Lipgloss::Style.new
+                .foreground(blend_array[blend_index])
+                .background(blend_array[blend_index + 1])
+                .render(@full.to_s)
+              blend_index += 2
+            end
+          end
+
+          # Empty fill - need to handle empty string case for ANSI codes
+          result << render_empty_fill(tw - fw)
+          result.to_s
+        else
+          # Solid fill
+          result = String::Builder.new
+          result << Lipgloss::Style.new.foreground(@full_color).render(@full.to_s * fw)
+          # Empty fill - need to handle empty string case for ANSI codes
+          result << render_empty_fill(tw - fw)
+          result.to_s
+        end
       end
 
       private def percentage_view(percent : Float64) : String
@@ -257,6 +319,32 @@ module Bubbles
         return lo if v < lo
         return hi if v > hi
         v
+      end
+
+      private def render_empty_fill(count : Int32) : String
+        n = Math.max(0, count)
+        empty_style = Lipgloss::Style.new.foreground(@empty_color)
+        empty_str = @empty.to_s * n
+
+        if empty_str.empty?
+          # Workaround for lipgloss bug: empty strings don't get ANSI codes
+          # We need to render the ANSI codes manually
+          # Get the foreground color ANSI code
+          if color = @empty_color
+            case color
+            when Lipgloss::Color
+              if color.type == Lipgloss::Color::Type::RGB
+                if rgb = color.value.as?(Tuple(Int32, Int32, Int32))
+                  r, g, b = rgb
+                  return "\e[38;2;#{r};#{g};#{b}m\e[m"
+                end
+              end
+            end
+          end
+          ""
+        else
+          empty_style.render(empty_str)
+        end
       end
     end
 
