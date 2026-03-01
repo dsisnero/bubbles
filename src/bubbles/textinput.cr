@@ -442,6 +442,16 @@ module Bubbles
         set_virtual_cursor(v)
       end
 
+      # Width returns the width of the text input.
+      # Note: width getter is provided by property width : Int32
+
+      # SetWidth sets the width of the text input.
+      def set_width(w : Int32) # ameba:disable Naming/AccessorMethodName
+        @width = w
+      end
+
+      # width= setter is provided by property width : Int32
+
       # Styles returns the current set of styles.
       def styles : Styles
         @styles
@@ -655,13 +665,12 @@ module Bubbles
           end
         end
 
-        if @pos > @value.size
-          @value = @value[0, old_pos]
+        if old_pos > @value.size
+          @value = @value[0, @pos]
         else
           @value = @value[0, @pos] + @value[old_pos..]
         end
         @err = validate(@value)
-        set_cursor(old_pos)
       end
 
       private def delete_word_forward
@@ -908,8 +917,8 @@ module Bubbles
             previous_suggestion
           else
             # Input one or more regular characters.
-            if rune = msg.rune
-              insert_runes_from_user_input([rune])
+            if !msg.text.empty?
+              insert_runes_from_user_input(msg.text.chars)
             end
           end
           update_suggestions
