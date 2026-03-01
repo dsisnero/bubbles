@@ -154,6 +154,30 @@ module Bubbles
         m
       end
 
+      def dup : Model
+        copy = self.class.new
+        copy.id = @id
+        copy.tag = @tag
+        copy.width = @width
+        copy.full = @full
+        copy.full_color = @full_color
+        copy.empty = @empty
+        copy.empty_color = @empty_color
+        copy.show_percentage = @show_percentage
+        copy.percent_format = @percent_format
+        copy.percentage_style = @percentage_style
+        copy.spring_frequency = @spring_frequency
+        copy.spring_damping = @spring_damping
+        copy.spring_customized = @spring_customized
+        copy.percent_shown = @percent_shown
+        copy.target_percent = @target_percent
+        copy.velocity = @velocity
+        copy.blend = @blend.dup
+        copy.scale_blend = @scale_blend
+        copy.color_func = @color_func
+        copy
+      end
+
       def init : Tea::Cmd
         nil
       end
@@ -164,13 +188,16 @@ module Bubbles
           return {self, nil} if msg.id != @id || msg.tag != @tag
           return {self, nil} unless animating?
 
+          # Create a copy for functional update
+          m = dup
+
           # Damped spring-like integration for percent animation.
-          delta = @target_percent - @percent_shown
+          delta = m.target_percent - m.percent_shown
           dt = 1.0 / FPS
-          @velocity += delta * @spring_frequency * dt
-          @velocity *= Math.exp(-@spring_damping * dt)
-          @percent_shown = clamp(@percent_shown + @velocity, 0.0, 1.0)
-          {self, next_frame}
+          m.velocity += delta * m.spring_frequency * dt
+          m.velocity *= Math.exp(-m.spring_damping * dt)
+          m.percent_shown = clamp(m.percent_shown + m.velocity, 0.0, 1.0)
+          {m, m.next_frame}
         else
           {self, nil}
         end
