@@ -1,7 +1,101 @@
 require "digest/sha256"
+require "./cursor"
+require "./key"
+require "./viewport"
+require "./internal/memoization"
+require "./internal/runeutil"
 
 module Bubbles
   module Textarea
+    # KeyMap is the key bindings for different actions within the textarea.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:47
+    struct KeyMap
+      property character_backward : Key::Binding
+      property character_forward : Key::Binding
+      property delete_after_cursor : Key::Binding
+      property delete_before_cursor : Key::Binding
+      property delete_character_backward : Key::Binding
+      property delete_character_forward : Key::Binding
+      property delete_word_backward : Key::Binding
+      property delete_word_forward : Key::Binding
+      property insert_newline : Key::Binding
+      property line_end : Key::Binding
+      property line_next : Key::Binding
+      property line_previous : Key::Binding
+      property line_start : Key::Binding
+      property page_up : Key::Binding
+      property page_down : Key::Binding
+      property paste : Key::Binding
+      property word_backward : Key::Binding
+      property word_forward : Key::Binding
+      property input_begin : Key::Binding
+      property input_end : Key::Binding
+      property uppercase_word_forward : Key::Binding
+      property lowercase_word_forward : Key::Binding
+      property capitalize_word_forward : Key::Binding
+      property transpose_character_backward : Key::Binding
+
+      def initialize(
+        @character_backward : Key::Binding,
+        @character_forward : Key::Binding,
+        @delete_after_cursor : Key::Binding,
+        @delete_before_cursor : Key::Binding,
+        @delete_character_backward : Key::Binding,
+        @delete_character_forward : Key::Binding,
+        @delete_word_backward : Key::Binding,
+        @delete_word_forward : Key::Binding,
+        @insert_newline : Key::Binding,
+        @line_end : Key::Binding,
+        @line_next : Key::Binding,
+        @line_previous : Key::Binding,
+        @line_start : Key::Binding,
+        @page_up : Key::Binding,
+        @page_down : Key::Binding,
+        @paste : Key::Binding,
+        @word_backward : Key::Binding,
+        @word_forward : Key::Binding,
+        @input_begin : Key::Binding,
+        @input_end : Key::Binding,
+        @uppercase_word_forward : Key::Binding,
+        @lowercase_word_forward : Key::Binding,
+        @capitalize_word_forward : Key::Binding,
+        @transpose_character_backward : Key::Binding,
+      )
+      end
+    end
+
+    # DefaultKeyMap returns the default set of key bindings for navigating and acting
+    # upon the textarea.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:78
+    def self.default_key_map : KeyMap
+      KeyMap.new(
+        character_forward: Key.new_binding(Key.with_keys("right", "ctrl+f"), Key.with_help("right", "character forward")),
+        character_backward: Key.new_binding(Key.with_keys("left", "ctrl+b"), Key.with_help("left", "character backward")),
+        word_forward: Key.new_binding(Key.with_keys("alt+right", "alt+f"), Key.with_help("alt+right", "word forward")),
+        word_backward: Key.new_binding(Key.with_keys("alt+left", "alt+b"), Key.with_help("alt+left", "word backward")),
+        line_next: Key.new_binding(Key.with_keys("down", "ctrl+n"), Key.with_help("down", "next line")),
+        line_previous: Key.new_binding(Key.with_keys("up", "ctrl+p"), Key.with_help("up", "previous line")),
+        delete_word_backward: Key.new_binding(Key.with_keys("alt+backspace", "ctrl+w"), Key.with_help("alt+backspace", "delete word backward")),
+        delete_word_forward: Key.new_binding(Key.with_keys("alt+delete", "alt+d"), Key.with_help("alt+delete", "delete word forward")),
+        delete_after_cursor: Key.new_binding(Key.with_keys("ctrl+k"), Key.with_help("ctrl+k", "delete after cursor")),
+        delete_before_cursor: Key.new_binding(Key.with_keys("ctrl+u"), Key.with_help("ctrl+u", "delete before cursor")),
+        insert_newline: Key.new_binding(Key.with_keys("enter", "ctrl+m"), Key.with_help("enter", "insert newline")),
+        delete_character_backward: Key.new_binding(Key.with_keys("backspace", "ctrl+h"), Key.with_help("backspace", "delete character backward")),
+        delete_character_forward: Key.new_binding(Key.with_keys("delete", "ctrl+d"), Key.with_help("delete", "delete character forward")),
+        line_start: Key.new_binding(Key.with_keys("home", "ctrl+a"), Key.with_help("home", "line start")),
+        line_end: Key.new_binding(Key.with_keys("end", "ctrl+e"), Key.with_help("end", "line end")),
+        page_up: Key.new_binding(Key.with_keys("pgup"), Key.with_help("pgup", "page up")),
+        page_down: Key.new_binding(Key.with_keys("pgdown"), Key.with_help("pgdown", "page down")),
+        paste: Key.new_binding(Key.with_keys("ctrl+v"), Key.with_help("ctrl+v", "paste")),
+        input_begin: Key.new_binding(Key.with_keys("alt+<", "ctrl+home"), Key.with_help("alt+<", "input begin")),
+        input_end: Key.new_binding(Key.with_keys("alt+>", "ctrl+end"), Key.with_help("alt+>", "input end")),
+        capitalize_word_forward: Key.new_binding(Key.with_keys("alt+c"), Key.with_help("alt+c", "capitalize word forward")),
+        lowercase_word_forward: Key.new_binding(Key.with_keys("alt+l"), Key.with_help("alt+l", "lowercase word forward")),
+        uppercase_word_forward: Key.new_binding(Key.with_keys("alt+u"), Key.with_help("alt+u", "uppercase word forward")),
+        transpose_character_backward: Key.new_binding(Key.with_keys("ctrl+t"), Key.with_help("ctrl+t", "transpose character backward"))
+      )
+    end
+
     struct LineInfo
       property width : Int32
       property char_width : Int32
@@ -31,16 +125,150 @@ module Bubbles
       end
     end
 
+    # line is the input to the text wrapping function. This is stored in a struct
+    # so that it can be hashed and memoized.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:235
     struct Line
+      include Internal::Memoization::Hasher
+
       property runes : Array(Char)
       property width : Int32
 
       def initialize(@runes : Array(Char), @width : Int32)
       end
 
+      # Hash returns a hash of the line.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:241
       def hash : String
         Digest::SHA256.hexdigest("#{runes.join}:#{@width}")
       end
+
+      # memo_hash returns a hash for memoization.
+      def memo_hash : String
+        hash
+      end
+    end
+
+    # CursorStyle is the style for real and virtual cursors.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:148
+    struct CursorStyle
+      property color : String? # TODO: Use proper color type
+      property shape : String  # TODO: Use proper CursorShape enum
+      property blink : Bool # ameba:disable Naming/QueryBoolMethods
+      property blink_speed : Time::Span
+
+      def initialize(@color = nil, @shape = "block", @blink = false, @blink_speed = 500.milliseconds)
+      end
+    end
+
+    # Styles are the styles for the textarea, separated into focused and blurred
+    # states. The appropriate styles will be chosen based on the focus state of
+    # the textarea.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:178
+    struct Styles
+      property focused : StyleState
+      property blurred : StyleState
+      property cursor : CursorStyle
+
+      def initialize(@focused : StyleState, @blurred : StyleState, @cursor : CursorStyle)
+      end
+    end
+
+    # StyleState that will be applied to the text area.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:191
+    struct StyleState
+      property base : String               # TODO: Use lipgloss.Style
+      property text : String               # TODO: Use lipgloss.Style
+      property line_number : String        # TODO: Use lipgloss.Style
+      property cursor_line_number : String # TODO: Use lipgloss.Style
+      property cursor_line : String        # TODO: Use lipgloss.Style
+      property end_of_buffer : String      # TODO: Use lipgloss.Style
+      property placeholder : String        # TODO: Use lipgloss.Style
+      property prompt : String             # TODO: Use lipgloss.Style
+
+      def initialize(
+        @base : String = "",
+        @text : String = "",
+        @line_number : String = "",
+        @cursor_line_number : String = "",
+        @cursor_line : String = "",
+        @end_of_buffer : String = "",
+        @placeholder : String = "",
+        @prompt : String = "",
+      )
+      end
+
+      # computedCursorLine returns the computed style for the cursor line.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:202
+      def computed_cursor_line : String
+        # TODO: Implement lipgloss style inheritance
+        @cursor_line
+      end
+
+      # computedCursorLineNumber returns the computed style for the cursor line number.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:206
+      def computed_cursor_line_number : String
+        # TODO: Implement lipgloss style inheritance
+        @cursor_line_number
+      end
+
+      # computedEndOfBuffer returns the computed style for the end of buffer character.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:213
+      def computed_end_of_buffer : String
+        # TODO: Implement lipgloss style inheritance
+        @end_of_buffer
+      end
+
+      # computedLineNumber returns the computed style for line numbers.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:217
+      def computed_line_number : String
+        # TODO: Implement lipgloss style inheritance
+        @line_number
+      end
+
+      # computedPlaceholder returns the computed style for the placeholder.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:221
+      def computed_placeholder : String
+        # TODO: Implement lipgloss style inheritance
+        @placeholder
+      end
+
+      # computedPrompt returns the computed style for the prompt.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:225
+      def computed_prompt : String
+        # TODO: Implement lipgloss style inheritance
+        @prompt
+      end
+
+      # computedText returns the computed style for text.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:229
+      def computed_text : String
+        # TODO: Implement lipgloss style inheritance
+        @text
+      end
+    end
+
+    # DefaultStyles returns the default styles for focused and blurred states for
+    # the textarea.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:375
+    def self.default_styles(is_dark : Bool = false) : Styles
+      # TODO: Implement proper lipgloss styles
+      focused = StyleState.new
+      blurred = StyleState.new
+      cursor = CursorStyle.new
+      Styles.new(focused, blurred, cursor)
+    end
+
+    # DefaultLightStyles returns the default styles for a light background.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:410
+    def self.default_light_styles : Styles
+      default_styles(false)
+    end
+
+    # DefaultDarkStyles returns the default styles for a dark background.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:415
+    def self.default_dark_styles : Styles
+      default_styles(true)
     end
 
     class Model

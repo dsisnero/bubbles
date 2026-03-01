@@ -256,59 +256,59 @@ stopwatch/stopwatch.go::struct::ResetMsg	struct	missing		auto-generated
 stopwatch/stopwatch.go::struct::StartStopMsg	struct	missing		auto-generated
 stopwatch/stopwatch.go::struct::TickMsg	struct	missing		auto-generated
 stopwatch/stopwatch.go::type::Option	type	missing		auto-generated
-table/table_test.go::test::TestCursorNavigation	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_FromValues	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_RenderRow	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_SetColumns	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_SetRows	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestModel_View	test	ported	spec/table_spec.cr		auto-generated
+table/table_test.go::test::TestCursorNavigation	test	missing		auto-generated
+table/table_test.go::test::TestModel_FromValues	test	missing		auto-generated
+table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	missing		auto-generated
+table/table_test.go::test::TestModel_RenderRow	test	missing		auto-generated
+table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	missing		auto-generated
+table/table_test.go::test::TestModel_SetColumns	test	missing		auto-generated
+table/table_test.go::test::TestModel_SetRows	test	missing		auto-generated
+table/table_test.go::test::TestModel_View	test	missing		auto-generated
 table/table_test.go::test::TestModel_View_CenteredInABox	test	missing		auto-generated
-table/table_test.go::test::TestNew	test	ported	spec/table_spec.cr		auto-generated
-table/table_test.go::test::TestTableAlignment	test	ported	spec/table_spec.cr		auto-generated
-table/table.go::func::DefaultKeyMap	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::DefaultStyles	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::New	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithColumns	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithFocused	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithHeight	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithKeyMap	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithRows	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithStyles	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::func::WithWidth	func	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::KeyMap.FullHelp	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::KeyMap.ShortHelp	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Blur	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Columns	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Cursor	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Focus	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Focused	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.FromValues	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.GotoBottom	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.GotoTop	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Height	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.HelpView	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.MoveDown	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.MoveUp	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Rows	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SelectedRow	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetColumns	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetCursor	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetHeight	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetRows	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetStyles	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.SetWidth	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Update	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.UpdateViewport	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.View	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::method::Model.Width	method	ported	src/bubbles/table.cr		auto-generated
-table/table.go::struct::Column	struct	ported	src/bubbles/table.cr		auto-generated
-table/table.go::struct::KeyMap	struct	ported	src/bubbles/table.cr		auto-generated
-table/table.go::struct::Model	struct	ported	src/bubbles/table.cr		auto-generated
-table/table.go::struct::Styles	struct	ported	src/bubbles/table.cr		auto-generated
-table/table.go::type::Option	type	ported	src/bubbles/table.cr		auto-generated
-table/table.go::type::Row	type	ported	src/bubbles/table.cr		auto-generated
+table/table_test.go::test::TestNew	test	missing		auto-generated
+table/table_test.go::test::TestTableAlignment	test	missing		auto-generated
+table/table.go::func::DefaultKeyMap	func	missing		auto-generated
+table/table.go::func::DefaultStyles	func	missing		auto-generated
+table/table.go::func::New	func	missing		auto-generated
+table/table.go::func::WithColumns	func	missing		auto-generated
+table/table.go::func::WithFocused	func	missing		auto-generated
+table/table.go::func::WithHeight	func	missing		auto-generated
+table/table.go::func::WithKeyMap	func	missing		auto-generated
+table/table.go::func::WithRows	func	missing		auto-generated
+table/table.go::func::WithStyles	func	missing		auto-generated
+table/table.go::func::WithWidth	func	missing		auto-generated
+table/table.go::method::KeyMap.FullHelp	method	missing		auto-generated
+table/table.go::method::KeyMap.ShortHelp	method	missing		auto-generated
+table/table.go::method::Model.Blur	method	missing		auto-generated
+table/table.go::method::Model.Columns	method	missing		auto-generated
+table/table.go::method::Model.Cursor	method	missing		auto-generated
+table/table.go::method::Model.Focus	method	missing		auto-generated
+table/table.go::method::Model.Focused	method	missing		auto-generated
+table/table.go::method::Model.FromValues	method	missing		auto-generated
+table/table.go::method::Model.GotoBottom	method	missing		auto-generated
+table/table.go::method::Model.GotoTop	method	missing		auto-generated
+table/table.go::method::Model.Height	method	missing		auto-generated
+table/table.go::method::Model.HelpView	method	missing		auto-generated
+table/table.go::method::Model.MoveDown	method	missing		auto-generated
+table/table.go::method::Model.MoveUp	method	missing		auto-generated
+table/table.go::method::Model.Rows	method	missing		auto-generated
+table/table.go::method::Model.SelectedRow	method	missing		auto-generated
+table/table.go::method::Model.SetColumns	method	missing		auto-generated
+table/table.go::method::Model.SetCursor	method	missing		auto-generated
+table/table.go::method::Model.SetHeight	method	missing		auto-generated
+table/table.go::method::Model.SetRows	method	missing		auto-generated
+table/table.go::method::Model.SetStyles	method	missing		auto-generated
+table/table.go::method::Model.SetWidth	method	missing		auto-generated
+table/table.go::method::Model.Update	method	missing		auto-generated
+table/table.go::method::Model.UpdateViewport	method	missing		auto-generated
+table/table.go::method::Model.View	method	missing		auto-generated
+table/table.go::method::Model.Width	method	missing		auto-generated
+table/table.go::struct::Column	struct	missing		auto-generated
+table/table.go::struct::KeyMap	struct	missing		auto-generated
+table/table.go::struct::Model	struct	missing		auto-generated
+table/table.go::struct::Styles	struct	missing		auto-generated
+table/table.go::type::Option	type	missing		auto-generated
+table/table.go::type::Row	type	missing		auto-generated
 textarea/textarea_test.go::test::TestCanHandleEmoji	test	missing		auto-generated
 textarea/textarea_test.go::test::TestInsertString	test	missing		auto-generated
 textarea/textarea_test.go::test::TestSetValue	test	missing		auto-generated
