@@ -47,7 +47,7 @@ describe Bubbles::Paginator do
       model = Bubbles::Paginator.new
       model.set_total_pages(tt[1])
       model.page = tt[2]
-      model, _ = model.update(Tea::Key.new(Tea::KeyType::Left))
+      model, _ = model.update(Tea::Key.new(code: Tea::KeyLeft))
       model.page.should eq(tt[3]), tt[0]
     end
   end
@@ -62,7 +62,7 @@ describe Bubbles::Paginator do
       model = Bubbles::Paginator.new
       model.set_total_pages(tt[1])
       model.page = tt[2]
-      model, _ = model.update(Tea::Key.new(Tea::KeyType::Right))
+      model, _ = model.update(Tea::Key.new(code: Tea::KeyRight))
       model.page.should eq(tt[3]), tt[0]
     end
   end
