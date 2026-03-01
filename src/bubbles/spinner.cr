@@ -10,7 +10,7 @@ module Bubbles
       @@last_id.add(1).to_i32
     end
 
-    struct SpinnerData
+    struct Spinner
       property frames : Array(String)
       property fps : Time::Span
 
@@ -18,18 +18,18 @@ module Bubbles
       end
     end
 
-    Line      = SpinnerData.new(["|", "/", "-", "\\"], 100.milliseconds)
-    Dot       = SpinnerData.new(["⣾ ", "⣽ ", "⣻ ", "⢿ ", "⡿ ", "⣟ ", "⣯ ", "⣷ "], 100.milliseconds)
-    MiniDot   = SpinnerData.new(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"], 83.milliseconds)
-    Jump      = SpinnerData.new(["⢄", "⢂", "⢁", "⡁", "⡈", "⡐", "⡠"], 100.milliseconds)
-    Pulse     = SpinnerData.new(["█", "▓", "▒", "░"], 125.milliseconds)
-    Points    = SpinnerData.new(["∙∙∙", "●∙∙", "∙●∙", "∙∙●"], 142.milliseconds)
-    Globe     = SpinnerData.new(["🌍", "🌎", "🌏"], 250.milliseconds)
-    Moon      = SpinnerData.new(["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"], 125.milliseconds)
-    Monkey    = SpinnerData.new(["🙈", "🙉", "🙊"], 333.milliseconds)
-    Meter     = SpinnerData.new(["▱▱▱", "▰▱▱", "▰▰▱", "▰▰▰", "▰▰▱", "▰▱▱", "▱▱▱"], 142.milliseconds)
-    Hamburger = SpinnerData.new(["☱", "☲", "☴", "☲"], 333.milliseconds)
-    Ellipsis  = SpinnerData.new(["", ".", "..", "..."], 333.milliseconds)
+    Line      = Spinner.new(["|", "/", "-", "\\"], 100.milliseconds)
+    Dot       = Spinner.new(["⣾ ", "⣽ ", "⣻ ", "⢿ ", "⡿ ", "⣟ ", "⣯ ", "⣷ "], 100.milliseconds)
+    MiniDot   = Spinner.new(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"], 83.milliseconds)
+    Jump      = Spinner.new(["⢄", "⢂", "⢁", "⡁", "⡈", "⡐", "⡠"], 100.milliseconds)
+    Pulse     = Spinner.new(["█", "▓", "▒", "░"], 125.milliseconds)
+    Points    = Spinner.new(["∙∙∙", "●∙∙", "∙●∙", "∙∙●"], 142.milliseconds)
+    Globe     = Spinner.new(["🌍", "🌎", "🌏"], 250.milliseconds)
+    Moon      = Spinner.new(["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"], 125.milliseconds)
+    Monkey    = Spinner.new(["🙈", "🙉", "🙊"], 333.milliseconds)
+    Meter     = Spinner.new(["▱▱▱", "▰▱▱", "▰▰▱", "▰▰▰", "▰▰▱", "▰▱▱", "▱▱▱"], 142.milliseconds)
+    Hamburger = Spinner.new(["☱", "☲", "☴", "☲"], 333.milliseconds)
+    Ellipsis  = Spinner.new(["", ".", "..", "..."], 333.milliseconds)
 
     class TickMsg
       include Tea::Msg
@@ -42,7 +42,7 @@ module Bubbles
     end
 
     class Model
-      property spinner : SpinnerData
+      property spinner : Spinner
       property style : Lipgloss::Style
       property frame : Int32
       property id : Int32
@@ -52,7 +52,7 @@ module Bubbles
         @spinner = Line
         @style = Lipgloss::Style.new
         @frame = 0
-        @id = Spinner.next_id
+        @id = Bubbles::Spinner.next_id
         @tag = 0
       end
 
@@ -119,7 +119,7 @@ module Bubbles
       m
     end
 
-    def self.with_spinner(spinner : SpinnerData) : Option
+    def self.with_spinner(spinner : Spinner) : Option
       ->(m : Model) { m.spinner = spinner }
     end
 

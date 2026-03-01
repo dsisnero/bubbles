@@ -126,6 +126,15 @@ module Bubbles
         @blink_tag = 0
       end
 
+      # Creates a deep copy of the model.
+      def dup
+        copy = super
+        # Create new BlinkCtx with same parent context but no cancel function
+        # The copy shouldn't be able to cancel the original's context
+        copy.blink_ctx = BlinkCtx.new(@blink_ctx.ctx)
+        copy
+      end
+
       # Update updates the cursor.
       def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
@@ -134,14 +143,18 @@ module Bubbles
           if @mode != Mode::Blink || !@focus
             return {self, nil}
           end
-          cmd = blink
-          {self, cmd}
+          copy = dup
+          cmd = copy.blink
+          {copy, cmd}
         when Tea::FocusMsg
-          cmd = focus
-          {self, cmd}
+          # Focus modifies the model and returns a command
+          copy = dup
+          cmd = copy.focus
+          {copy, cmd}
         when Tea::BlurMsg
-          blur
-          {self, nil}
+          copy = dup
+          copy.blur
+          {copy, nil}
         when BlinkMsg
           # We're choosy about whether to accept blinkMsgs so that our cursor
           # only exactly when it should.
@@ -153,12 +166,14 @@ module Bubbles
           if msg.id != @id || msg.tag != @blink_tag
             return {self, nil}
           end
-          cmd = nil
           if @mode == Mode::Blink
-            @blinked = !@blinked
-            cmd = blink
+            copy = dup
+            copy.blinked = !@blinked
+            cmd = copy.blink
+            {copy, cmd}
+          else
+            {self, nil}
           end
-          {self, cmd}
         when BlinkCanceled
           {self, nil}
         else
