@@ -92,7 +92,7 @@ module Bubbles
         @spacing
       end
 
-      def update(msg : Tea::Msg, m : Model) : Tea::Cmd
+      def update(msg : Tea::Msg, m : Model) : Tea::Cmd?
         if f = @update_func
           return f.call(msg, m)
         end

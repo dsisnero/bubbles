@@ -20,7 +20,7 @@ module Bubbles
       abstract def render(w : IO, m : Model, index : Int32, item : Item)
       abstract def height : Int32
       abstract def spacing : Int32
-      abstract def update(msg : Tea::Msg, m : Model) : Tea::Cmd
+      abstract def update(msg : Tea::Msg, m : Model) : Tea::Cmd?
     end
 
     struct FilteredItem
@@ -606,10 +606,10 @@ module Bubbles
         case msg
         when Tea::KeyPressMsg
           if Bubbles::Key.matches?(msg, @key_map.force_quit)
-            return {self, -> { QuitMsg.new.as(Tea::Msg?) }}
+            return {self, Tea.quit}
           end
         when FilterMatchesMsg
-          @filtered_items = msg.matches
+          @filtered_items = msg
           return {self, nil}
         when Bubbles::Spinner::TickMsg
           @spinner, cmd = @spinner.update(msg)
@@ -619,9 +619,9 @@ module Bubbles
         end
 
         if @filter_state == FilterState::Filtering
-          cmds << handle_filtering(msg).as(Tea::Cmd?)
+          cmds << handle_filtering(msg)
         else
-          cmds << handle_browsing(msg).as(Tea::Cmd?)
+          cmds << handle_browsing(msg)
         end
 
         # Remove nil commands
@@ -742,7 +742,7 @@ module Bubbles
         @styles.status_bar.render(status)
       end
 
-      private def handle_browsing(msg : Tea::Msg) : Tea::Cmd
+      private def handle_browsing(msg : Tea::Msg) : Tea::Cmd?
         if kmsg = msg.as?(Tea::KeyPressMsg)
           case
           when Bubbles::Key.matches?(kmsg, @key_map.clear_filter)
@@ -771,7 +771,7 @@ module Bubbles
             @filter_input.cursor_end
             @filter_input.focus
             update_keybindings
-            return -> { Bubbles::Cursor::InitialBlinkMsg.new.as(Tea::Msg?) }
+            return -> { Bubbles::TextInput.blink.as(Tea::Msg?) }
           when Bubbles::Key.matches?(kmsg, @key_map.show_full_help) || Bubbles::Key.matches?(kmsg, @key_map.close_full_help)
             @help.show_all = !@help.show_all
             update_pagination
@@ -783,7 +783,7 @@ module Bubbles
         cmd
       end
 
-      private def handle_filtering(msg : Tea::Msg) : Tea::Cmd
+      private def handle_filtering(msg : Tea::Msg) : Tea::Cmd?
         cmds = [] of Tea::Cmd?
         if kmsg = msg.as?(Tea::KeyPressMsg)
           case
@@ -813,9 +813,7 @@ module Bubbles
         cmds << input_cmd
 
         if filter_changed
-          if cmd = filter_items(self)
-            cmds << cmd
-          end
+          cmds << filter_items(self)
           @key_map.accept_while_filtering.set_enabled(@filter_input.value != "")
         end
 
@@ -909,7 +907,7 @@ module Bubbles
         return if @filter_state == FilterState::Unfiltered
         @filter_state = FilterState::Unfiltered
         @filter_input.reset
-        @filtered_items = [] of FilteredItem
+        @filtered_items = nil
         update_pagination
         update_keybindings
       end
