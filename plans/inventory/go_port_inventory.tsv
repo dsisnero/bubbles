@@ -1,46 +1,46 @@
 # go_id	kind	status	crystal_refs	notes
-styles.go::func::DefaultDarkStyles	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-styles.go::func::DefaultLightStyles	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-styles.go::func::DefaultStyles	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-styles.go::struct::CursorStyle	struct	ported	src/bubbles/textinput.cr	exact Go parity achieved
-styles.go::struct::Styles	struct	ported	src/bubbles/textinput.cr	exact Go parity achieved
-styles.go::struct::StyleState	struct	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput_test.go::test::Test_CurrentSuggestion	test	ported	spec/textinput_spec.cr	exact Go parity achieved
-textinput_test.go::test::Test_SlicingOutsideCap	test	ported	spec/textinput_spec.cr	exact Go parity achieved
-textinput_test.go::test::TestChinesePlaceholder	test	pending	spec/textinput_spec.cr	marked pending - upstream test skipped as flaky
-textinput_test.go::test::TestPlaceholderTruncate	test	pending	spec/textinput_spec.cr	marked pending - upstream test skipped as flaky
-textinput.go::const::EchoNone	const	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::const::EchoNormal	const	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::const::EchoPassword	const	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::func::Blink	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::func::DefaultKeyMap	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::func::New	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::func::Paste	func	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.AvailableSuggestions	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Blur	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.CurrentSuggestion	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.CurrentSuggestionIndex	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Cursor	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.CursorEnd	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.CursorStart	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Focus	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Focused	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.MatchedSuggestions	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Position	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Reset	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetCursor	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetStyles	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetSuggestions	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetValue	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetVirtualCursor	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.SetWidth	method	partial	src/bubbles/textinput.cr	Crystal uses property width= instead of SetWidth()
-textinput.go::method::Model.Styles	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Update	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Value	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.View	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.VirtualCursor	method	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::method::Model.Width	method	partial	src/bubbles/textinput.cr	Crystal uses property width instead of Width()
-textinput.go::struct::KeyMap	struct	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::struct::Model	struct	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::type::EchoMode	type	ported	src/bubbles/textinput.cr	exact Go parity achieved
-textinput.go::type::ValidateFunc	type	ported	src/bubbles/textinput.cr	exact Go parity achieved
+styles.go::func::DefaultDarkStyles	func	missing		auto-generated
+styles.go::func::DefaultLightStyles	func	missing		auto-generated
+styles.go::func::DefaultStyles	func	missing		auto-generated
+styles.go::struct::CursorStyle	struct	missing		auto-generated
+styles.go::struct::Styles	struct	missing		auto-generated
+styles.go::struct::StyleState	struct	missing		auto-generated
+textinput_test.go::test::Test_CurrentSuggestion	test	missing		auto-generated
+textinput_test.go::test::Test_SlicingOutsideCap	test	missing		auto-generated
+textinput_test.go::test::TestChinesePlaceholder	test	missing		auto-generated
+textinput_test.go::test::TestPlaceholderTruncate	test	missing		auto-generated
+textinput.go::const::EchoNone	const	missing		auto-generated
+textinput.go::const::EchoNormal	const	missing		auto-generated
+textinput.go::const::EchoPassword	const	missing		auto-generated
+textinput.go::func::Blink	func	missing		auto-generated
+textinput.go::func::DefaultKeyMap	func	missing		auto-generated
+textinput.go::func::New	func	missing		auto-generated
+textinput.go::func::Paste	func	missing		auto-generated
+textinput.go::method::Model.AvailableSuggestions	method	missing		auto-generated
+textinput.go::method::Model.Blur	method	missing		auto-generated
+textinput.go::method::Model.CurrentSuggestion	method	missing		auto-generated
+textinput.go::method::Model.CurrentSuggestionIndex	method	missing		auto-generated
+textinput.go::method::Model.Cursor	method	missing		auto-generated
+textinput.go::method::Model.CursorEnd	method	missing		auto-generated
+textinput.go::method::Model.CursorStart	method	missing		auto-generated
+textinput.go::method::Model.Focus	method	missing		auto-generated
+textinput.go::method::Model.Focused	method	missing		auto-generated
+textinput.go::method::Model.MatchedSuggestions	method	missing		auto-generated
+textinput.go::method::Model.Position	method	missing		auto-generated
+textinput.go::method::Model.Reset	method	missing		auto-generated
+textinput.go::method::Model.SetCursor	method	missing		auto-generated
+textinput.go::method::Model.SetStyles	method	missing		auto-generated
+textinput.go::method::Model.SetSuggestions	method	missing		auto-generated
+textinput.go::method::Model.SetValue	method	missing		auto-generated
+textinput.go::method::Model.SetVirtualCursor	method	missing		auto-generated
+textinput.go::method::Model.SetWidth	method	missing		auto-generated
+textinput.go::method::Model.Styles	method	missing		auto-generated
+textinput.go::method::Model.Update	method	missing		auto-generated
+textinput.go::method::Model.Value	method	missing		auto-generated
+textinput.go::method::Model.View	method	missing		auto-generated
+textinput.go::method::Model.VirtualCursor	method	missing		auto-generated
+textinput.go::method::Model.Width	method	missing		auto-generated
+textinput.go::struct::KeyMap	struct	missing		auto-generated
+textinput.go::struct::Model	struct	missing		auto-generated
+textinput.go::type::EchoMode	type	missing		auto-generated
+textinput.go::type::ValidateFunc	type	missing		auto-generated

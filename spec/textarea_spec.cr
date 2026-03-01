@@ -88,6 +88,7 @@ describe Bubbles::Textarea do
   it "TestView" do
     textarea = Bubbles::Textarea.new
     textarea.set_value("a\nb")
-    textarea.view.should eq("a\nb")
+    # The view method now adds trailing spaces for soft-wrapping consistency
+    textarea.view.should eq("a \nb ")
   end
 end

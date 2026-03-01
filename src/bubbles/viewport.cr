@@ -499,6 +499,13 @@ module Bubbles
         return hi if v > hi
         v
       end
+
+      # Update handles messages and updates the viewport.
+      # Ported from Go: vendor/bubbles/viewport/viewport.go:656
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
+        # Basic implementation - just return self for now
+        {self, nil}
+      end
     end
 
     def self.new(*opts : Option) : Model
