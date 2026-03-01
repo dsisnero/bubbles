@@ -236,6 +236,8 @@ module Bubbles
         result = [] of Char
         runes.each do |rune|
           case rune
+          when '\uFFFD' # utf8.RuneError
+            # skip
           when '\r', '\n'
             result.concat(@replace_newline)
           when '\t'
