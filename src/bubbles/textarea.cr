@@ -860,37 +860,37 @@ module Bubbles
         n < 0 ? -n : n
       end
 
-       # view returns the rendered view of the textarea.
-       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1317
-       def view : String
-         if value.empty? && @row == 0 && @col == 0 && !@placeholder.empty?
-           return placeholder_view
-         end
+      # view returns the rendered view of the textarea.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1317
+      def view : String
+        if value.empty? && @row == 0 && @col == 0 && !@placeholder.empty?
+          return placeholder_view
+        end
 
-         # TODO: Implement virtual_cursor.text_style = active_style.computed_cursor_line
+        # TODO: Implement virtual_cursor.text_style = active_style.computed_cursor_line
 
-         output = [] of String
-         style = Lipgloss::Style.new
-         new_lines = 0
-         widest_line_number = 0
-         li = line_info
-         styles = active_style
+        output = [] of String
+        style = Lipgloss::Style.new
+        new_lines = 0
+        widest_line_number = 0
+        _ = line_info # Not used yet but kept for Go parity
+        styles = active_style
 
-         display_line = 0
-         @value.each_with_index do |line, line_idx|
-           wrapped_lines = memoized_wrap(line, @width)
+        display_line = 0
+        @value.each_with_index do |line, line_idx|
+          wrapped_lines = memoized_wrap(line, @width)
 
-           if @row == line_idx
-             style = styles.computed_cursor_line
-           else
-             style = styles.computed_text
-           end
+          if @row == line_idx
+            style = styles.computed_cursor_line
+          else
+            style = styles.computed_text
+          end
 
-           wrapped_lines.each_with_index do |wrapped_line, wrapped_idx|
-             prompt_str = prompt_view(display_line)
-             prompt_str = styles.computed_prompt.render(prompt_str)
-             output << style.render(prompt_str)
-             display_line += 1
+          wrapped_lines.each_with_index do |wrapped_line, wrapped_idx|
+            prompt_str = prompt_view(display_line)
+            prompt_str = styles.computed_prompt.render(prompt_str)
+            output << style.render(prompt_str)
+            display_line += 1
             # prompt_str = styles.computed_prompt.render(prompt_str)
             prompt_str = "" # Placeholder for now
             output << "#{style}#{prompt_str}"
