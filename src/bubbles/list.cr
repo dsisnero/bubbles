@@ -170,6 +170,7 @@ module Bubbles
       property delegate : ItemDelegate
 
       @status_message_expires_at : Time?
+      @status_message_timer_channel : Channel(Nil)?
 
       def initialize(@items : Array(Item), @delegate : ItemDelegate, @width : Int32, @height : Int32)
         @show_title = true
@@ -206,6 +207,7 @@ module Bubbles
         @status_message_lifetime = 1.second
         @status_message = ""
         @status_message_expires_at = nil
+        @status_message_timer_channel = nil
         @filtered_items = nil
 
         update_pagination
@@ -294,7 +296,6 @@ module Bubbles
       end
 
       def set_item(index : Int32, item : Item) : Tea::Cmd
-        return nil if index < 0 || index >= @items.size
         @items[index] = item
         cmd = nil
         if @filter_state != FilterState::Unfiltered
@@ -436,7 +437,7 @@ module Bubbles
       end
 
       def matches_for_item(index : Int32) : Array(Int32)?
-        return nil if index >= @filtered_items.size
+        return nil if @filtered_items.nil? || index >= @filtered_items.size
         @filtered_items[index].matches
       end
 
@@ -446,7 +447,7 @@ module Bubbles
 
       def global_index : Int32
         i = index
-        return i if i >= @filtered_items.size
+        return i if @filtered_items.nil? || i >= @filtered_items.size
         @filtered_items[i].index
       end
 
@@ -549,8 +550,29 @@ module Bubbles
       def new_status_message(s : String) : Tea::Cmd
         @status_message = s
         @status_message_expires_at = Time.utc + @status_message_lifetime
+
+        # Stop existing timer if any
+        if channel = @status_message_timer_channel
+          channel.close
+          @status_message_timer_channel = nil
+        end
+
+        # Create new timer channel
+        channel = Channel(Nil).new(1)
+        @status_message_timer_channel = channel
+
+        # Spawn timer fiber
+        spawn do
+          sleep @status_message_lifetime
+          begin
+            channel.send(nil) unless channel.closed?
+          rescue Channel::ClosedError
+            # Ignore - timer was stopped
+          end
+        end
+
         -> {
-          sleep(@status_message_lifetime)
+          channel.receive if channel
           StatusMessageTimeoutMsg.new.as(Tea::Msg?)
         }
       end
@@ -600,20 +622,7 @@ module Bubbles
         # Remove nil commands
         cmds.reject!(&.nil?)
 
-        if cmds.empty?
-          {self, nil}
-        else
-          # Convert to tuple for splat
-          case cmds.size
-          when 1
-            {self, cmds[0]}
-          when 2
-            {self, Tea.batch(cmds[0], cmds[1])}
-          else
-            # Should not happen, but handle it
-            {self, Tea.batch(cmds[0], cmds[1])}
-          end
-        end
+        {self, Tea.batch(*cmds)}
       end
 
       def short_help : Array(Bubbles::Key::Binding)
@@ -806,18 +815,7 @@ module Bubbles
         end
 
         update_pagination
-        return nil if cmds.empty?
-
-        # Convert to tuple for splat
-        case cmds.size
-        when 1
-          cmds[0] || -> { nil.as(Tea::Msg?) }
-        when 2
-          Tea.batch(cmds[0], cmds[1])
-        else
-          # Should not happen
-          -> { nil.as(Tea::Msg?) }
-        end
+        Tea.batch(*cmds)
       end
 
       private def title_view : String
@@ -988,6 +986,10 @@ module Bubbles
       private def hide_status_message
         @status_message = ""
         @status_message_expires_at = nil
+        if channel = @status_message_timer_channel
+          channel.close
+          @status_message_timer_channel = nil
+        end
       end
 
       private def max_cursor_index : Int32
