@@ -1,46 +1,13 @@
 # go_id	kind	status	crystal_refs	notes
-styles.go::func::DefaultDarkStyles	func	missing		auto-generated
-styles.go::func::DefaultLightStyles	func	missing		auto-generated
-styles.go::func::DefaultStyles	func	missing		auto-generated
-styles.go::struct::CursorStyle	struct	missing		auto-generated
-styles.go::struct::Styles	struct	missing		auto-generated
-styles.go::struct::StyleState	struct	missing		auto-generated
-textinput_test.go::test::Test_CurrentSuggestion	test	missing		auto-generated
-textinput_test.go::test::Test_SlicingOutsideCap	test	missing		auto-generated
-textinput_test.go::test::TestChinesePlaceholder	test	missing		auto-generated
-textinput_test.go::test::TestPlaceholderTruncate	test	missing		auto-generated
-textinput.go::const::EchoNone	const	missing		auto-generated
-textinput.go::const::EchoNormal	const	missing		auto-generated
-textinput.go::const::EchoPassword	const	missing		auto-generated
-textinput.go::func::Blink	func	missing		auto-generated
-textinput.go::func::DefaultKeyMap	func	missing		auto-generated
-textinput.go::func::New	func	missing		auto-generated
-textinput.go::func::Paste	func	missing		auto-generated
-textinput.go::method::Model.AvailableSuggestions	method	missing		auto-generated
-textinput.go::method::Model.Blur	method	missing		auto-generated
-textinput.go::method::Model.CurrentSuggestion	method	missing		auto-generated
-textinput.go::method::Model.CurrentSuggestionIndex	method	missing		auto-generated
-textinput.go::method::Model.Cursor	method	missing		auto-generated
-textinput.go::method::Model.CursorEnd	method	missing		auto-generated
-textinput.go::method::Model.CursorStart	method	missing		auto-generated
-textinput.go::method::Model.Focus	method	missing		auto-generated
-textinput.go::method::Model.Focused	method	missing		auto-generated
-textinput.go::method::Model.MatchedSuggestions	method	missing		auto-generated
-textinput.go::method::Model.Position	method	missing		auto-generated
-textinput.go::method::Model.Reset	method	missing		auto-generated
-textinput.go::method::Model.SetCursor	method	missing		auto-generated
-textinput.go::method::Model.SetStyles	method	missing		auto-generated
-textinput.go::method::Model.SetSuggestions	method	missing		auto-generated
-textinput.go::method::Model.SetValue	method	missing		auto-generated
-textinput.go::method::Model.SetVirtualCursor	method	missing		auto-generated
-textinput.go::method::Model.SetWidth	method	missing		auto-generated
-textinput.go::method::Model.Styles	method	missing		auto-generated
-textinput.go::method::Model.Update	method	missing		auto-generated
-textinput.go::method::Model.Value	method	missing		auto-generated
-textinput.go::method::Model.View	method	missing		auto-generated
-textinput.go::method::Model.VirtualCursor	method	missing		auto-generated
-textinput.go::method::Model.Width	method	missing		auto-generated
-textinput.go::struct::KeyMap	struct	missing		auto-generated
-textinput.go::struct::Model	struct	missing		auto-generated
-textinput.go::type::EchoMode	type	missing		auto-generated
-textinput.go::type::ValidateFunc	type	missing		auto-generated
+spinner_test.go::test::TestSpinnerNew	test	ported	spec/spinner_spec.cr:4-35	All test cases ported
+spinner.go::func::New	func	ported	src/bubbles/spinner.cr:121-130	Exact Go logic with variadic options
+spinner.go::func::WithSpinner	func	ported	src/bubbles/spinner.cr:133-135	Returns Option that sets spinner
+spinner.go::func::WithStyle	func	ported	src/bubbles/spinner.cr:137-139	Returns Option that sets style
+spinner.go::method::Model.ID	method	ported	src/bubbles/spinner.cr:70-72	Returns spinner's unique ID
+spinner.go::method::Model.Tick	method	ported	src/bubbles/spinner.cr:104-106	Returns TickMsg with time, id, tag
+spinner.go::method::Model.Update	method	ported	src/bubbles/spinner.cr:74-98	Exact Go logic with ID/tag filtering
+spinner.go::method::Model.View	method	ported	src/bubbles/spinner.cr:100-104	Renders frame with style, error check
+spinner.go::struct::Model	struct	ported	src/bubbles/spinner.cr:44-68	Public spinner/style, private frame/id/tag
+spinner.go::struct::Spinner	struct	ported	src/bubbles/spinner.cr:13-19	Frames and FPS fields
+spinner.go::struct::TickMsg	struct	ported	src/bubbles/spinner.cr:34-41	Public time/id, private tag
+spinner.go::type::Option	type	ported	src/bubbles/spinner.cr:119	Proc(Model, Nil) matches Go func(*Model)

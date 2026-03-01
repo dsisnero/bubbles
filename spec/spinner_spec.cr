@@ -7,7 +7,7 @@ describe Bubbles::Spinner do
     s.spinner.fps.should eq(Bubbles::Spinner::Line.fps)
     s.spinner.frames.should eq(Bubbles::Spinner::Line.frames)
 
-    custom = Bubbles::Spinner::Spinner.new(["a", "b", "c", "d"], 16.milliseconds)
+    custom = Bubbles::Spinner::Spinner.new(["a", "b", "c", "d"], 16.nanoseconds)
     s2 = Bubbles::Spinner.new(Bubbles::Spinner.with_spinner(custom))
     s2.spinner.fps.should eq(custom.fps)
     s2.spinner.frames.should eq(custom.frames)

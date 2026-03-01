@@ -35,7 +35,7 @@ module Bubbles
       include Tea::Msg
       getter time : Time
       getter id : Int32
-      getter tag : Int32
+      @tag : Int32
 
       def initialize(@time : Time, @id : Int32, @tag : Int32)
       end
@@ -44,9 +44,14 @@ module Bubbles
     class Model
       property spinner : Spinner
       property style : Lipgloss::Style
-      property frame : Int32
-      property id : Int32
-      property tag : Int32
+
+      @frame : Int32
+      @id : Int32
+      @tag : Int32
+
+      protected setter frame
+      protected setter id
+      protected setter tag
 
       def initialize
         @spinner = Line
@@ -56,14 +61,8 @@ module Bubbles
         @tag = 0
       end
 
-      def dup : Model
-        m = Model.new
-        m.spinner = @spinner
-        m.style = @style.dup
-        m.frame = @frame
-        m.id = @id
-        m.tag = @tag
-        m
+      def id : Int32
+        @id
       end
 
       def update(msg : Tea::Msg) : {Model, Tea::Cmd}
@@ -72,17 +71,27 @@ module Bubbles
           if msg.id > 0 && msg.id != @id
             return {self, nil}
           end
-          if msg.tag > 0 && msg.tag != @tag
+          if msg.@tag > 0 && msg.@tag != @tag
             return {self, nil}
           end
 
-          m = self.dup
+          # Create a copy (like Go's value receiver)
+          m = Model.new
+          m.spinner = @spinner
+          m.style = @style.dup
+          m.frame = @frame
+          m.id = @id
+          m.tag = @tag
+
+          # Update frame
           m.frame += 1
           if m.frame >= m.spinner.frames.size
             m.frame = 0
           end
 
+          # Update tag
           m.tag += 1
+
           {m, tick(m.id, m.tag)}
         else
           {self, nil}
