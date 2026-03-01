@@ -908,7 +908,7 @@ module Bubbles
           when key_matches(msg, @key_map.delete_before_cursor)
             delete_before_cursor
           when key_matches(msg, @key_map.paste)
-            return {self, TextInput.paste}
+            return {self, -> { TextInput.paste }}
           when key_matches(msg, @key_map.delete_word_forward)
             delete_word_forward
           when key_matches(msg, @key_map.next_suggestion)
@@ -917,9 +917,7 @@ module Bubbles
             previous_suggestion
           else
             # Input one or more regular characters.
-            if !msg.text.empty?
-              insert_runes_from_user_input(msg.text.chars)
-            end
+            insert_runes_from_user_input(msg.text.chars)
           end
           update_suggestions
         when Tea::PasteMsg
@@ -949,7 +947,7 @@ module Bubbles
         if cmds.empty?
           {self, nil}
         else
-          {self, -> { cmds.each(&.call); nil }}
+          {self, Tea.batch(*cmds)}
         end
       end
 
