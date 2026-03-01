@@ -32,9 +32,9 @@ module Bubbles
 
     class PasteErrMsg
       include Tea::Msg
-      property error : Exception
+      property error : Exception?
 
-      def initialize(@error : Exception); end
+      def initialize(@error : Exception?); end
     end
 
     # Blink is a command used to initialize cursor blinking.
