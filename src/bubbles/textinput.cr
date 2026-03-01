@@ -5,6 +5,7 @@ require "./cursor"
 require "uniwidth"
 require "textseg"
 require "easyclip"
+require "colorful"
 
 module Bubbles
   module TextInput
@@ -154,12 +155,12 @@ module Bubbles
 
       # Shape is the cursor shape. The following shapes are available:
       #
-      # - Tea::CursorShape::Block
-      # - Tea::CursorShape::Underline
-      # - Tea::CursorShape::Bar
+      # - Tea::CursorStyle::Block
+      # - Tea::CursorStyle::Underline
+      # - Tea::CursorStyle::Bar
       #
       # This is only used for real cursors.
-      property shape : String
+      property shape : Tea::CursorStyle
 
       # CursorBlink determines whether or not the cursor should blink.
       property? blink : Bool
@@ -173,7 +174,7 @@ module Bubbles
 
       def initialize(
         @color = "7",
-        @shape = "block",
+        @shape = Tea::CursorStyle::Block,
         @blink = true,
         @blink_speed = 500.milliseconds,
       )
@@ -200,7 +201,7 @@ module Bubbles
       )
       s.cursor = CursorStyle.new(
         color: "7",
-        shape: "block",
+        shape: Tea::CursorStyle::Block,
         blink: true
       )
       s
@@ -975,20 +976,23 @@ module Bubbles
 
         style = @styles.cursor
         cursor = Tea::Cursor.new(x: x_offset, y: 0)
-        cursor.color = style.color if style.color && !style.color.empty?
+        if style.color && !style.color.empty?
+          # Convert string color to Colorful::Color
+          # Try to parse as hex color first, then as ANSI color
+          if style.color.starts_with?('#')
+            cursor.color = Colorful::Color.hex(style.color)
+          else
+            # ANSI color code (e.g., "7" for white)
+            # For now, set to nil (default color)
+            cursor.color = nil
+          end
+        end
 
-        # Map shape string to CursorStyle enum
-        cursor_style = case style.shape
-                       when "underline"
-                         Tea::CursorStyle::Underline
-                       when "bar"
-                         Tea::CursorStyle::Bar
-                       else
-                         Tea::CursorStyle::Block
-                       end
+        # Start with the base shape (non-blinking)
+        cursor_style = style.shape
 
         # Apply blinking if needed
-        if style.blink
+        if style.blink?
           cursor_style = case cursor_style
                          when Tea::CursorStyle::Block
                            Tea::CursorStyle::BlockBlinking
