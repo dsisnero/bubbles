@@ -61,20 +61,62 @@ describe Bubbles::Table do
   end
 
   it "TestCursorNavigation" do
-    rows = Array.new(5) { |i| ["row#{i}"] }
-    table = Bubbles::Table.new(
-      Bubbles::Table.with_rows(rows),
-      Bubbles::Table.with_focused(true)
-    )
+    tests = {
+      "New" => {
+        rows:   [["r1"], ["r2"], ["r3"]],
+        action: ->(t : Bubbles::Table::Model) { },
+        want:   0,
+      },
+      "MoveDown" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.move_down(2) },
+        want:   2,
+      },
+      "MoveUp" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.cursor = 3; t.move_up(2) },
+        want:   1,
+      },
+      "GotoBottom" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.goto_bottom },
+        want:   3,
+      },
+      "GotoTop" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.cursor = 3; t.goto_top },
+        want:   0,
+      },
+      "SetCursor" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.set_cursor(2) },
+        want:   2,
+      },
+      "MoveDown with overflow" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.move_down(5) },
+        want:   3,
+      },
+      "MoveUp with overflow" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.cursor = 3; t.move_up(5) },
+        want:   0,
+      },
+      "Blur does not stop movement" => {
+        rows:   [["r1"], ["r2"], ["r3"], ["r4"]],
+        action: ->(t : Bubbles::Table::Model) { t.blur; t.move_down(2) },
+        want:   2,
+      },
+    }
 
-    table.update(Tea::Key.new(Tea::KeyType::Down))
-    table.cursor.should eq(1)
-    table.update(Tea::Key.new(Tea::KeyType::Up))
-    table.cursor.should eq(0)
-    table.goto_bottom
-    table.cursor.should eq(4)
-    table.goto_top
-    table.cursor.should eq(0)
+    tests.each do |name, test|
+      table = Bubbles::Table.new(
+        Bubbles::Table.with_columns(test_cols),
+        Bubbles::Table.with_rows(test[:rows])
+      )
+      test[:action].call(table)
+      table.cursor.should eq(test[:want]), "Failed test case: #{name}"
+    end
   end
 
   it "TestModel_SetRows" do
