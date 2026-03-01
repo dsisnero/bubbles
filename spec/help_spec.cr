@@ -1,5 +1,6 @@
 require "./spec_helper"
 require "../src/bubbles/help"
+require "ansi"
 
 class TestKeyMap
   include Bubbles::Help::KeyMap
@@ -34,8 +35,11 @@ describe Bubbles::Help do
     [20, 30, 40].each do |w|
       m.set_width(w)
       s = m.full_help_view(kb.full_help)
-      s.should_not be_empty
-      Lipgloss.width(s).should be <= w
+      s = Ansi.strip(s)
+
+      golden_path = File.expand_path("../vendor/bubbles/help/testdata/TestFullHelp/full_help_#{w}_width.golden", __DIR__)
+      expected = File.read(golden_path)
+      s.should eq(expected)
     end
   end
 end

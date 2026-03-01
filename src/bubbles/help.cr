@@ -30,8 +30,25 @@ module Bubbles
       end
     end
 
-    def self.default_styles(_is_dark : Bool) : Styles
-      Styles.new
+    def self.default_styles(is_dark : Bool) : Styles
+      # Choose colors based on is_dark parameter
+      key_hex = is_dark ? "#626262" : "#909090"
+      desc_hex = is_dark ? "#4A4A4A" : "#B2B2B2"
+      sep_hex = is_dark ? "#3C3C3C" : "#DADADA"
+
+      key_style = Lipgloss::Style.new.foreground(key_hex)
+      desc_style = Lipgloss::Style.new.foreground(desc_hex)
+      sep_style = Lipgloss::Style.new.foreground(sep_hex)
+
+      Styles.new(
+        ellipsis: sep_style,
+        short_key: key_style,
+        short_desc: desc_style,
+        short_separator: sep_style,
+        full_key: key_style,
+        full_desc: desc_style,
+        full_separator: sep_style
+      )
     end
 
     def self.default_dark_styles : Styles
@@ -40,6 +57,11 @@ module Bubbles
 
     def self.default_light_styles : Styles
       default_styles(false)
+    end
+
+    # New creates a new help view with some useful defaults.
+    def self.new : Model
+      Model.new
     end
 
     class Model
