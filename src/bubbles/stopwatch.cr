@@ -46,14 +46,28 @@ module Bubbles
       property id : Int32
       property tag : Int32
       property? running : Bool
-      property elapsed : Time::Span
+
+      # Internal field matching Go's 'd' field
+      @d : Time::Span = 0.seconds
 
       def initialize
         @interval = 1.second
         @id = Stopwatch.next_id
         @tag = 0
         @running = false
-        @elapsed = 0.seconds
+        @d = 0.seconds
+      end
+
+      def id : Int32
+        @id
+      end
+
+      def elapsed : Time::Span
+        @d
+      end
+
+      def running : Bool
+        @running
       end
 
       def self.new : Model
@@ -69,20 +83,22 @@ module Bubbles
         m
       end
 
-      def init : Tea::Cmd
+      def init : Tea::Cmd?
         start
       end
 
-      def start : Tea::Cmd
-        @running = true
-        tick(@id, @tag, @interval)
+      def start : Tea::Cmd?
+        Tea.sequence(
+          -> { StartStopMsg.new(@id, true).as(Tea::Msg?) },
+          tick(@id, @tag, @interval)
+        )
       end
 
       def stop : Tea::Cmd
         -> { StartStopMsg.new(@id, false).as(Tea::Msg?) }
       end
 
-      def toggle : Tea::Cmd
+      def toggle : Tea::Cmd?
         return stop if running?
         start
       end
@@ -98,14 +114,14 @@ module Bubbles
           @running = msg.running
         when ResetMsg
           return {self, nil.as(Tea::Cmd?)} if msg.id != @id
-          @elapsed = 0.seconds
+          @d = 0.seconds
         when TickMsg
           return {self, nil.as(Tea::Cmd?)} if !running? || msg.id != @id
           if msg.tag > 0 && msg.tag != @tag
             return {self, nil.as(Tea::Cmd?)}
           end
 
-          @elapsed += @interval
+          @d += @interval
           @tag += 1
           return {self, tick(@id, @tag, @interval)}
         end
@@ -114,7 +130,7 @@ module Bubbles
       end
 
       def view : String
-        @elapsed.to_s
+        @d.to_s
       end
 
       private def tick(id : Int32, tag : Int32, d : Time::Span) : Tea::Cmd

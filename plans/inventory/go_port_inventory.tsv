@@ -227,88 +227,88 @@ progress/progress.go::struct::FrameMsg	struct	missing		auto-generated
 progress/progress.go::struct::Model	struct	missing		auto-generated
 progress/progress.go::type::ColorFunc	type	missing		auto-generated
 progress/progress.go::type::Option	type	missing		auto-generated
-spinner/spinner_test.go::test::TestSpinnerNew	test	missing		auto-generated
-spinner/spinner.go::func::New	func	missing		auto-generated
-spinner/spinner.go::func::WithSpinner	func	missing		auto-generated
-spinner/spinner.go::func::WithStyle	func	missing		auto-generated
-spinner/spinner.go::method::Model.ID	method	missing		auto-generated
-spinner/spinner.go::method::Model.Tick	method	missing		auto-generated
-spinner/spinner.go::method::Model.Update	method	missing		auto-generated
-spinner/spinner.go::method::Model.View	method	missing		auto-generated
-spinner/spinner.go::struct::Model	struct	missing		auto-generated
-spinner/spinner.go::struct::Spinner	struct	missing		auto-generated
-spinner/spinner.go::struct::TickMsg	struct	missing		auto-generated
-spinner/spinner.go::type::Option	type	missing		auto-generated
-stopwatch/stopwatch.go::func::New	func	missing		auto-generated
-stopwatch/stopwatch.go::func::WithInterval	func	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Elapsed	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.ID	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Init	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Reset	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Running	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Start	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Stop	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Toggle	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.Update	method	missing		auto-generated
-stopwatch/stopwatch.go::method::Model.View	method	missing		auto-generated
-stopwatch/stopwatch.go::struct::Model	struct	missing		auto-generated
-stopwatch/stopwatch.go::struct::ResetMsg	struct	missing		auto-generated
-stopwatch/stopwatch.go::struct::StartStopMsg	struct	missing		auto-generated
-stopwatch/stopwatch.go::struct::TickMsg	struct	missing		auto-generated
-stopwatch/stopwatch.go::type::Option	type	missing		auto-generated
-table/table_test.go::test::TestCursorNavigation	test	missing		auto-generated
-table/table_test.go::test::TestModel_FromValues	test	missing		auto-generated
-table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	missing		auto-generated
-table/table_test.go::test::TestModel_RenderRow	test	missing		auto-generated
-table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	missing		auto-generated
-table/table_test.go::test::TestModel_SetColumns	test	missing		auto-generated
-table/table_test.go::test::TestModel_SetRows	test	missing		auto-generated
-table/table_test.go::test::TestModel_View	test	missing		auto-generated
+spinner/spinner_test.go::test::TestSpinnerNew	test	ported		exact port complete; test structure matches Go; all sub-issues closed
+spinner/spinner.go::func::New	func	ported		Bubbles::Spinner.new with exact option pattern
+spinner/spinner.go::func::WithSpinner	func	ported		Bubbles::Spinner.with_spinner; exact match
+spinner/spinner.go::func::WithStyle	func	ported		Bubbles::Spinner.with_style; exact match
+spinner/spinner.go::method::Model.ID	method	ported		property id provides equivalent functionality
+spinner/spinner.go::method::Model.Tick	method	ported		exists and returns exact TickMsg structure
+spinner/spinner.go::method::Model.Update	method	ported		exists with exact logic matching Go
+spinner/spinner.go::method::Model.View	method	ported		exists and matches Go exactly
+spinner/spinner.go::struct::Model	struct	ported		class Model with all fields; ID accessible via property
+spinner/spinner.go::struct::Spinner	struct	ported		struct Spinner (renamed from SpinnerData); exact match
+spinner/spinner.go::struct::TickMsg	struct	ported		class TickMsg with exact fields
+spinner/spinner.go::type::Option	type	ported		alias Option = Proc(Model, Nil); matches Go func(*Model)
+stopwatch/stopwatch.go::func::New	func	partial	Bubbles::Stopwatch.new, Bubbles::Stopwatch::Model.new	Partially implemented - different constructor patterns
+stopwatch/stopwatch.go::func::WithInterval	func	partial	Bubbles::Stopwatch.with_interval	Partially implemented - as method not function
+stopwatch/stopwatch.go::method::Model.Elapsed	method	missing		Missing method - has elapsed property but no Elapsed() method
+stopwatch/stopwatch.go::method::Model.ID	method	missing		Missing method
+stopwatch/stopwatch.go::method::Model.Init	method	partial	Bubbles::Stopwatch::Model#init	Partially implemented
+stopwatch/stopwatch.go::method::Model.Reset	method	partial	Bubbles::Stopwatch::Model#reset	Partially implemented
+stopwatch/stopwatch.go::method::Model.Running	method	partial	Bubbles::Stopwatch::Model#running?	Partially implemented - has running? but not Running()
+stopwatch/stopwatch.go::method::Model.Start	method	partial	Bubbles::Stopwatch::Model#start	Partially implemented - missing tea.Sequence logic
+stopwatch/stopwatch.go::method::Model.Stop	method	partial	Bubbles::Stopwatch::Model#stop	Partially implemented
+stopwatch/stopwatch.go::method::Model.Toggle	method	partial	Bubbles::Stopwatch::Model#toggle	Partially implemented
+stopwatch/stopwatch.go::method::Model.Update	method	partial	Bubbles::Stopwatch::Model#update	Partially implemented - needs exact parity check
+stopwatch/stopwatch.go::method::Model.View	method	partial	Bubbles::Stopwatch::Model#view	Partially implemented
+stopwatch/stopwatch.go::struct::Model	struct	partial	Bubbles::Stopwatch::Model	Partially implemented - different field names (d vs elapsed)
+stopwatch/stopwatch.go::struct::ResetMsg	struct	partial	Bubbles::Stopwatch::ResetMsg	Partially implemented
+stopwatch/stopwatch.go::struct::StartStopMsg	struct	partial	Bubbles::Stopwatch::StartStopMsg	Partially implemented
+stopwatch/stopwatch.go::struct::TickMsg	struct	partial	Bubbles::Stopwatch::TickMsg	Partially implemented
+stopwatch/stopwatch.go::type::Option	type	partial	Bubbles::Stopwatch::Option	Partially implemented - as alias not function type
+table/table_test.go::test::TestCursorNavigation	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_FromValues	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_RenderRow	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_SetColumns	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_SetRows	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestModel_View	test	ported	spec/table_spec.cr	ported with exact Go parity
 table/table_test.go::test::TestModel_View_CenteredInABox	test	missing		auto-generated
-table/table_test.go::test::TestNew	test	missing		auto-generated
-table/table_test.go::test::TestTableAlignment	test	missing		auto-generated
-table/table.go::func::DefaultKeyMap	func	missing		auto-generated
-table/table.go::func::DefaultStyles	func	missing		auto-generated
-table/table.go::func::New	func	missing		auto-generated
-table/table.go::func::WithColumns	func	missing		auto-generated
-table/table.go::func::WithFocused	func	missing		auto-generated
-table/table.go::func::WithHeight	func	missing		auto-generated
-table/table.go::func::WithKeyMap	func	missing		auto-generated
-table/table.go::func::WithRows	func	missing		auto-generated
-table/table.go::func::WithStyles	func	missing		auto-generated
-table/table.go::func::WithWidth	func	missing		auto-generated
-table/table.go::method::KeyMap.FullHelp	method	missing		auto-generated
-table/table.go::method::KeyMap.ShortHelp	method	missing		auto-generated
-table/table.go::method::Model.Blur	method	missing		auto-generated
-table/table.go::method::Model.Columns	method	missing		auto-generated
-table/table.go::method::Model.Cursor	method	missing		auto-generated
-table/table.go::method::Model.Focus	method	missing		auto-generated
-table/table.go::method::Model.Focused	method	missing		auto-generated
-table/table.go::method::Model.FromValues	method	missing		auto-generated
-table/table.go::method::Model.GotoBottom	method	missing		auto-generated
-table/table.go::method::Model.GotoTop	method	missing		auto-generated
-table/table.go::method::Model.Height	method	missing		auto-generated
-table/table.go::method::Model.HelpView	method	missing		auto-generated
-table/table.go::method::Model.MoveDown	method	missing		auto-generated
-table/table.go::method::Model.MoveUp	method	missing		auto-generated
-table/table.go::method::Model.Rows	method	missing		auto-generated
-table/table.go::method::Model.SelectedRow	method	missing		auto-generated
-table/table.go::method::Model.SetColumns	method	missing		auto-generated
-table/table.go::method::Model.SetCursor	method	missing		auto-generated
-table/table.go::method::Model.SetHeight	method	missing		auto-generated
-table/table.go::method::Model.SetRows	method	missing		auto-generated
-table/table.go::method::Model.SetStyles	method	missing		auto-generated
-table/table.go::method::Model.SetWidth	method	missing		auto-generated
-table/table.go::method::Model.Update	method	missing		auto-generated
-table/table.go::method::Model.UpdateViewport	method	missing		auto-generated
-table/table.go::method::Model.View	method	missing		auto-generated
-table/table.go::method::Model.Width	method	missing		auto-generated
-table/table.go::struct::Column	struct	missing		auto-generated
-table/table.go::struct::KeyMap	struct	missing		auto-generated
-table/table.go::struct::Model	struct	missing		auto-generated
-table/table.go::struct::Styles	struct	missing		auto-generated
-table/table.go::type::Option	type	missing		auto-generated
-table/table.go::type::Row	type	missing		auto-generated
+table/table_test.go::test::TestNew	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table_test.go::test::TestTableAlignment	test	ported	spec/table_spec.cr	ported with exact Go parity
+table/table.go::func::DefaultKeyMap	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::DefaultStyles	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::New	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithColumns	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithFocused	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithHeight	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithKeyMap	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithRows	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithStyles	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::func::WithWidth	func	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::KeyMap.FullHelp	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::KeyMap.ShortHelp	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Blur	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Columns	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Cursor	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Focus	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Focused	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.FromValues	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.GotoBottom	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.GotoTop	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Height	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.HelpView	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.MoveDown	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.MoveUp	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Rows	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SelectedRow	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetColumns	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetCursor	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetHeight	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetRows	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetStyles	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.SetWidth	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Update	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.UpdateViewport	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.View	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::method::Model.Width	method	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::struct::Column	struct	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::struct::KeyMap	struct	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::struct::Model	struct	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::struct::Styles	struct	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::type::Option	type	ported	src/bubbles/table.cr	ported with exact Go parity
+table/table.go::type::Row	type	ported	src/bubbles/table.cr	ported with exact Go parity
 textarea/textarea_test.go::test::TestCanHandleEmoji	test	missing		auto-generated
 textarea/textarea_test.go::test::TestInsertString	test	missing		auto-generated
 textarea/textarea_test.go::test::TestSetValue	test	missing		auto-generated
