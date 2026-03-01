@@ -503,7 +503,8 @@ module Bubbles
         -> {
           begin
             entries = Dir.children(path).map do |name|
-              File.info(File.join(path, name))
+              info = File.info(File.join(path, name))
+              Entry.new(name, info)
             end
 
             # Sort: directories first, then alphabetical
@@ -566,6 +567,11 @@ module Bubbles
     def self.hidden?(file : String) : {Bool, Exception?}
       # Unix implementation (matching hidden_unix.go)
       {file.starts_with?("."), nil}
+    end
+
+    # New returns a new filepicker model with default styling and key bindings.
+    def self.new : Model
+      Model.new
     end
   end
 end
