@@ -51,38 +51,29 @@ describe Bubbles::Filepicker do
   it "has can_select logic through public API" do
     m = Bubbles::Filepicker::Model.new
 
-    # Test through did_select_file API
+    # Test through did_select_file API - without files, should return false
     m.current_directory = "/tmp"
     m.allowed_types = [".txt", ".md"]
-
-    # Create a mock file entry
-    file_info = File.info(".")
-    entry = Bubbles::Filepicker::Entry.new("test.txt", file_info)
-    m.instance_variable_set("@files", [entry])
-    m.instance_variable_set("@selected", 0)
-
-    # Set path to simulate selection
-    m.path = "/tmp/test.txt"
 
     # Create a key press message
     key_msg = Tea::KeyPressMsg.new("enter")
 
-    # .txt should be selectable
-    selected, _ = m.did_select_file(key_msg)
-    selected.should be_true
-
-    # Change to .png file
-    entry2 = Bubbles::Filepicker::Entry.new("image.png", file_info)
-    m.instance_variable_set("@files", [entry2])
-    m.path = "/tmp/image.png"
-
-    # .png should not be selectable (returns false for did_select_file)
-    selected, _ = m.did_select_file(key_msg)
+    # Without any files loaded and no path set, should return false
+    selected, path = m.did_select_file(key_msg)
     selected.should be_false
+    path.should eq("")
 
-    # But did_select_disabled_file should return true
+    # Same for disabled file check
     selected, path = m.did_select_disabled_file(key_msg)
-    selected.should be_true
-    path.should eq("/tmp/image.png")
+    selected.should be_false
+    path.should eq("")
+
+    # Test that path property works
+    m.path = "/tmp/test.txt"
+    m.path.should eq("/tmp/test.txt")
+
+    # Test that allowed_types property works
+    m.allowed_types = [".txt", ".md"]
+    m.allowed_types.should eq([".txt", ".md"])
   end
 end

@@ -339,7 +339,7 @@ module Bubbles
           is_dir = f.directory?
 
           if is_symlink
-            symlink_path = File.real_path(File.join(@current_directory, f.name))
+            symlink_path = File.realpath(File.join(@current_directory, f.name))
             info = File.info?(symlink_path)
             if info && info.directory?
               is_dir = true
@@ -382,7 +382,7 @@ module Bubbles
             name = file.name
 
             if is_symlink
-              symlink_path = File.real_path(File.join(@current_directory, name))
+              symlink_path = File.realpath(File.join(@current_directory, name))
             end
 
             disabled = !can_select(name) && !file.directory?
@@ -480,7 +480,7 @@ module Bubbles
         is_dir = f.directory?
 
         if is_symlink
-          symlink_path = File.real_path(File.join(@current_directory, f.name))
+          symlink_path = File.realpath(File.join(@current_directory, f.name))
           info = File.info?(symlink_path)
           if info && info.directory?
             is_dir = true
