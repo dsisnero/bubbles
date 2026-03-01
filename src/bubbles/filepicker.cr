@@ -500,7 +500,7 @@ module Bubbles
       end
 
       private def read_dir(path : String, show_hidden : Bool) : Tea::Cmd
-        -> {
+        -> : Tea::Msg? {
           begin
             entries = Dir.children(path).map do |name|
               info = File.info(File.join(path, name))
@@ -518,7 +518,7 @@ module Bubbles
 
             unless show_hidden
               entries = entries.reject do |entry|
-                hidden, _ = hidden?(entry.name)
+                hidden, _ = Filepicker.hidden?(entry.name)
                 hidden
               end
             end
