@@ -319,8 +319,11 @@ module Bubbles
       def remove_item(index : Int32)
         @items = remove_item_from_slice(@items, index)
         if @filter_state != FilterState::Unfiltered
-          @filtered_items = remove_filter_match_from_slice(@filtered_items, index)
-          reset_filtering if @filtered_items.empty?
+          filtered = @filtered_items
+          if filtered
+            @filtered_items = remove_filter_match_from_slice(filtered, index)
+            reset_filtering if @filtered_items.empty?
+          end
         end
         update_pagination
       end
@@ -437,8 +440,9 @@ module Bubbles
       end
 
       def matches_for_item(index : Int32) : Array(Int32)?
-        return nil if @filtered_items.nil? || index >= @filtered_items.size
-        @filtered_items[index].matches
+        filtered = @filtered_items
+        return nil if filtered.nil? || index >= filtered.size
+        filtered[index].matches
       end
 
       def index : Int32
@@ -447,8 +451,9 @@ module Bubbles
 
       def global_index : Int32
         i = index
-        return i if @filtered_items.nil? || i >= @filtered_items.size
-        @filtered_items[i].index
+        filtered = @filtered_items
+        return i if filtered.nil? || i >= filtered.size
+        filtered[i].index
       end
 
       def cursor_up
