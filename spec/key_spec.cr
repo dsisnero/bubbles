@@ -8,16 +8,13 @@ describe Bubbles::Key do
         Bubbles::Key.with_keys("k", "up"),
         Bubbles::Key.with_help("↑/k", "move up"),
       )
-      binding.enabled?.should be_true
       binding.enabled.should be_true
 
       binding.set_enabled(false)
-      binding.enabled?.should be_false
       binding.enabled.should be_false
 
       binding.set_enabled(true)
       binding.unbind
-      binding.enabled?.should be_false
       binding.enabled.should be_false
     end
 
@@ -83,6 +80,30 @@ describe Bubbles::Key do
       binding = Bubbles::Key::Binding.new
       binding.unbind
       Bubbles::Key.matches?("any", binding).should be_false
+    end
+
+    it "WithKeys with no arguments creates nil keys (Go parity)" do
+      binding = Bubbles::Key.new_binding(Bubbles::Key.with_keys)
+      binding.keys.should be_nil
+      binding.enabled?.should be_false
+    end
+
+    it "SetKeys with no arguments sets nil keys (Go parity)" do
+      binding = Bubbles::Key::Binding.new
+      binding.set_keys
+      binding.keys.should be_nil
+      binding.enabled?.should be_false
+    end
+
+    it "Enabled matches Go behavior for empty vs nil keys" do
+      # Test that empty array enables binding (Go: non-nil slice enables)
+      binding = Bubbles::Key::Binding.new
+      binding.keys = [] of String
+      binding.enabled?.should be_true
+
+      # Test that nil keys disables binding
+      binding.keys = nil
+      binding.enabled?.should be_false
     end
   end
 end

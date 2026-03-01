@@ -12,6 +12,10 @@ module Bubbles
       end
 
       # SetKeys sets the keys for the keybinding.
+      def set_keys
+        @keys = nil
+      end
+
       def set_keys(*keys : String) # ameba:disable Naming/AccessorMethodName
         @keys = keys.to_a
       end
@@ -89,6 +93,10 @@ module Bubbles
     end
 
     # WithKeys initializes a keybinding with the given keystrokes.
+    def self.with_keys : BindingOpt
+      ->(b : Binding) { b.keys = nil }
+    end
+
     def self.with_keys(*keys : String) : BindingOpt
       ->(b : Binding) { b.keys = keys.to_a }
     end
