@@ -299,6 +299,25 @@ module Bubbles
         update_virtual_cursor_style
       end
 
+      # copy creates a copy of the model for functional updates.
+      def copy
+        # Create a new instance
+        result = self.class.new
+
+        # Copy all fields
+        {% for ivar in @type.instance_vars %}
+          result.@{{ivar.id}} = @{{ivar.id}}
+        {% end %}
+
+        # Deep copy arrays
+        result.value = @value.dup
+        result.suggestions = @suggestions.dup
+        result.matched_suggestions = @matched_suggestions.dup
+        result.virtual_cursor = @virtual_cursor.dup
+
+        result
+      end
+
       # san initializes or retrieves the rune sanitizer.
       private def san : Sanitizer
         unless @rsan
