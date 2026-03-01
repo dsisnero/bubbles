@@ -151,7 +151,7 @@ module Bubbles
       #
       # For real cursors, the foreground color set here will be used as the
       # cursor color.
-      property color : String
+      property color : Lipgloss::Color | Lipgloss::NoColor
 
       # Shape is the cursor shape. The following shapes are available:
       #
@@ -173,11 +173,17 @@ module Bubbles
       property blink_speed : Time::Span
 
       def initialize(
-        @color = "7",
+        color : String | Lipgloss::Color | Lipgloss::NoColor = Lipgloss.color("7"),
         @shape = Tea::CursorStyle::Block,
         @blink = true,
-        @blink_speed = 500.milliseconds,
+        @blink_speed = 0.seconds,
       )
+        @color = case color
+                 when String
+                   Lipgloss.color(color).as(Lipgloss::Color | Lipgloss::NoColor)
+                 else
+                   color.as(Lipgloss::Color | Lipgloss::NoColor)
+                 end
       end
     end
 
@@ -200,7 +206,7 @@ module Bubbles
         text: Lipgloss::Style.new.foreground(light_dark.call(Lipgloss.color("245"), Lipgloss.color("7")).as(Lipgloss::Color | Lipgloss::NoColor))
       )
       s.cursor = CursorStyle.new(
-        color: "7",
+        color: Lipgloss.color("7"),
         shape: Tea::CursorStyle::Block,
         blink: true
       )
@@ -475,7 +481,7 @@ module Bubbles
           return
         end
 
-        @virtual_cursor.style = Lipgloss::Style.new.foreground(Lipgloss.color(@styles.cursor.color))
+        @virtual_cursor.style = Lipgloss::Style.new.foreground(@styles.cursor.color)
 
         # By default, the blink speed of the cursor is set to a default
         # internally.
@@ -976,16 +982,22 @@ module Bubbles
 
         style = @styles.cursor
         cursor = Tea::Cursor.new(x: x_offset, y: 0)
-        if style.color && !style.color.empty?
-          # Convert string color to Colorful::Color
-          # Try to parse as hex color first, then as ANSI color
-          if style.color.starts_with?('#')
-            cursor.color = Colorful::Color.hex(style.color)
+
+        # Convert Lipgloss::Color | Lipgloss::NoColor to Colorful::Color for cursor
+        case color = style.color
+        when Lipgloss::Color
+          # Lipgloss::Color can be ANSI ("7") or hex ("#FFFFFF")
+          color_str = color.to_s
+          if color_str.starts_with?('#')
+            cursor.color = Colorful::Color.hex(color_str)
           else
-            # ANSI color code (e.g., "7" for white)
-            # For now, set to nil (default color)
+            # ANSI color code - map to RGB
+            # For now, set to nil (default terminal color)
             cursor.color = nil
           end
+        when Lipgloss::NoColor
+          # No color specified
+          cursor.color = nil
         end
 
         # Start with the base shape (non-blinking)

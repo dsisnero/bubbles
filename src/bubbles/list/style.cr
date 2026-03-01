@@ -57,7 +57,7 @@ module Bubbles
 
       prompt = Lipgloss.new_style.foreground(light_dark.call("#04B575", "#ECFD65"))
       s.filter = Bubbles::TextInput.default_styles(dark)
-      s.filter.cursor.color = "#EE6FF8"
+      s.filter.cursor.color = light_dark.call("#EE6FF8", "#EE6FF8")
       s.filter.blurred.prompt = prompt
       s.filter.focused.prompt = prompt
 

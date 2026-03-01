@@ -2,6 +2,7 @@ require "lipgloss"
 require "../help"
 require "../key"
 require "./style"
+require "../list"
 
 module Bubbles
   module List
@@ -33,8 +34,8 @@ module Bubbles
       end
     end
 
-    def self.new_default_item_styles(_is_dark : Bool) : DefaultItemStyles
-      light_dark = ->(_light : String, dark : String) { Lipgloss.color(dark) }
+    def self.new_default_item_styles(is_dark : Bool) : DefaultItemStyles
+      light_dark = ->(light : String, dark : String) { is_dark ? Lipgloss.color(dark) : Lipgloss.color(light) }
       s = DefaultItemStyles.new
 
       s.normal_title = Lipgloss.new_style.foreground(light_dark.call("#1a1a1a", "#dddddd")).padding(0, 0, 0, 2)
