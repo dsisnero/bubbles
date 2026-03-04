@@ -1,4 +1,8 @@
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "lipgloss"
 require "./key"
 require "./cursor"
@@ -184,6 +188,10 @@ module Bubbles
                  else
                    color.as(Lipgloss::Color | Lipgloss::NoColor)
                  end
+      end
+
+      def color=(value : String)
+        @color = Lipgloss.color(value).as(Lipgloss::Color | Lipgloss::NoColor)
       end
     end
 
@@ -438,6 +446,10 @@ module Bubbles
 
       # VirtualCursor returns whether the model is using a virtual cursor.
       def virtual_cursor : Bool
+        @use_virtual_cursor
+      end
+
+      def virtual_cursor? : Bool
         @use_virtual_cursor
       end
 
@@ -862,7 +874,7 @@ module Bubbles
 
       # Update handles incoming messages and returns an updated model
       # along with optional commands.
-      def update(msg : Tea::Msg) : {self, Tea::Cmd}
+      def update(msg : Tea::Msg) : {self, Tea::Cmd?}
         if !@focus
           return {self, nil}
         end
@@ -917,7 +929,7 @@ module Bubbles
           when key_matches(msg, @key_map.delete_before_cursor)
             delete_before_cursor
           when key_matches(msg, @key_map.paste)
-            return {self, -> { TextInput.paste }}
+            return {self, ->{ TextInput.paste.as(Tea::Msg | Nil) }}
           when key_matches(msg, @key_map.delete_word_forward)
             delete_word_forward
           when key_matches(msg, @key_map.next_suggestion)
@@ -942,17 +954,22 @@ module Bubbles
 
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)
-          cmds << cmd
+          cmds << cmd if cmd
 
           # If the cursor position changed, reset the blink state.
           if old_pos != @pos && @virtual_cursor.mode == Cursor::Mode::Blink
             @virtual_cursor.blinked = false
-            cmds << @virtual_cursor.blink
+            blink_cmd = @virtual_cursor.blink
+            cmds << blink_cmd if blink_cmd
           end
         end
 
         handle_overflow
-        {self, Tea.batch(*cmds)}
+        if cmds.empty?
+          {self, nil}
+        else
+          {self, Bubbletea.batch(cmds)}
+        end
       end
 
       # Cursor returns a Tea::Cursor for rendering a real cursor in a Bubble Tea

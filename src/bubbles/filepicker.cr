@@ -1,10 +1,20 @@
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "./key"
 require "lipgloss"
 require "file"
 
 module Bubbles
   module Filepicker
+    @@last_id = Atomic(Int64).new(0_i64)
+
+    def self.next_id : Int32
+      (@@last_id.add(1) + 1).to_i32
+    end
+
     # Internal messages
     class ErrorMsg
       include Tea::Msg
@@ -29,7 +39,7 @@ module Bubbles
       end
 
       def size : UInt64
-        @info.size
+        @info.size.to_u64
       end
 
       def permissions : File::Permissions
@@ -157,41 +167,22 @@ module Bubbles
 
     # Model represents a file picker.
     class Model
-      include Tea::Model
+      private NO_OP_CMD = -> : Tea::Msg? { nil }
 
       property path : String
       property current_directory : String
       property allowed_types : Array(String)
-      property key_map : KeyMap
-      property? show_permissions : Bool
-      property? show_size : Bool
-      property? show_hidden : Bool
-      property? dir_allowed : Bool
-      property? file_allowed : Bool
-      property file_selected : String
       property cursor : String
+      property key_map : KeyMap
       property styles : Styles
-      property? auto_height : Bool
-
-      # Private fields matching Go implementation
-      @id : Int32
-      @files : Array(Entry)
-      @selected : Int32
-      @selected_stack : Stack
-      @min_idx : Int32
-      @max_idx : Int32
-      @max_stack : Stack
-      @min_stack : Stack
-      @height : Int32
-
-      @@last_id = Atomic(Int64).new(0)
-
-      def self.next_id : Int32
-        @@last_id.add(1).to_i32
-      end
+      property show_permissions : Bool
+      property show_size : Bool
+      property show_hidden : Bool
+      property dir_allowed : Bool
+      property file_allowed : Bool
 
       def initialize
-        @id = self.class.next_id
+        @id = Filepicker.next_id
         @path = ""
         @current_directory = "."
         @allowed_types = [] of String
@@ -213,6 +204,34 @@ module Bubbles
         @max_stack = Stack.new
         @min_stack = Stack.new
         @height = 0
+      end
+
+      def id : Int32
+        @id
+      end
+
+      def file_allowed? : Bool
+        @file_allowed
+      end
+
+      def dir_allowed? : Bool
+        @dir_allowed
+      end
+
+      def show_permissions? : Bool
+        @show_permissions
+      end
+
+      def show_size? : Bool
+        @show_size
+      end
+
+      def show_hidden? : Bool
+        @show_hidden
+      end
+
+      def auto_height? : Bool
+        @auto_height
       end
 
       # SetHeight sets the height of the file picker.
@@ -248,22 +267,22 @@ module Bubbles
         case msg
         when ReadDirMsg
           read_dir_msg = msg.as(ReadDirMsg)
-          return {self, Tea::Cmd.none} unless read_dir_msg.id == @id
+          return {self, NO_OP_CMD} unless read_dir_msg.id == @id
           @files = read_dir_msg.entries
           @max_idx = Math.max(@max_idx, height - 1)
-          {self, Tea::Cmd.none}
+          {self, NO_OP_CMD}
         when Tea::WindowSizeMsg
           window_size_msg = msg.as(Tea::WindowSizeMsg)
           if @auto_height
             self.height = window_size_msg.height - MARGIN_BOTTOM
           end
           @max_idx = height - 1
-          {self, Tea::Cmd.none}
+          {self, NO_OP_CMD}
         when Tea::KeyPressMsg
           key_msg = msg.as(Tea::KeyPressMsg)
           handle_key_press(key_msg)
         else
-          {self, Tea::Cmd.none}
+          {self, NO_OP_CMD}
         end
       end
 
@@ -330,19 +349,23 @@ module Bubbles
           end
           return {self, read_dir(@current_directory, @show_hidden)}
         when Key.matches?(msg, @key_map.open)
-          return {self, Tea::Cmd.none} if @files.empty?
+          return {self, NO_OP_CMD} if @files.empty?
 
           f = @files[@selected]?
-          return {self, Tea::Cmd.none} unless f
+          return {self, NO_OP_CMD} unless f
 
           is_symlink = f.symlink?
           is_dir = f.directory?
 
           if is_symlink
-            symlink_path = File.realpath(File.join(@current_directory, f.name))
-            info = File.info?(symlink_path)
-            if info && info.directory?
-              is_dir = true
+            begin
+              symlink_path = File.realpath(File.join(@current_directory, f.name))
+              info = File.info?(symlink_path)
+              if info && info.directory?
+                is_dir = true
+              end
+            rescue
+              # Ignore broken symlinks; keep default non-dir behavior.
             end
           end
 
@@ -353,7 +376,7 @@ module Bubbles
             end
           end
 
-          return {self, Tea::Cmd.none} unless is_dir
+          return {self, NO_OP_CMD} unless is_dir
 
           @current_directory = File.join(@current_directory, f.name)
           push_view(@selected, @min_idx, @max_idx)
@@ -363,16 +386,17 @@ module Bubbles
           return {self, read_dir(@current_directory, @show_hidden)}
         end
 
-        {self, Tea::Cmd.none}
+        {self, NO_OP_CMD}
       end
 
       # View returns the view of the file picker.
-      def view : Tea::View
+      def view : String
         if @files.empty?
           return @styles.empty_directory.height(height).max_height(height).to_s
         end
 
         String.build do |io|
+          lines_rendered = 0
           @files.each_with_index do |file, idx|
             next if idx < @min_idx || idx > @max_idx
 
@@ -382,7 +406,11 @@ module Bubbles
             name = file.name
 
             if is_symlink
-              symlink_path = File.realpath(File.join(@current_directory, name))
+              begin
+                symlink_path = File.realpath(File.join(@current_directory, name))
+              rescue
+                symlink_path = ""
+              end
             end
 
             disabled = !can_select(name) && !file.directory?
@@ -390,7 +418,7 @@ module Bubbles
             if @selected == idx
               selected = ""
               if @show_permissions
-                selected += " " + file_mode_to_string(file.permissions)
+                selected += " " + file_mode_to_string(file)
               end
               if @show_size
                 selected += sprintf("%#{@styles.file_size.width}s", size)
@@ -405,6 +433,7 @@ module Bubbles
                 io << @styles.cursor.render(@cursor) + @styles.selected.render(selected)
               end
               io << '\n'
+              lines_rendered += 1
               next
             end
 
@@ -423,17 +452,17 @@ module Bubbles
               file_name += " → " + symlink_path
             end
             if @show_permissions
-              io << " " + @styles.permission.render(file_mode_to_string(file.permissions))
+              io << " " + @styles.permission.render(file_mode_to_string(file))
             end
             if @show_size
               io << @styles.file_size.render(size)
             end
             io << " " + file_name
             io << '\n'
+            lines_rendered += 1
           end
 
           # Fill remaining height with newlines
-          lines_rendered = io.to_s.count('\n')
           (lines_rendered..height).each do
             io << '\n'
           end
@@ -480,10 +509,14 @@ module Bubbles
         is_dir = f.directory?
 
         if is_symlink
-          symlink_path = File.realpath(File.join(@current_directory, f.name))
-          info = File.info?(symlink_path)
-          if info && info.directory?
-            is_dir = true
+          begin
+            symlink_path = File.realpath(File.join(@current_directory, f.name))
+            info = File.info?(symlink_path)
+            if info && info.directory?
+              is_dir = true
+            end
+          rescue
+            # Ignore broken symlinks; keep default non-dir behavior.
           end
         end
 
@@ -502,9 +535,15 @@ module Bubbles
       private def read_dir(path : String, show_hidden : Bool) : Tea::Cmd
         -> : Tea::Msg? {
           begin
-            entries = Dir.children(path).map do |name|
-              info = File.info(File.join(path, name))
-              Entry.new(name, info)
+            entries = [] of Entry
+            Dir.children(path).each do |name|
+              begin
+                info = File.info(File.join(path, name), follow_symlinks: false)
+                entries << Entry.new(name, info)
+              rescue
+                # Match Go's os.DirEntry.Info() behavior in view/update:
+                # skip unreadable/broken entries instead of failing the whole dir.
+              end
             end
 
             # Sort: directories first, then alphabetical
@@ -546,7 +585,8 @@ module Bubbles
         sprintf(format, size, units[i]).gsub(" ", "")
       end
 
-      private def file_mode_to_string(mode : File::Permissions) : String
+      private def file_mode_to_string(entry : Entry) : String
+        mode = entry.permissions
         # Simplified mode string representation
         str = String.build do |io|
           io << (mode.owner_read? ? 'r' : '-')
@@ -559,7 +599,14 @@ module Bubbles
           io << (mode.other_write? ? 'w' : '-')
           io << (mode.other_execute? ? 'x' : '-')
         end
-        "drwxrwxrwx"[0] + str # Simplified, assumes directory flag handled elsewhere
+        prefix = if entry.directory?
+                   'd'
+                 elsif entry.symlink?
+                   'l'
+                 else
+                   '-'
+                 end
+        "#{prefix}#{str}"
       end
     end
 

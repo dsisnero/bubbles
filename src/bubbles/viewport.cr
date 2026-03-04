@@ -1,4 +1,8 @@
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "./key"
 require "ansi"
 require "lipgloss"
@@ -94,16 +98,16 @@ module Bubbles
       def initialize
         @width = 0
         @height = 0
-        @key_map = Viewport.default_key_map
         @soft_wrap = false
         @fill_height = false
-        @mouse_wheel_enabled = true
-        @mouse_wheel_delta = 3
         @y_offset = 0
         @x_offset = 0
-        @horizontal_step = DEFAULT_HORIZONTAL_STEP
         @y_position = 0
         @style = Lipgloss::Style.new
+        @key_map = Viewport.default_key_map
+        @mouse_wheel_enabled = true
+        @mouse_wheel_delta = 3
+        @horizontal_step = DEFAULT_HORIZONTAL_STEP
         @left_gutter_func = NoGutter
         @lines = [] of String
         @longest_line_width = 0
@@ -112,7 +116,7 @@ module Bubbles
         @highlight_style = Lipgloss::Style.new
         @selected_highlight_style = Lipgloss::Style.new
         @style_line_func = nil
-        @initialized = false
+        @initialized = true
       end
 
       def self.new(*opts : Option) : Model
@@ -122,7 +126,7 @@ module Bubbles
         m
       end
 
-      def init : Tea::Cmd
+      def init : Tea::Cmd?
         nil
       end
 
@@ -260,11 +264,15 @@ module Bubbles
       end
 
       def scroll_up(lines : Int32)
+        return if at_top || lines == 0 || @lines.empty?
         set_y_offset(@y_offset - lines)
+        @hi_idx = find_nearest_match
       end
 
       def scroll_down(lines : Int32)
+        return if at_bottom || lines == 0 || @lines.empty?
         set_y_offset(@y_offset + lines)
+        @hi_idx = find_nearest_match
       end
 
       def scroll_left(cols : Int32)
@@ -276,11 +284,14 @@ module Bubbles
       end
 
       def goto_top
+        return if at_top
         @y_offset = 0
+        @hi_idx = find_nearest_match
       end
 
       def goto_bottom
         @y_offset = max_y_offset
+        @hi_idx = find_nearest_match
       end
 
       def ensure_visible(line_idx : Int32)
@@ -428,11 +439,40 @@ module Bubbles
 
       private def soft_wrap(lines : Array(String), max_width : Int32, max_height : Int32,
                             total : Int32, ridx : Int32, voffset : Int32) : Array(String)
-        # TODO: Implement soft wrap
-        lines.map! do |line|
-          Ansi.cut(line, @x_offset, @x_offset + max_width)
+        wrapped_lines = [] of String
+
+        lines.each_with_index do |line, i|
+          line_width = Ansi.string_width(line)
+          if line_width <= max_width
+            if @left_gutter_func
+              line = @left_gutter_func.call(GutterContext.new(
+                index: i + ridx,
+                total_lines: total,
+                soft: false
+              )) + line
+            end
+            wrapped_lines << line
+            next
+          end
+
+          idx = 0
+          while line_width > idx
+            truncated = Ansi.cut(line, idx, max_width + idx)
+            if @left_gutter_func
+              truncated = @left_gutter_func.call(GutterContext.new(
+                index: i + ridx,
+                total_lines: total,
+                soft: idx > 0
+              )) + truncated
+            end
+            wrapped_lines << truncated
+            idx += max_width
+          end
         end
-        setup_gutter(lines, total, ridx)
+
+        start_idx = clamp(voffset, 0, wrapped_lines.size)
+        end_idx = clamp(voffset + max_height, start_idx, wrapped_lines.size)
+        wrapped_lines[start_idx...end_idx]
       end
 
       private def max_width : Int32
@@ -481,7 +521,8 @@ module Bubbles
       end
 
       private def max_y_offset : Int32
-        Math.max(0, total_line_count - @height)
+        total, _, _ = calculate_line(0)
+        Math.max(0, total - @height + @style.get_vertical_frame_size)
       end
 
       private def max_x_offset : Int32
@@ -500,10 +541,58 @@ module Bubbles
         v
       end
 
-      # Update handles messages and updates the viewport.
-      # Ported from Go: vendor/bubbles/viewport/viewport.go:656
       def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
-        # Basic implementation - just return self for now
+        if !@initialized
+          @key_map = Viewport.default_key_map
+          @mouse_wheel_enabled = true
+          @mouse_wheel_delta = 3
+          @horizontal_step = DEFAULT_HORIZONTAL_STEP
+          @left_gutter_func = NoGutter
+          @initialized = true
+        end
+
+        case msg
+        when Tea::KeyPressMsg
+          case
+          when Bubbles::Key.matches?(msg, @key_map.page_down)
+            scroll_down(@height)
+          when Bubbles::Key.matches?(msg, @key_map.page_up)
+            scroll_up(@height)
+          when Bubbles::Key.matches?(msg, @key_map.half_page_down)
+            scroll_down(@height // 2)
+          when Bubbles::Key.matches?(msg, @key_map.half_page_up)
+            scroll_up(@height // 2)
+          when Bubbles::Key.matches?(msg, @key_map.down)
+            scroll_down(1)
+          when Bubbles::Key.matches?(msg, @key_map.up)
+            scroll_up(1)
+          when Bubbles::Key.matches?(msg, @key_map.left)
+            scroll_left(@horizontal_step)
+          when Bubbles::Key.matches?(msg, @key_map.right)
+            scroll_right(@horizontal_step)
+          end
+        when Tea::MouseWheelMsg
+          if @mouse_wheel_enabled
+            if msg.wheel_down?
+              if msg.mouse.shift?
+                scroll_right(@horizontal_step)
+              else
+                scroll_down(@mouse_wheel_delta)
+              end
+            elsif msg.wheel_up?
+              if msg.mouse.shift?
+                scroll_left(@horizontal_step)
+              else
+                scroll_up(@mouse_wheel_delta)
+              end
+            elsif msg.wheel_left?
+              scroll_left(@horizontal_step)
+            elsif msg.wheel_right?
+              scroll_right(@horizontal_step)
+            end
+          end
+        end
+
         {self, nil}
       end
     end

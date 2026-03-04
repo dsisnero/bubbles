@@ -1,4 +1,8 @@
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "lipgloss"
 require "atomic"
 
@@ -49,6 +53,10 @@ module Bubbles
       @id : Int32
       @tag : Int32
 
+      getter frame
+      getter id
+      getter tag
+      
       protected setter frame
       protected setter id
       protected setter tag
@@ -61,11 +69,7 @@ module Bubbles
         @tag = 0
       end
 
-      def id : Int32
-        @id
-      end
-
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
         when TickMsg
           if msg.id > 0 && msg.id != @id

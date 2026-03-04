@@ -1,5 +1,9 @@
 require "digest/sha256"
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "./cursor"
 require "./key"
 require "./viewport"
@@ -9,7 +13,12 @@ require "./internal/runeutil"
 module Bubbles
   module Textarea
     # Constants ported from Go: vendor/bubbles/textarea/textarea.go:32-38
+    MIN_HEIGHT         =     1
+    DEFAULT_HEIGHT     =     6
+    DEFAULT_WIDTH      =    40
     DEFAULT_CHAR_LIMIT =     0 # no limit
+    DEFAULT_MAX_HEIGHT =    99
+    DEFAULT_MAX_WIDTH  =   500
     MAX_LINES          = 10000 # maximum number of lines in the textarea
 
     # pasteMsg is a message containing pasted content.
@@ -277,10 +286,35 @@ module Bubbles
     # the textarea.
     # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:375
     def self.default_styles(is_dark : Bool = false) : Styles
-      # TODO: Implement proper lipgloss styles
-      focused = StyleState.new
-      blurred = StyleState.new
-      cursor = CursorStyle.new
+      ld = ->(light : String, dark : String) { Lipgloss.color(is_dark ? dark : light) }
+
+      focused = StyleState.new(
+        base: Lipgloss::Style.new,
+        cursor_line: Lipgloss::Style.new.background(ld.call("255", "0")),
+        cursor_line_number: Lipgloss::Style.new.foreground(ld.call("240", "240")),
+        end_of_buffer: Lipgloss::Style.new.foreground(ld.call("254", "0")),
+        line_number: Lipgloss::Style.new.foreground(ld.call("249", "7")),
+        placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        text: Lipgloss::Style.new
+      )
+
+      blurred = StyleState.new(
+        base: Lipgloss::Style.new,
+        cursor_line: Lipgloss::Style.new.foreground(ld.call("245", "7")),
+        cursor_line_number: Lipgloss::Style.new.foreground(ld.call("249", "7")),
+        end_of_buffer: Lipgloss::Style.new.foreground(ld.call("254", "0")),
+        line_number: Lipgloss::Style.new.foreground(ld.call("249", "7")),
+        placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
+        prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        text: Lipgloss::Style.new.foreground(ld.call("245", "7"))
+      )
+
+      cursor = CursorStyle.new(
+        color: "7",
+        shape: "block",
+        blink: true
+      )
       Styles.new(focused, blurred, cursor)
     end
 
@@ -297,6 +331,7 @@ module Bubbles
     end
 
     class Model
+      property err : Exception?
       property prompt : String
       property placeholder : String
       property char_limit : Int32
@@ -310,34 +345,49 @@ module Bubbles
       @prompt_func : (PromptInfo -> String)?
       @prompt_width : Int32
       @styles : Styles
+      @end_of_buffer_character : Char
+      @max_height : Int32
+      @max_width : Int32
       @focus : Bool
       @rsan : Internal::Runeutil::Sanitizer?
       @cache : Internal::Memoization::MemoCache(Line, Array(Array(Char)))
       @show_line_numbers : Bool
       @key_map : KeyMap
+      @use_virtual_cursor : Bool
+      @virtual_cursor : Cursor::Model
+      @last_char_offset : Int32
+      @viewport : Bubbles::Viewport::Model
 
       def initialize
+        @err = nil
         @prompt = "> "
         @placeholder = ""
-        @char_limit = 0
-        @width = 40
-        @height = 6
+        @char_limit = DEFAULT_CHAR_LIMIT
+        @max_height = DEFAULT_MAX_HEIGHT
+        @max_width = DEFAULT_MAX_WIDTH
+        @width = DEFAULT_WIDTH
+        @height = DEFAULT_HEIGHT
         @row = 0
         @col = 0
-        @value = [([] of Char)]
+        @value = Array(Array(Char)).new(MIN_HEIGHT) { [] of Char }
         @scroll_y_offset = 0
         @prompt_func = nil
         @prompt_width = 0
-        @styles = Styles.new(
-          focused: StyleState.new,
-          blurred: StyleState.new,
-          cursor: CursorStyle.new
-        )
+        @styles = Textarea.default_dark_styles
+        @end_of_buffer_character = ' '
         @focus = false
         @rsan = nil
-        @cache = Internal::Memoization::MemoCache(Line, Array(Array(Char))).new(99)
+        @cache = Internal::Memoization::MemoCache(Line, Array(Array(Char))).new(MAX_LINES)
         @show_line_numbers = false
         @key_map = Textarea.default_key_map
+        @use_virtual_cursor = true
+        @virtual_cursor = Cursor::Model.new
+        @last_char_offset = 0
+        @viewport = Bubbles::Viewport::Model.new
+
+        set_height(DEFAULT_HEIGHT)
+        set_width(DEFAULT_WIDTH)
+        update_virtual_cursor_style
       end
 
       def self.new : Model
@@ -366,9 +416,9 @@ module Bubbles
       # Focus sets the focus state on the model. When the model is in focus it can
       # receive keyboard input and the cursor will be hidden.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:724
-      def focus
+      def focus : Tea::Cmd?
         @focus = true
-        # TODO: Implement virtual_cursor.focus
+        @virtual_cursor.focus
       end
 
       # Blur removes the focus state on the model. When the model is blurred it can
@@ -376,7 +426,109 @@ module Bubbles
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:731
       def blur
         @focus = false
-        # TODO: Implement virtual_cursor.blur
+        @virtual_cursor.blur
+      end
+
+      # init initializes the model.
+      def init : Tea::Cmd?
+        nil
+      end
+
+      # styles returns the current styles for the textarea.
+      def styles : Styles
+        @styles
+      end
+
+      # setStyles updates styling for the textarea.
+      def set_styles(s : Styles) # ameba:disable Naming/AccessorMethodName
+        @styles = s
+        update_virtual_cursor_style
+      end
+
+      def styles=(s : Styles)
+        set_styles(s)
+      end
+
+      # keyMap returns the current key bindings.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go (KeyMap field access).
+      def key_map : KeyMap
+        @key_map
+      end
+
+      # setKeyMap updates key bindings.
+      def set_key_map(km : KeyMap) # ameba:disable Naming/AccessorMethodName
+        @key_map = km
+      end
+
+      def key_map=(km : KeyMap)
+        set_key_map(km)
+      end
+
+      # showLineNumbers controls whether line numbers are rendered.
+      def show_line_numbers : Bool
+        @show_line_numbers
+      end
+
+      def show_line_numbers? : Bool
+        @show_line_numbers
+      end
+
+      def set_show_line_numbers(v : Bool) # ameba:disable Naming/AccessorMethodName
+        @show_line_numbers = v
+      end
+
+      def show_line_numbers=(v : Bool)
+        set_show_line_numbers(v)
+      end
+
+      # virtualCursor returns whether or not the virtual cursor is enabled.
+      def virtual_cursor : Bool
+        @use_virtual_cursor
+      end
+
+      def virtual_cursor? : Bool
+        @use_virtual_cursor
+      end
+
+      # setVirtualCursor sets whether or not to use the virtual cursor.
+      def set_virtual_cursor(v : Bool) # ameba:disable Naming/AccessorMethodName
+        @use_virtual_cursor = v
+        update_virtual_cursor_style
+      end
+
+      def virtual_cursor=(v : Bool)
+        set_virtual_cursor(v)
+      end
+
+      private def update_virtual_cursor_style
+        unless @use_virtual_cursor
+          @virtual_cursor.set_mode(Cursor::Mode::Hide)
+          return
+        end
+
+        if color = @styles.cursor.color
+          @virtual_cursor.style = Lipgloss::Style.new.foreground(color)
+        else
+          @virtual_cursor.style = Lipgloss::Style.new
+        end
+
+        if @styles.cursor.blink
+          if @styles.cursor.blink_speed > 0.seconds
+            @virtual_cursor.blink_speed = @styles.cursor.blink_speed
+          end
+          @virtual_cursor.set_mode(Cursor::Mode::Blink)
+        else
+          @virtual_cursor.set_mode(Cursor::Mode::Static)
+        end
+      end
+
+      # reset sets the input to its default state with no input.
+      def reset
+        @value = Array(Array(Char)).new(MIN_HEIGHT) { [] of Char }
+        @col = 0
+        @row = 0
+        @viewport.goto_top
+        set_cursor_column(0)
       end
 
       # san returns the rune sanitizer for the model.
@@ -385,7 +537,7 @@ module Bubbles
         if @rsan.nil?
           # Textinput has all its input on a single line so collapse
           # newlines/tabs to single spaces.
-          @rsan = Internal::Runeutil::Sanitizer.new
+          @rsan = Internal::Runeutil::DefaultSanitizer.new(Internal::Runeutil::SanitizerConfig.new)
         end
         @rsan.as(Internal::Runeutil::Sanitizer)
       end
@@ -484,17 +636,9 @@ module Bubbles
 
         if (num_extra_lines = lines.size - 1) > 0
           # Add the new lines.
-          # We try to reuse the slice if there's already space.
-          new_grid = @value.dup
-          if new_grid.size + num_extra_lines <= new_grid.capacity
-            # Can reuse the extra space (Crystal arrays don't expose capacity like Go slices)
-            # Just append nil elements
-            num_extra_lines.times { new_grid << [] of Char }
-          else
-            # No space left; need a new slice.
-            new_grid = Array(Array(Char)).new(@value.size + num_extra_lines) { [] of Char }
-            new_grid[0..@row] = @value[0..@row]
-          end
+          # Crystal arrays don't expose capacity, so build the expanded grid.
+          new_grid = Array(Array(Char)).new(@value.size + num_extra_lines) { [] of Char }
+          new_grid[0..@row] = @value[0..@row]
           # Add all the rows that were after the cursor in the original
           # grid at the end of the new grid.
           (@row + 1...@value.size).each_with_index do |src_idx, dst_idx|
@@ -547,10 +691,21 @@ module Bubbles
 
       def set_cursor_column(c : Int32) # ameba:disable Naming/AccessorMethodName
         @col = clamp(c, 0, @value[@row].size)
+        @last_char_offset = 0
       end
 
       def cursor_column=(c : Int32)
         set_cursor_column(c)
+      end
+
+      # cursorStart moves the cursor to the start of the input field.
+      def cursor_start
+        set_cursor_column(0)
+      end
+
+      # cursorEnd moves the cursor to the end of the input field.
+      def cursor_end
+        set_cursor_column(@value[@row].size)
       end
 
       def move_to_begin
@@ -581,6 +736,81 @@ module Bubbles
         line_chars[start_idx...end_idx].join
       end
 
+      # deleteBeforeCursor deletes all text before the cursor.
+      private def delete_before_cursor
+        @value[@row] = @value[@row][@col..]
+        set_cursor_column(0)
+      end
+
+      # deleteAfterCursor deletes all text after the cursor.
+      private def delete_after_cursor
+        @value[@row] = @value[@row][0...@col]
+        set_cursor_column(@value[@row].size)
+      end
+
+      # transposeLeft exchanges the runes at the cursor and immediately before.
+      private def transpose_left
+        return if @col == 0 || @value[@row].size < 2
+        set_cursor_column(@col - 1) if @col >= @value[@row].size
+        @value[@row][@col - 1], @value[@row][@col] = @value[@row][@col], @value[@row][@col - 1]
+        set_cursor_column(@col + 1) if @col < @value[@row].size
+      end
+
+      # deleteWordLeft deletes the word left to the cursor.
+      private def delete_word_left
+        return if @col == 0 || @value[@row].empty?
+
+        old_col = @col
+
+        set_cursor_column(@col - 1)
+        while @value[@row][@col].whitespace?
+          break if @col <= 0
+          set_cursor_column(@col - 1)
+        end
+
+        while @col > 0
+          if !@value[@row][@col].whitespace?
+            set_cursor_column(@col - 1)
+          else
+            set_cursor_column(@col + 1) if @col > 0
+            break
+          end
+        end
+
+        if old_col > @value[@row].size
+          @value[@row] = @value[@row][0...@col]
+        else
+          @value[@row] = @value[@row][0...@col] + @value[@row][old_col..]
+        end
+      end
+
+      # deleteWordRight deletes the word right to the cursor.
+      private def delete_word_right
+        return if @col >= @value[@row].size || @value[@row].empty?
+
+        old_col = @col
+
+        while @col < @value[@row].size && @value[@row][@col].whitespace?
+          set_cursor_column(@col + 1)
+        end
+
+        while @col < @value[@row].size
+          if !@value[@row][@col].whitespace?
+            set_cursor_column(@col + 1)
+          else
+            break
+          end
+        end
+
+        if @col > @value[@row].size
+          @value[@row] = @value[@row][0...old_col]
+        else
+          @value[@row] = @value[@row][0...old_col] + @value[@row][@col..]
+        end
+
+        set_cursor_column(old_col)
+      end
+
       # LineInfo returns the number of characters from the start of the
       # (soft-wrapped) line and the (soft-wrapped) line width.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:992
@@ -608,6 +838,7 @@ module Bubbles
 
       def set_width(w : Int32) # ameba:disable Naming/AccessorMethodName
         @width = w
+        @viewport.set_width(w)
       end
 
       def width=(w : Int32)
@@ -622,6 +853,7 @@ module Bubbles
 
       def set_height(h : Int32) # ameba:disable Naming/AccessorMethodName
         @height = h
+        @viewport.set_height(h)
       end
 
       def height=(h : Int32)
@@ -751,20 +983,20 @@ module Bubbles
 
       # Blink is a command used to initialize cursor blinking.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1561
-      def self.blink : Tea::Msg
-        Cursor.blink
+      def self.blink : Tea::Cmd
+        -> { Cursor.blink.as(Tea::Msg?) }
       end
 
       # Paste is a command for pasting from the clipboard into the text input.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1691
-      def self.paste : Tea::Msg
+      def self.paste : Tea::Cmd
         # TODO: Implement clipboard reading
         # str, err = clipboard.read_all
         # if err != nil
         #   return PasteErrMsg.new(err)
         # end
         # return PasteMsg.new(str.chars)
-        PasteMsg.new([] of Char)
+        -> { PasteMsg.new([] of Char).as(Tea::Msg?) }
       end
 
       # wrap performs word wrapping on the given runes.
@@ -860,20 +1092,19 @@ module Bubbles
         n < 0 ? -n : n
       end
 
-      # view returns the rendered view of the textarea.
+      # view_internal returns the rendered view content of the textarea.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1317
-      def view : String
+      private def view_internal : String
         if value.empty? && @row == 0 && @col == 0 && !@placeholder.empty?
           return placeholder_view
         end
 
-        # TODO: Implement virtual_cursor.text_style = active_style.computed_cursor_line
+        @virtual_cursor.text_style = active_style.computed_cursor_line
 
-        output = [] of String
+        output = String::Builder.new
         style = Lipgloss::Style.new
-        new_lines = 0
         widest_line_number = 0
-        _ = line_info # Not used yet but kept for Go parity
+        current_line_info = line_info
         styles = active_style
 
         display_line = 0
@@ -887,17 +1118,13 @@ module Bubbles
           end
 
           wrapped_lines.each_with_index do |wrapped_line, wrapped_idx|
-            prompt_str = prompt_view(display_line)
-            prompt_str = styles.computed_prompt.render(prompt_str)
-            output << style.render(prompt_str)
-            display_line += 1
-            # prompt_str = styles.computed_prompt.render(prompt_str)
-            prompt_str = "" # Placeholder for now
-            output << "#{style}#{prompt_str}"
+            prompt = prompt_view(display_line)
+            prompt = styles.computed_prompt.render(prompt)
+            output << style.render(prompt)
             display_line += 1
 
+            ln = ""
             if @show_line_numbers
-              ln = ""
               if wrapped_idx == 0 # normal line
                 is_cursor_line = @row == line_idx
                 ln = line_number_view(line_idx + 1, is_cursor_line)
@@ -906,89 +1133,201 @@ module Bubbles
                 ln = line_number_view(-1, is_cursor_line)
               end
               output << ln
+            end
 
-              # Note the widest line number for padding purposes later.
-              lnw = ln.size # TODO: Implement uniseg.string_width for proper Unicode width
-              if lnw > widest_line_number
-                widest_line_number = lnw
+            # Note the widest line number for padding purposes later.
+            lnw = Lipgloss.width(ln)
+            if lnw > widest_line_number
+              widest_line_number = lnw
+            end
+
+            wrapped = wrapped_line.join
+            strwidth = Lipgloss.width(wrapped)
+            padding = @width - strwidth
+            if strwidth > @width
+              wrapped = wrapped.ends_with?(" ") ? wrapped[0...-1] : wrapped
+              padding -= (@width - strwidth)
+            end
+
+            if @row == line_idx && current_line_info.row_offset == wrapped_idx
+              wrapped_chars = wrapped.chars
+              col_offset = current_line_info.column_offset
+              col_offset = clamp(col_offset, 0, wrapped_chars.size)
+              output << style.render(wrapped_chars[0...col_offset].join)
+              if @col >= line.size && current_line_info.char_offset >= @width
+                @virtual_cursor.set_char(" ")
+                output << @virtual_cursor.view
+              else
+                ch = wrapped_chars[col_offset]? || ' '
+                @virtual_cursor.set_char(ch.to_s)
+                output << style.render(@virtual_cursor.view)
+                if col_offset + 1 < wrapped_chars.size
+                  output << style.render(wrapped_chars[(col_offset + 1)..].join)
+                end
               end
+            else
+              output << style.render(wrapped)
             end
 
-            # strwidth = wrapped_line.size # TODO: Implement uniseg.string_width for proper Unicode width
-            # TODO: Add padding when we have proper Unicode width calculation
-            # padding = @width - strwidth
-            # if padding > 0
-            #   output << wrapped_line.join + " " * padding
-            # else
-            #   output << wrapped_line.join
-            # end
-            output << wrapped_line.join
-
-            # Add newline unless this is the last wrapped line of the last line
-            unless wrapped_idx == wrapped_lines.size - 1 && line_idx == @value.size - 1
-              output << "\n"
-              new_lines += 1
-            end
+            output << style.render(" " * Math.max(0, padding))
+            output << '\n'
           end
         end
 
-        output.join
+        # Always show at least `@height` lines.
+        i = 0
+        while i < @height
+          output << prompt_view(display_line)
+          display_line += 1
+
+          left_gutter = @end_of_buffer_character.to_s
+          right_gap_width = @width - Lipgloss.width(left_gutter) + widest_line_number
+          right_gap = " " * Math.max(0, right_gap_width)
+          output << styles.computed_end_of_buffer.render(left_gutter + right_gap)
+          output << '\n'
+          i += 1
+        end
+
+        output.to_s
       end
 
       # View returns the rendered view of the textarea with viewport.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1415
-      # TODO: Implement View method - currently commented out due to Crystal syntax issues
-      # with capital letter method names and return type annotations
-      # def view_with_viewport : String
-      #   # XXX: This is a workaround for the case where the viewport hasn't
-      #   # been initialized yet like during the initial render. In that case,
-      #   # we need to render the view again because Update hasn't been called
-      #   # yet to set the content of the viewport.
-      #   # TODO: Implement viewport.set_content(view)
-      #   view_result = view
-      #   # TODO: Implement viewport.view
-      #   viewport_view = view_result
-      #   styles = active_style
-      #   # TODO: Implement styles.base.render(viewport_view)
-      #   viewport_view
-      # end
+      def view : String
+        @viewport.set_content(view_internal)
+        styles = active_style
+        styles.base.render(@viewport.view)
+      end
 
       # promptView renders a single line of the prompt.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1427
       private def prompt_view(display_line : Int32) : String
         prompt = @prompt
-        return prompt if @prompt_func.nil?
+        unless @prompt_func.nil?
+          info = PromptInfo.new(
+            line_number: display_line,
+            focused: @focus
+          )
+          prompt = @prompt_func.as(PromptInfo -> String).call(info)
+          width = Lipgloss.width(prompt)
+          if width < @prompt_width
+            prompt = (" " * (@prompt_width - width)) + prompt
+          end
+        end
 
-        info = PromptInfo.new(
-          line_number: display_line,
-          focused: @focus
-        )
-        @prompt_func.as(PromptInfo -> String).call(info)
+        active_style.computed_prompt.render(prompt)
       end
 
       # lineNumberView renders a line number.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1451
       private def line_number_view(n : Int32, is_cursor_line : Bool) : String
-        if n <= 0
-          # Soft-wrapped line
-          return "  " # Two spaces for alignment
+        return "" unless @show_line_numbers
+
+        str = n <= 0 ? " " : n.to_s
+        text_style = active_style.computed_text
+        line_number_style = active_style.computed_line_number
+        if is_cursor_line
+          text_style = active_style.computed_cursor_line
+          line_number_style = active_style.computed_cursor_line_number
         end
 
-        line_num_str = n.to_s
-        if is_cursor_line
-          # TODO: Implement styles.computed_cursor_line_number.render(line_num_str)
-          line_num_str
-        else
-          # TODO: Implement styles.computed_line_number.render(line_num_str)
-          line_num_str
-        end
+        digits = @max_height.to_s.size
+        str = " #{str.rjust(digits)} "
+        text_style.render(line_number_style.render(str))
       end
 
       # placeholderView renders the placeholder.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1478
       private def placeholder_view : String
-        # TODO: Implement styles.computed_placeholder.render(@placeholder)
-        @placeholder
+        styles = active_style
+        buf = String::Builder.new
+
+        # word wrap lines
+        pwordwrap = Ansi.wordwrap(@placeholder, @width, "")
+        # hard wrap lines (handles lines that could not be word wrapped)
+        pwrap = Ansi.hardwrap(pwordwrap, @width, true)
+        # split string by new lines
+        plines = pwrap.strip.split('\n')
+
+        i = 0
+        while i < @height
+          is_line_number = plines.size > i
+          line_style = plines.size > i ? styles.computed_cursor_line : styles.computed_placeholder
+
+          # render prompt
+          prompt = prompt_view(i)
+          prompt = styles.computed_prompt.render(prompt)
+          buf << line_style.render(prompt)
+
+          # when show line numbers enabled:
+          # - render line number for only the cursor line
+          # - indent other placeholder lines
+          if @show_line_numbers
+            ln = 0
+            should_render_line_number = false
+            case
+            when i == 0
+              ln = i + 1
+              should_render_line_number = true
+            when plines.size > i
+              should_render_line_number = true
+            end
+            buf << line_number_view(ln, is_line_number) if should_render_line_number
+          end
+
+          case
+          when i == 0
+            @virtual_cursor.text_style = styles.computed_placeholder
+            line = plines[0]? || ""
+            if line.empty?
+              @virtual_cursor.set_char(" ")
+              buf << line_style.render(@virtual_cursor.view)
+            else
+              first = line[0].to_s
+              rest = line[1..]? || ""
+              @virtual_cursor.set_char(first)
+              buf << line_style.render(@virtual_cursor.view)
+              buf << line_style.render(styles.computed_placeholder.render(rest))
+            end
+            gap = " " * Math.max(0, @width - Lipgloss.width(line))
+            buf << line_style.render(gap)
+          when plines.size > i
+            placeholder_line = plines[i]
+            gap = " " * Math.max(0, @width - Lipgloss.width(placeholder_line))
+            buf << line_style.render(placeholder_line + gap)
+          else
+            eob = styles.computed_end_of_buffer.render(@end_of_buffer_character.to_s)
+            buf << eob
+          end
+
+          buf << '\n'
+          i += 1
+        end
+
+        @viewport.set_content(buf.to_s)
+        styles.base.render(@viewport.view)
+      end
+
+      # Cursor returns a Tea cursor for real-cursor rendering.
+      # Ported from Go: vendor/bubbles/textarea/textarea.go:Cursor.
+      def cursor : Tea::Cursor?
+        return nil if @use_virtual_cursor || !focused
+
+        info = line_info
+        x_offset = info.char_offset +
+                   Lipgloss.width(prompt_view(0)) +
+                   Lipgloss.width(line_number_view(0, false))
+        y_offset = cursor_line_number - @viewport.y_offset
+
+        Tea::Cursor.new(
+          x: x_offset,
+          y: y_offset,
+          visible: true,
+          style: Tea::CursorStyle::BlockBlinking,
+          # Go stores terminal color index ("7") here; Tea::Cursor currently
+          # expects a concrete Colorful::Color, so map to the Go-equivalent hex.
+          color: Colorful::Color.hex("#c0c0c0")
+        )
       end
 
       def set_prompt_func(prompt_width : Int32, fn : PromptInfo -> String)
@@ -1125,10 +1464,10 @@ module Bubbles
         when Tea::KeyPressMsg
           key_msg = msg.as(Tea::KeyPressMsg)
           cmd = handle_key_press(key_msg)
+          # MaxHeight sentinel is an internal message, not a command.
+          return {self, nil} if cmd.is_a?(MaxHeightHitMsg)
           # If handle_key_press returned a command (e.g., paste), return immediately
           return {self, cmd} if cmd
-          # If handle_key_press returned MaxHeightHitMsg, return immediately (Go parity)
-          return {self, nil} if cmd.is_a?(MaxHeightHitMsg)
         when PasteMsg
           paste_msg = msg.as(PasteMsg)
           insert_runes_from_user_input(paste_msg.chars)
@@ -1138,11 +1477,11 @@ module Bubbles
         end
 
         # Make sure we set the content of the viewport before updating it.
-        view_result = view
+        view_result = view_internal
         @viewport.set_content(view_result)
         vp, cmd = @viewport.update(msg)
         @viewport = vp
-        cmds << cmd
+        cmds << cmd if cmd
 
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)
@@ -1155,18 +1494,22 @@ module Bubbles
             @virtual_cursor.blinked = false
             cmd = @virtual_cursor.blink
           end
-          cmds << cmd
+          cmds << cmd if cmd
         end
 
         reposition_view
 
         # Return batched commands
-        {self, Tea.batch(cmds)}
+        batched = Tea.batch
+        cmds.each do |c|
+          batched = Tea.batch(batched, c)
+        end
+        {self, batched}
       end
 
       # handle_key_press processes a key press message.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1191
-      private def handle_key_press(key_msg : Tea::KeyPressMsg) : Tea::Cmd?
+      private def handle_key_press(key_msg : Tea::KeyPressMsg) : Tea::Cmd? | MaxHeightHitMsg
         key_str = key_msg.keystroke
 
         # Check each key binding in exact Go order
@@ -1238,7 +1581,7 @@ module Bubbles
           word_right
         elsif Key.matches?(key_str, @key_map.paste)
           # Return paste command (Go: return m, Paste)
-          return Textarea.paste
+          return self.class.paste
         elsif Key.matches?(key_str, @key_map.character_backward)
           character_left(false) # inside_line = false (Go: m.characterLeft(false /* insideLine */))
         elsif Key.matches?(key_str, @key_map.line_previous)

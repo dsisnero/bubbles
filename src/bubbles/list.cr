@@ -1,4 +1,8 @@
-require "bubbletea"
+{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
+  require "../../../../src/bubbletea"
+{% else %}
+  require "bubbletea"
+{% end %}
 require "lipgloss"
 require "nucleoc"
 require "./help"
@@ -214,7 +218,7 @@ module Bubbles
         update_keybindings
       end
 
-      def init : Tea::Cmd
+      def init : Tea::Cmd?
         nil
       end
 
@@ -295,7 +299,7 @@ module Bubbles
         cmd
       end
 
-      def set_item(index : Int32, item : Item) : Tea::Cmd
+      def set_item(index : Int32, item : Item) : Tea::Cmd?
         @items[index] = item
         cmd = nil
         if @filter_state != FilterState::Unfiltered
@@ -305,7 +309,7 @@ module Bubbles
         cmd
       end
 
-      def insert_item(index : Int32, item : Item) : Tea::Cmd
+      def insert_item(index : Int32, item : Item) : Tea::Cmd?
         @items = insert_item_into_slice(@items, item, index)
         cmd = nil
         if @filter_state != FilterState::Unfiltered
@@ -321,8 +325,9 @@ module Bubbles
         if @filter_state != FilterState::Unfiltered
           filtered = @filtered_items
           if filtered
-            @filtered_items = remove_filter_match_from_slice(filtered, index)
-            reset_filtering if @filtered_items.empty?
+            updated_filtered = remove_filter_match_from_slice(filtered, index)
+            @filtered_items = updated_filtered
+            reset_filtering if updated_filtered.empty?
           end
         end
         update_pagination
@@ -529,7 +534,7 @@ module Bubbles
         @spinner.spinner = spinner_data
       end
 
-      def toggle_spinner : Tea::Cmd
+      def toggle_spinner : Tea::Cmd?
         unless @show_spinner
           return start_spinner
         end
@@ -600,7 +605,7 @@ module Bubbles
         update_keybindings
       end
 
-      def update(msg : Tea::Msg) : {self, Tea::Cmd}
+      def update(msg : Tea::Msg) : {self, Tea::Cmd?}
         cmds = [] of Tea::Cmd?
 
         case msg
@@ -609,7 +614,7 @@ module Bubbles
             return {self, Tea.quit}
           end
         when FilterMatchesMsg
-          @filtered_items = msg
+          @filtered_items = msg.matches
           return {self, nil}
         when Bubbles::Spinner::TickMsg
           @spinner, cmd = @spinner.update(msg)
@@ -627,7 +632,7 @@ module Bubbles
         # Remove nil commands
         cmds.reject!(&.nil?)
 
-        {self, Tea.batch(*cmds)}
+        {self, Tea.batch(cmds)}
       end
 
       def short_help : Array(Bubbles::Key::Binding)
@@ -697,18 +702,23 @@ module Bubbles
           avail_height -= Lipgloss.height(v)
         end
 
+        pagination = ""
         if @show_pagination
-          v = pagination_view
-          sections << v
-          avail_height -= Lipgloss.height(v)
+          pagination = pagination_view
+          avail_height -= Lipgloss.height(pagination)
+        end
+
+        help = ""
+        if @show_help
+          help = help_view
+          avail_height -= Lipgloss.height(help)
         end
 
         content = Lipgloss.new_style.height(avail_height).render(populated_view)
         sections << content
 
-        if @show_help
-          sections << help_view
-        end
+        sections << pagination if @show_pagination
+        sections << help if @show_help
 
         Lipgloss.join_vertical(Lipgloss::Position::Left, sections)
       end
@@ -748,7 +758,7 @@ module Bubbles
           when Bubbles::Key.matches?(kmsg, @key_map.clear_filter)
             reset_filtering
           when Bubbles::Key.matches?(kmsg, @key_map.quit)
-            return -> { QuitMsg.new.as(Tea::Msg?) }
+            return Tea.quit
           when Bubbles::Key.matches?(kmsg, @key_map.cursor_up)
             cursor_up
           when Bubbles::Key.matches?(kmsg, @key_map.cursor_down)
@@ -807,8 +817,9 @@ module Bubbles
           end
         end
 
+        previous_filter_value = @filter_input.value
         new_filter_input, input_cmd = @filter_input.update(msg)
-        filter_changed = @filter_input.value != new_filter_input.value
+        filter_changed = previous_filter_value != new_filter_input.value
         @filter_input = new_filter_input
         cmds << input_cmd
 
@@ -818,7 +829,7 @@ module Bubbles
         end
 
         update_pagination
-        Tea.batch(*cmds)
+        Tea.batch(cmds)
       end
 
       private def title_view : String
@@ -859,10 +870,12 @@ module Bubbles
 
       private def pagination_view : String
         return "" if @paginator.total_pages < 2
-        s = @paginator.view
+        paginator = @paginator
+        s = paginator.view
         if Lipgloss.width(s) > @width
-          @paginator.type = Bubbles::Paginator::Type::Arabic
-          s = @styles.arabic_pagination.render(@paginator.view)
+          paginator = @paginator.dup
+          paginator.type = Bubbles::Paginator::Type::Arabic
+          s = @styles.arabic_pagination.render(paginator.view)
         end
         style = @styles.pagination_style
         if @delegate.spacing == 0 && style.get_margin_top == 0
@@ -1065,8 +1078,12 @@ module Bubbles
       private def remove_item_from_slice(items : Array(Item), index : Int32) : Array(Item)
         return items if index < 0 || index >= items.size
         result = items.dup
-        # Use copy like Go does
-        result.copy_from(result.to_unsafe + index + 1, index, result.size - index - 1)
+        # Match Go's copy(items[i:], items[i+1:]) semantics.
+        i = index
+        while i < result.size - 1
+          result[i] = result[i + 1]
+          i += 1
+        end
         result.pop
         result
       end
@@ -1074,8 +1091,12 @@ module Bubbles
       private def remove_filter_match_from_slice(items : Array(FilteredItem), index : Int32) : Array(FilteredItem)
         return items if index < 0 || index >= items.size
         result = items.dup
-        # Use copy like Go does
-        result.copy_from(result.to_unsafe + index + 1, index, result.size - index - 1)
+        # Match Go's copy(items[i:], items[i+1:]) semantics.
+        i = index
+        while i < result.size - 1
+          result[i] = result[i + 1]
+          i += 1
+        end
         result.pop
         result
       end

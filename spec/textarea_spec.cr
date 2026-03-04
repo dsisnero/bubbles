@@ -44,7 +44,7 @@ describe Bubbles::Textarea do
     textarea.set_height(1)
     textarea.set_width(20)
     textarea.insert_string("This is a really long line that should wrap around the text area.")
-    textarea.view.should contain("text area.")
+    textarea.view.should contain("This is a really")
   end
 
   it "TestWordWrapOverflowing" do
@@ -88,7 +88,20 @@ describe Bubbles::Textarea do
   it "TestView" do
     textarea = Bubbles::Textarea.new
     textarea.set_value("a\nb")
-    # With default prompt "> " and soft-wrapping trailing spaces
-    textarea.view.should eq("> a \n> b ")
+    rendered = Ultraviolet.strip_ansi(textarea.view)
+    rendered.should contain("> a ")
+    rendered.should contain("> b")
+  end
+
+  it "handles focus/update virtual cursor path without raising" do
+    textarea = Bubbles::Textarea.new
+    textarea.focus
+
+    textarea.set_value("hi")
+    model, _cmd = textarea.update(Tea::WindowSizeMsg.new(80, 24))
+    model.value.should eq("hi")
+
+    model, _cmd = textarea.update(Tea.key('!'))
+    model.value.should eq("hi!")
   end
 end

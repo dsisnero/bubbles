@@ -60,7 +60,7 @@ module Bubbles
 
       property show_description : Bool # ameba:disable Naming/QueryBoolMethods
       property styles : DefaultItemStyles
-      property update_func : Proc(Tea::Msg, Model, Tea::Cmd)?
+      property update_func : Proc(Tea::Msg, Model, Tea::Cmd?)?
       property short_help_func : Proc(Array(Bubbles::Key::Binding))?
       property full_help_func : Proc(Array(Array(Bubbles::Key::Binding)))?
       @height : Int32

@@ -47,6 +47,7 @@ module Bubbles
 
       highlights = [] of HighlightInfo
       stripped = Ansi.strip(content)
+      bytes = stripped.to_slice
       iterator = TextSegment.each_grapheme(stripped)
 
       matches.each do |match|
@@ -62,7 +63,7 @@ module Bubbles
           cluster = iterator.next
           break if cluster.is_a?(Iterator::Stop)
 
-          if content[byte_pos] == '\n'
+          if byte_pos < bytes.size && bytes[byte_pos] == '\n'.ord.to_u8
             previous_lines_offset = grapheme_pos + 1
             line += 1
           end
@@ -82,7 +83,7 @@ module Bubbles
           break if cluster.is_a?(Iterator::Stop)
 
           # if it ends with a new line, add the range, increase line, and continue
-          if content[byte_pos] == '\n'
+          if byte_pos < bytes.size && bytes[byte_pos] == '\n'.ord.to_u8
             colstart = Math.max(0, grapheme_start - previous_lines_offset)
             colend = Math.max(grapheme_pos - previous_lines_offset + 1, colstart) # +1 its \n itself
 
