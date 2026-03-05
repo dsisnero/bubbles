@@ -1064,7 +1064,6 @@ module Bubbles
 
         styles = active_style
         style_text = ->(s : String) { styles.text.inline(true).render(s) }
-
         value = @value[@offset...@offset_right]
         pos = max(0, @pos - @offset)
         v = style_text.call(echo_transform(value[0, pos].join))
@@ -1079,9 +1078,11 @@ module Bubbles
           if @focus && can_accept_suggestion
             suggestion = @matched_suggestions[@current_suggestion_index]
             if value.size < suggestion.size
+              previous_text_style = @virtual_cursor.text_style
               @virtual_cursor.text_style = styles.suggestion
               @virtual_cursor.set_char(echo_transform(suggestion[pos].to_s))
               v += @virtual_cursor.view
+              @virtual_cursor.text_style = previous_text_style
               v += completion_view(1)
             else
               @virtual_cursor.set_char(" ")

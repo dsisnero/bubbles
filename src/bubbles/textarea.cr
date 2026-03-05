@@ -811,19 +811,43 @@ module Bubbles
       # (soft-wrapped) line and the (soft-wrapped) line width.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:992
       def line_info : LineInfo
-        # TODO: Implement proper LineInfo with memoizedWrap
-        # For now, return a simple implementation
-        line_chars = @value[@row]
-        width = line_chars.size.to_i32
-        LineInfo.new(
-          width: width,
-          char_width: width,
-          height: 1,
-          start_column: 0,
-          column_offset: @col,
-          row_offset: 0,
-          char_offset: @col
-        )
+        grid = memoized_wrap(@value[@row], @width)
+
+        # Find out which line we are currently on. This can be determined by the
+        # cursor column and counting the number of runes we need to skip.
+        counter = 0
+        grid.each_with_index do |line, i|
+          # We wrap around to the next line if we're at the end of the previous
+          # line so that we can be at the very beginning of the next row.
+          if counter + line.size == @col && i + 1 < grid.size
+            return LineInfo.new(
+              char_offset: 0,
+              column_offset: 0,
+              height: grid.size,
+              row_offset: i + 1,
+              start_column: @col,
+              width: grid[i + 1].size,
+              char_width: UnicodeCharWidth.width(line.join)
+            )
+          end
+
+          if counter + line.size >= @col
+            take = Math.max(0, @col - counter)
+            return LineInfo.new(
+              char_offset: UnicodeCharWidth.width(line[0, take].join),
+              column_offset: @col - counter,
+              height: grid.size,
+              row_offset: i,
+              start_column: counter,
+              width: line.size,
+              char_width: UnicodeCharWidth.width(line.join)
+            )
+          end
+
+          counter += line.size
+        end
+
+        LineInfo.new
       end
 
       # Width returns the width of the textarea.
@@ -833,8 +857,33 @@ module Bubbles
       end
 
       def set_width(w : Int32) # ameba:disable Naming/AccessorMethodName
-        @width = w
-        @viewport.set_width(w)
+        # Update prompt width only if there is no prompt function; set_prompt_func
+        # updates prompt width when it is configured.
+        if @prompt_func.nil?
+          @prompt_width = UnicodeCharWidth.width(@prompt)
+        end
+
+        # Add base style borders and padding to reserved outer width.
+        reserved_outer = active_style.base.get_horizontal_frame_size
+
+        # Add prompt width and, optionally, line number width to reserved inner width.
+        reserved_inner = @prompt_width
+        if @show_line_numbers
+          gap = 2
+          reserved_inner += num_digits(@max_height) + gap
+        end
+
+        # Ensure at least one cell for input content.
+        min_width = reserved_inner + reserved_outer + 1
+        input_width = Math.max(w, min_width)
+
+        # Respect configured maximum width when set.
+        if @max_width > 0
+          input_width = Math.min(input_width, @max_width)
+        end
+
+        @viewport.set_width(input_width - reserved_outer)
+        @width = input_width - reserved_outer - reserved_inner
       end
 
       def width=(w : Int32)
@@ -848,8 +897,15 @@ module Bubbles
       end
 
       def set_height(h : Int32) # ameba:disable Naming/AccessorMethodName
-        @height = h
-        @viewport.set_height(h)
+        if @max_height > 0
+          @height = clamp(h, MIN_HEIGHT, @max_height)
+          @viewport.set_height(clamp(h, MIN_HEIGHT, @max_height))
+        else
+          @height = Math.max(h, MIN_HEIGHT)
+          @viewport.set_height(Math.max(h, MIN_HEIGHT))
+        end
+
+        reposition_view
       end
 
       def height=(h : Int32)
@@ -860,14 +916,14 @@ module Bubbles
       # scrolling behavior.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1033
       private def reposition_view
-        # TODO: Implement viewport integration
-        # minimum = @viewport.y_offset
-        # maximum = minimum + @viewport.height - 1
-        # if row = cursor_line_number; row < minimum
-        #   @viewport.scroll_up(minimum - row)
-        # elsif row > maximum
-        #   @viewport.scroll_down(row - maximum)
-        # end
+        minimum = @viewport.y_offset
+        maximum = minimum + @viewport.height - 1
+        row = cursor_line_number
+        if row < minimum
+          @viewport.scroll_up(minimum - row)
+        elsif row > maximum
+          @viewport.scroll_down(row - maximum)
+        end
       end
 
       # MoveToBegin moves the cursor to the beginning of the textarea.

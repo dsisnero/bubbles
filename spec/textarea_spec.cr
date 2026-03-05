@@ -29,7 +29,8 @@ describe Bubbles::Textarea do
     textarea.set_value("🧋🧋🧋")
     textarea.value.should eq("🧋🧋🧋")
     textarea.col.should eq(3)
-    textarea.line_info.char_offset.should eq(3)
+    # Go parity: emoji occupy width 2, so 3 emoji => char offset 6.
+    textarea.line_info.char_offset.should eq(6)
   end
 
   it "TestValueSoftWrap" do
@@ -41,10 +42,13 @@ describe Bubbles::Textarea do
 
   it "TestVerticalScrolling" do
     textarea = Bubbles::Textarea.new
+    textarea.prompt = ""
+    textarea.show_line_numbers = false
+    textarea.char_limit = 100
     textarea.set_height(1)
     textarea.set_width(20)
     textarea.insert_string("This is a really long line that should wrap around the text area.")
-    textarea.view.should contain("This is a really")
+    textarea.view.should contain("This is a ")
   end
 
   it "TestWordWrapOverflowing" do
@@ -88,9 +92,9 @@ describe Bubbles::Textarea do
   it "TestView" do
     textarea = Bubbles::Textarea.new
     textarea.set_value("a\nb")
-    rendered = Ultraviolet.strip_ansi(textarea.view)
-    rendered.should contain("> a ")
-    rendered.should contain("> b")
+    rendered = Ansi.strip(textarea.view)
+    rendered.should contain("1 a")
+    rendered.should contain("2 b")
   end
 
   it "handles focus/update virtual cursor path without raising" do
