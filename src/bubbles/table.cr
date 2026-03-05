@@ -1,10 +1,6 @@
 require "ansi"
 require "lipgloss"
-{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
-  require "../../../../src/bubbletea"
-{% else %}
-  require "bubbletea"
-{% end %}
+require "../../../../src/bubbletea"
 require "./help"
 require "./key"
 require "./viewport"
@@ -22,6 +18,7 @@ module Bubbles
     end
 
     struct KeyMap
+      include Bubbles::Help::KeyMap
       property line_up : Bubbles::Key::Binding
       property line_down : Bubbles::Key::Binding
       property page_up : Bubbles::Key::Binding

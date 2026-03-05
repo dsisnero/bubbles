@@ -1000,15 +1000,35 @@ module Bubbles
         # Convert Lipgloss::Color | Lipgloss::NoColor to Colorful::Color for cursor
         case color = style.color
         when Lipgloss::Color
-          # Lipgloss::Color can be ANSI ("7") or hex ("#FFFFFF")
-          color_str = color.to_s
-          if color_str.starts_with?('#')
-            cursor.color = Colorful::Color.hex(color_str)
+          if color.type == Lipgloss::Color::Type::Named
+            idx = color.value.as(Int32)
+            ansi16 = {
+              {0x00, 0x00, 0x00}, # black
+              {0x80, 0x00, 0x00}, # maroon
+              {0x00, 0x80, 0x00}, # green
+              {0x80, 0x80, 0x00}, # olive
+              {0x00, 0x00, 0x80}, # navy
+              {0x80, 0x00, 0x80}, # purple
+              {0x00, 0x80, 0x80}, # teal
+              {0xc0, 0xc0, 0xc0}, # silver
+              {0x80, 0x80, 0x80}, # gray
+              {0xff, 0x00, 0x00}, # red
+              {0x00, 0xff, 0x00}, # lime
+              {0xff, 0xff, 0x00}, # yellow
+              {0x00, 0x00, 0xff}, # blue
+              {0xff, 0x00, 0xff}, # fuchsia
+              {0x00, 0xff, 0xff}, # aqua
+              {0xff, 0xff, 0xff}, # white
+            }
+            r, g, b = ansi16[idx.clamp(0, 15)]
           else
-            # ANSI color code - map to RGB
-            # For now, set to nil (default terminal color)
-            cursor.color = nil
+            r, g, b = color.to_rgb
           end
+          cursor.color = Colorful::Color.new(
+            r.to_f64 / 255.0,
+            g.to_f64 / 255.0,
+            b.to_f64 / 255.0
+          )
         when Lipgloss::NoColor
           # No color specified
           cursor.color = nil

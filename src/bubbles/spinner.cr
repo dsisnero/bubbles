@@ -1,8 +1,4 @@
-{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
-  require "../../../../src/bubbletea"
-{% else %}
-  require "bubbletea"
-{% end %}
+require "../../../../src/bubbletea"
 require "lipgloss"
 require "atomic"
 
@@ -56,7 +52,7 @@ module Bubbles
       getter frame
       getter id
       getter tag
-      
+
       protected setter frame
       protected setter id
       protected setter tag

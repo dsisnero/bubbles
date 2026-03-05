@@ -1,9 +1,5 @@
 require "digest/sha256"
-{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
-  require "../../../../src/bubbletea"
-{% else %}
-  require "bubbletea"
-{% end %}
+require "../../../../src/bubbletea"
 require "./cursor"
 require "./key"
 require "./viewport"
@@ -360,7 +356,7 @@ module Bubbles
 
       def initialize
         @err = nil
-        @prompt = "> "
+        @prompt = "#{Lipgloss.thick_border.left} "
         @placeholder = ""
         @char_limit = DEFAULT_CHAR_LIMIT
         @max_height = DEFAULT_MAX_HEIGHT
@@ -378,7 +374,7 @@ module Bubbles
         @focus = false
         @rsan = nil
         @cache = Internal::Memoization::MemoCache(Line, Array(Array(Char))).new(MAX_LINES)
-        @show_line_numbers = false
+        @show_line_numbers = true
         @key_map = Textarea.default_key_map
         @use_virtual_cursor = true
         @virtual_cursor = Cursor::Model.new

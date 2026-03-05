@@ -134,16 +134,16 @@ module Bubbles
           desc = s.dimmed_desc.render(desc)
         elsif selected && m.filter_state != FilterState::Filtering
           if filtered
-            unmatched = s.selected_title.inline(true)
-            matched = unmatched.inherit(s.filter_match)
+            unmatched = s.selected_title.copy.inline(true)
+            matched = unmatched.copy.inherit(s.filter_match)
             title = Lipgloss.style_runes(title, matched_runes, matched, unmatched)
           end
           title = s.selected_title.render(title)
           desc = s.selected_desc.render(desc)
         else
           if filtered
-            unmatched = s.normal_title.inline(true)
-            matched = unmatched.inherit(s.filter_match)
+            unmatched = s.normal_title.copy.inline(true)
+            matched = unmatched.copy.inherit(s.filter_match)
             title = Lipgloss.style_runes(title, matched_runes, matched, unmatched)
           end
           title = s.normal_title.render(title)

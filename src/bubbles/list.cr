@@ -1,10 +1,5 @@
-{% if file_exists?("#{__DIR__}/../../../../src/bubbletea.cr") %}
-  require "../../../../src/bubbletea"
-{% else %}
-  require "bubbletea"
-{% end %}
+require "../../../../src/bubbletea"
 require "lipgloss"
-require "nucleoc"
 require "./help"
 require "./key"
 require "./paginator"
@@ -83,60 +78,130 @@ module Bubbles
       include Tea::Msg
     end
 
-    # Temporary struct to hold score and indices before sorting
+    # Temporary struct to hold score and indices before sorting.
     private struct ScoredRank
       property index : Int32
-      property score : UInt16
+      property score : Int32
       property indices : Array(Int32)
 
-      def initialize(@index : Int32, @score : UInt16, @indices : Array(Int32))
+      def initialize(@index : Int32, @score : Int32, @indices : Array(Int32))
       end
     end
 
     def self.default_filter(term : String, targets : Array(String)) : Array(Rank)
-      return [] of Rank if term.empty?
-
-      scored_ranks = [] of ScoredRank
-      targets.each_with_index do |target, index|
-        if result = Nucleoc.fuzzy_match_indices(target, term)
-          score, indices = result
-          # Convert UInt32 indices to Int32 for compatibility
-          int_indices = indices.map(&.to_i32)
-          scored_ranks << ScoredRank.new(index.to_i32, score, int_indices)
-        end
-      end
-
-      # Sort by score descending (higher score = better match)
-      # Use stable sort to preserve original order when scores are equal
-      scored_ranks.sort! do |a, b|
-        # Compare scores first (higher is better)
-        score_cmp = b.score <=> a.score
-        if score_cmp != 0
-          score_cmp
-        else
-          # When scores are equal, preserve original order (lower index first)
-          a.index <=> b.index
-        end
-      end
-
-      # Convert to Rank struct (without score)
-      scored_ranks.map { |scored_rank| Rank.new(scored_rank.index, scored_rank.indices) }
+      fuzzy_find(term, targets, sort_results: true)
     end
 
     def self.unsorted_filter(term : String, targets : Array(String)) : Array(Rank)
+      fuzzy_find(term, targets, sort_results: false)
+    end
+
+    private FIRST_CHAR_MATCH_BONUS            = 10
+    private MATCH_FOLLOWING_SEPARATOR_BONUS   = 20
+    private CAMEL_CASE_MATCH_BONUS            = 20
+    private ADJACENT_MATCH_BONUS              = 5
+    private UNMATCHED_LEADING_CHAR_PENALTY    = -5
+    private MAX_UNMATCHED_LEADING_CHAR_PENALTY = -15
+    private SEPARATORS = "/-_ .\\"
+
+    private def self.fuzzy_find(term : String, targets : Array(String), sort_results : Bool) : Array(Rank)
       return [] of Rank if term.empty?
 
-      ranks = [] of Rank
-      targets.each_with_index do |target, index|
-        if result = Nucleoc.fuzzy_match_indices(target, term)
-          _, indices = result
-          # Convert UInt32 indices to Int32 for compatibility
-          int_indices = indices.map(&.to_i32)
-          ranks << Rank.new(index.to_i32, int_indices)
+      pattern = term.chars
+      scored_ranks = [] of ScoredRank
+
+      targets.each_with_index do |target, target_index|
+        next unless scored = fuzzy_score(pattern, target, target_index.to_i32)
+        scored_ranks << scored
+      end
+
+      if sort_results
+        scored_ranks.sort! do |a, b|
+          score_cmp = b.score <=> a.score
+          score_cmp == 0 ? (a.index <=> b.index) : score_cmp
         end
       end
-      # Return unsorted as the name suggests
-      ranks
+
+      scored_ranks.map { |scored| Rank.new(scored.index, scored.indices) }
+    end
+
+    private def self.fuzzy_score(pattern : Array(Char), target : String, index : Int32) : ScoredRank?
+      chars = [] of Char
+      byte_offsets = [] of Int32
+      byte_offset = 0
+      target.each_char do |char|
+        chars << char
+        byte_offsets << byte_offset
+        byte_offset += char.bytesize
+      end
+
+      match_indices = [] of Int32
+      pattern_index = 0
+      match_score = 0
+      best_score = -1
+      matched_index = -1
+      curr_adjacent_bonus = 0
+      last_char = '\0'
+      last_index = 0
+
+      chars.each_with_index do |candidate, k|
+        break if pattern_index >= pattern.size
+
+        byte_index = byte_offsets[k]
+        if equal_fold(candidate, pattern[pattern_index])
+          score = 0
+          score += FIRST_CHAR_MATCH_BONUS if byte_index == 0
+          score += CAMEL_CASE_MATCH_BONUS if last_char.lowercase? && candidate.uppercase?
+          score += MATCH_FOLLOWING_SEPARATOR_BONUS if byte_index != 0 && separator?(last_char)
+
+          unless match_indices.empty?
+            bonus = adjacent_char_bonus(last_index, match_indices.last, curr_adjacent_bonus)
+            score += bonus
+            curr_adjacent_bonus += bonus
+          end
+
+          if score > best_score
+            best_score = score
+            matched_index = byte_index
+          end
+        end
+
+        next_pattern_char = pattern_index < pattern.size - 1 ? pattern[pattern_index + 1] : nil
+        next_candidate = k + 1 < chars.size ? chars[k + 1] : nil
+        if (next_pattern_char && next_candidate && equal_fold(next_pattern_char, next_candidate)) || next_candidate.nil?
+          if matched_index > -1
+            if match_indices.empty?
+              penalty = matched_index * UNMATCHED_LEADING_CHAR_PENALTY
+              best_score += {penalty, MAX_UNMATCHED_LEADING_CHAR_PENALTY}.max
+            end
+            match_score += best_score
+            match_indices << matched_index
+            best_score = -1
+            matched_index = -1
+            pattern_index += 1
+          end
+        end
+
+        last_index = byte_index
+        last_char = candidate
+      end
+
+      return nil unless match_indices.size == pattern.size
+
+      match_score += match_indices.size - target.bytesize
+      ScoredRank.new(index, match_score, match_indices)
+    end
+
+    private def self.equal_fold(a : Char, b : Char) : Bool
+      a == b || a.downcase == b.downcase
+    end
+
+    private def self.separator?(char : Char) : Bool
+      SEPARATORS.includes?(char)
+    end
+
+    private def self.adjacent_char_bonus(i : Int32, last_match : Int32, current_bonus : Int32) : Int32
+      last_match == i ? (current_bonus * 2 + ADJACENT_MATCH_BONUS) : 0
     end
 
     class Model
