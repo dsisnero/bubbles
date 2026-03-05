@@ -539,10 +539,8 @@ module Bubbles
       end
 
       def set_value(s : String) # ameba:disable Naming/AccessorMethodName
-        lines = s.split('\n').map(&.chars)
-        @value = lines.empty? ? [([] of Char)] : lines
-        @row = @value.size - 1
-        @col = @value[@row].size
+        reset
+        insert_string(s)
       end
 
       def value=(s : String)
@@ -654,7 +652,11 @@ module Bubbles
       end
 
       def length : Int32
-        @value.sum(&.size).to_i32
+        total = 0
+        @value.each do |row|
+          total += UnicodeCharWidth.width(row.join)
+        end
+        total + @value.size - 1
       end
 
       def line_count : Int32
@@ -674,15 +676,11 @@ module Bubbles
       end
 
       def cursor_up
-        return if @row <= 0
-        @row -= 1
-        @col = Math.min(@col, @value[@row].size)
+        set_cursor_line_relative(-1)
       end
 
       def cursor_down
-        return if @row >= @value.size - 1
-        @row += 1
-        @col = Math.min(@col, @value[@row].size)
+        set_cursor_line_relative(1)
       end
 
       def set_cursor_column(c : Int32) # ameba:disable Naming/AccessorMethodName
@@ -704,17 +702,72 @@ module Bubbles
         set_cursor_column(@value[@row].size)
       end
 
+      # setCursorLineRelative moves the cursor by the given number of lines.
+      # Negative values move the cursor up, positive values move the cursor down.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:620
+      private def set_cursor_line_relative(delta : Int32)
+        return if delta == 0
+
+        li = line_info
+        char_offset = Math.max(@last_char_offset, li.char_offset)
+        @last_char_offset = char_offset
+
+        # 2 columns to account for trailing space wrapping.
+        trailing_space = 2
+
+        if delta > 0
+          delta.times do
+            if li.row_offset + 1 >= li.height && @row < @value.size - 1
+              @row += 1
+              @col = 0
+            else
+              @col = Math.min(li.start_column + li.width + trailing_space, @value[@row].size - 1)
+            end
+            li = line_info
+          end
+        else
+          (-delta).times do
+            if li.row_offset <= 0 && @row > 0
+              @row -= 1
+              @col = @value[@row].size
+            else
+              @col = li.start_column - trailing_space
+            end
+            li = line_info
+          end
+        end
+
+        nli = line_info
+        @col = nli.start_column
+
+        if nli.width <= 0
+          reposition_view
+          return
+        end
+
+        offset = 0
+        while offset < char_offset
+          break if @row >= @value.size || @col >= @value[@row].size || offset >= nli.char_width - 1
+
+          offset += UnicodeCharWidth.width(@value[@row][@col].to_s)
+          @col += 1
+        end
+
+        reposition_view
+      end
+
       def move_to_begin
         @row = 0
-        @col = 0
+        set_cursor_column(0)
+        reposition_view
       end
 
       # MoveToEnd moves the cursor to the end of the textarea.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1066
       def move_to_end
         @row = @value.size - 1
-        @col = @value[@row].size
-        # TODO: Implement viewport.goto_bottom
+        set_cursor_column(@value[@row].size)
+        reposition_view
       end
 
       def word : String
@@ -930,20 +983,32 @@ module Bubbles
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1060
       def move_to_begin
         @row = 0
-        @col = 0
-        # TODO: Implement viewport.goto_top
+        set_cursor_column(0)
+        reposition_view
       end
 
       # PageUp moves the cursor one page up.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1072
       def page_up
-        # TODO: Implement viewport.view_up
+        offset = @viewport.y_offset - cursor_line_number
+        if offset < 0
+          set_cursor_line_relative(offset)
+          return
+        end
+
+        set_cursor_line_relative(-@height)
       end
 
       # PageDown moves the cursor one page down.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1077
       def page_down
-        # TODO: Implement viewport.view_down
+        offset = cursor_line_number - @viewport.y_offset
+        if offset < @height - 1
+          set_cursor_line_relative(@height - 1 - offset)
+          return
+        end
+
+        set_cursor_line_relative(@height)
       end
 
       # cursorLineNumber returns the line number that the cursor is on.
@@ -1068,9 +1133,7 @@ module Bubbles
           end
 
           if spaces > 0
-            # TODO: Implement proper Unicode width calculation
-            # For now, use simple character count
-            if lines[row].size + word.size + spaces > width
+            if UnicodeCharWidth.width(lines[row].join) + UnicodeCharWidth.width(word.join) + spaces > width
               row += 1
               lines << [] of Char
               lines[row].concat(word)
@@ -1084,9 +1147,10 @@ module Bubbles
               word.clear
             end
           else
-            # TODO: Implement proper Unicode width calculation for double-width runes
-            # For now, use simple character count
-            if word.size + 1 > width
+            # If the last character is a double-width rune, then we may not be
+            # able to add it to this line as it might cause us to exceed width.
+            last_char_len = UnicodeCharWidth.width(word[-1].to_s)
+            if UnicodeCharWidth.width(word.join) + last_char_len > width
               # If the current line has any content, let's move to the next
               # line because the current word fills up the entire line.
               if !lines[row].empty?
@@ -1099,9 +1163,7 @@ module Bubbles
           end
         end
 
-        # TODO: Implement proper Unicode width calculation
-        # For now, use simple character count
-        if lines[row].size + word.size + spaces >= width
+        if UnicodeCharWidth.width(lines[row].join) + UnicodeCharWidth.width(word.join) + spaces >= width
           lines << [] of Char
           lines[row + 1].concat(word)
           # We add an extra space at the end of the line to account for the
@@ -1179,12 +1241,11 @@ module Bubbles
             if @show_line_numbers
               if wrapped_idx == 0 # normal line
                 is_cursor_line = @row == line_idx
-                ln = line_number_view(line_idx + 1, is_cursor_line)
+                output << line_number_view(line_idx + 1, is_cursor_line)
               else # soft wrapped line
                 is_cursor_line = @row == line_idx
-                ln = line_number_view(-1, is_cursor_line)
+                output << line_number_view(-1, is_cursor_line)
               end
-              output << ln
             end
 
             # Note the widest line number for padding purposes later.
@@ -1255,16 +1316,16 @@ module Bubbles
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1427
       private def prompt_view(display_line : Int32) : String
         prompt = @prompt
-        unless @prompt_func.nil?
-          info = PromptInfo.new(
-            line_number: display_line,
-            focused: @focus
-          )
-          prompt = @prompt_func.as(PromptInfo -> String).call(info)
-          width = Lipgloss.width(prompt)
-          if width < @prompt_width
-            prompt = (" " * (@prompt_width - width)) + prompt
-          end
+        return prompt if @prompt_func.nil?
+
+        info = PromptInfo.new(
+          line_number: display_line,
+          focused: @focus
+        )
+        prompt = @prompt_func.as(PromptInfo -> String).call(info)
+        width = Lipgloss.width(prompt)
+        if width < @prompt_width
+          prompt = (" " * (@prompt_width - width)) + prompt
         end
 
         active_style.computed_prompt.render(prompt)
@@ -1366,19 +1427,97 @@ module Bubbles
         return nil if @use_virtual_cursor || !focused
 
         info = line_info
+        base_style = active_style.base
         x_offset = info.char_offset +
                    Lipgloss.width(prompt_view(0)) +
-                   Lipgloss.width(line_number_view(0, false))
-        y_offset = cursor_line_number - @viewport.y_offset
+                   Lipgloss.width(line_number_view(0, false)) +
+                   base_style.get_margin_left +
+                   base_style.get_padding_left +
+                   base_style.get_border_left_size
+        y_offset = cursor_line_number - @viewport.y_offset +
+                   base_style.get_margin_top +
+                   base_style.get_padding_top +
+                   base_style.get_border_top_size
 
         Tea::Cursor.new(
           x: x_offset,
           y: y_offset,
           visible: true,
-          style: Tea::CursorStyle::BlockBlinking,
-          # Go stores terminal color index ("7") here; Tea::Cursor currently
-          # expects a concrete Colorful::Color, so map to the Go-equivalent hex.
-          color: Colorful::Color.hex("#c0c0c0")
+          style: cursor_style(@styles.cursor.shape, @styles.cursor.blink),
+          color: cursor_color(@styles.cursor.color)
+        )
+      end
+
+      private def cursor_style(shape : String, blink : Bool) : Tea::CursorStyle
+        base = case shape.downcase
+               when "underline"
+                 Tea::CursorStyle::Underline
+               when "bar"
+                 Tea::CursorStyle::Bar
+               else
+                 Tea::CursorStyle::Block
+               end
+
+        return base unless blink
+        case base
+        when Tea::CursorStyle::Underline
+          Tea::CursorStyle::UnderlineBlinking
+        when Tea::CursorStyle::Bar
+          Tea::CursorStyle::BarBlinking
+        else
+          Tea::CursorStyle::BlockBlinking
+        end
+      end
+
+      private def cursor_color(raw : String?) : Colorful::Color?
+        return nil unless raw
+
+        if raw.starts_with?('#')
+          return Colorful::Color.hex(raw)
+        end
+
+        idx = raw.to_i?
+        return nil unless idx
+
+        if idx <= 15
+          ansi16 = {
+            {0x00, 0x00, 0x00}, # black
+            {0x80, 0x00, 0x00}, # maroon
+            {0x00, 0x80, 0x00}, # green
+            {0x80, 0x80, 0x00}, # olive
+            {0x00, 0x00, 0x80}, # navy
+            {0x80, 0x00, 0x80}, # purple
+            {0x00, 0x80, 0x80}, # teal
+            {0xc0, 0xc0, 0xc0}, # silver
+            {0x80, 0x80, 0x80}, # gray
+            {0xff, 0x00, 0x00}, # red
+            {0x00, 0xff, 0x00}, # lime
+            {0xff, 0xff, 0x00}, # yellow
+            {0x00, 0x00, 0xff}, # blue
+            {0xff, 0x00, 0xff}, # fuchsia
+            {0x00, 0xff, 0xff}, # aqua
+            {0xff, 0xff, 0xff}, # white
+          }
+          r, g, b = ansi16[idx.clamp(0, 15)]
+        elsif idx <= 231
+          n = idx - 16
+          r6 = n // 36
+          g6 = (n % 36) // 6
+          b6 = n % 6
+          r = r6 == 0 ? 0 : 55 + r6 * 40
+          g = g6 == 0 ? 0 : 55 + g6 * 40
+          b = b6 == 0 ? 0 : 55 + b6 * 40
+        elsif idx <= 255
+          gray = 8 + (idx - 232) * 10
+          r = g = b = gray
+        else
+          return nil
+        end
+
+        Colorful::Color.new(
+          r.to_f64 / 255.0,
+          g.to_f64 / 255.0,
+          b.to_f64 / 255.0
         )
       end
 

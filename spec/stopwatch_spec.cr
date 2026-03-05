@@ -4,7 +4,7 @@ require "../src/bubbles/stopwatch"
 describe Bubbles::Stopwatch do
   it "creates with default interval and id" do
     m = Bubbles::Stopwatch.new
-    m.interval.should eq(1.second)
+    m.interval.should eq(0.seconds)
     m.id.should be > 0
     m.running?.should be_false
     m.elapsed.should eq(0.seconds)

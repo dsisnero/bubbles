@@ -51,7 +51,7 @@ module Bubbles
       @d : Time::Span = 0.seconds
 
       def initialize
-        @interval = 1.second
+        @interval = 0.seconds
         @id = Stopwatch.next_id
         @tag = 0
         @running = false
@@ -130,13 +130,57 @@ module Bubbles
       end
 
       def view : String
-        @d.to_s
+        format_duration(@d)
       end
 
       private def tick(id : Int32, tag : Int32, d : Time::Span) : Tea::Cmd
         Tea.tick(d) do
           TickMsg.new(id, tag)
         end
+      end
+
+      private def format_duration(duration : Time::Span) : String
+        ns = duration.total_nanoseconds.to_i64
+        return "0s" if ns == 0
+
+        sign = ""
+        if ns < 0
+          sign = "-"
+          ns = -ns
+        end
+
+        second_ns = 1_000_000_000_i64
+        minute_ns = 60_i64 * second_ns
+        hour_ns = 60_i64 * minute_ns
+
+        if ns < second_ns
+          if ns % 1_000_000_i64 == 0
+            return "#{sign}#{ns // 1_000_000_i64}ms"
+          elsif ns % 1_000_i64 == 0
+            return "#{sign}#{ns // 1_000_i64}us"
+          else
+            return "#{sign}#{ns}ns"
+          end
+        end
+
+        hours = ns // hour_ns
+        ns -= hours * hour_ns
+        minutes = ns // minute_ns
+        ns -= minutes * minute_ns
+        seconds = ns // second_ns
+        ns -= seconds * second_ns
+
+        io = String::Builder.new
+        io << sign
+        io << hours << 'h' if hours > 0
+        io << minutes << 'm' if minutes > 0 || hours > 0
+        io << seconds
+        if ns > 0
+          frac = ns.to_s.rjust(9, '0').rstrip('0')
+          io << '.' << frac
+        end
+        io << 's'
+        io.to_s
       end
     end
 

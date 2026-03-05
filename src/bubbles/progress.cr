@@ -1,6 +1,7 @@
 require "atomic"
 require "math"
 require "../../../../src/bubbletea"
+require "harmonica"
 require "lipgloss"
 
 module Bubbles
@@ -106,6 +107,7 @@ module Bubbles
       property show_percentage : Bool # ameba:disable Naming/QueryBoolMethods
       property percent_format : String
       property percentage_style : Lipgloss::Style
+      property spring : Harmonica::Spring
       property spring_frequency : Float64
       property spring_damping : Float64
       property spring_customized : Bool # ameba:disable Naming/QueryBoolMethods
@@ -129,6 +131,7 @@ module Bubbles
         @percentage_style = Lipgloss::Style.new
         @spring_frequency = DEFAULT_FREQUENCY
         @spring_damping = DEFAULT_DAMPING
+        @spring = Harmonica::Spring.new(Harmonica.fps(FPS), @spring_frequency, @spring_damping)
         @spring_customized = false
         @percent_shown = 0.0
         @target_percent = 0.0
@@ -141,6 +144,9 @@ module Bubbles
       def self.new : Model
         m = allocate
         m.initialize
+        unless m.spring_customized
+          m.set_spring_options(DEFAULT_FREQUENCY, DEFAULT_DAMPING)
+        end
         m
       end
 
@@ -168,6 +174,7 @@ module Bubbles
         copy.percentage_style = @percentage_style
         copy.spring_frequency = @spring_frequency
         copy.spring_damping = @spring_damping
+        copy.spring = @spring
         copy.spring_customized = @spring_customized
         copy.percent_shown = @percent_shown
         copy.target_percent = @target_percent
@@ -182,22 +189,14 @@ module Bubbles
         nil
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
         case msg
         when FrameMsg
           return {self, nil} if msg.id != @id || msg.tag != @tag
           return {self, nil} unless animating?
 
-          # Create a copy for functional update
-          m = dup
-
-          # Damped spring-like integration for percent animation.
-          delta = m.target_percent - m.percent_shown
-          dt = 1.0 / FPS
-          m.velocity += delta * m.spring_frequency * dt
-          m.velocity *= Math.exp(-m.spring_damping * dt)
-          m.percent_shown = clamp(m.percent_shown + m.velocity, 0.0, 1.0)
-          {m, m.next_frame}
+          @percent_shown, @velocity = @spring.update(@percent_shown, @velocity, @target_percent)
+          {self, next_frame}
         else
           {self, nil}
         end
@@ -206,6 +205,7 @@ module Bubbles
       def set_spring_options(frequency : Float64, damping : Float64)
         @spring_frequency = frequency
         @spring_damping = damping
+        @spring = Harmonica::Spring.new(Harmonica.fps(FPS), frequency, damping)
       end
 
       def spring_options=(opts : Tuple(Float64, Float64))
@@ -254,11 +254,11 @@ module Bubbles
 
       def animating? : Bool
         dist = (@percent_shown - @target_percent).abs
-        !(dist < 0.001 && @velocity.abs < 0.01)
+        !(dist < 0.001 && @velocity < 0.01)
       end
 
-      private def next_frame : Tea::Cmd
-        Tea.tick((1000 // FPS).milliseconds) do
+      def next_frame : Tea::Cmd
+        Tea.tick(Time::Span.new(nanoseconds: (1_000_000_000_i64 // FPS).to_i64)) do
           FrameMsg.new(@id, @tag)
         end
       end
