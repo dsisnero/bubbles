@@ -1,4 +1,3 @@
-require "../../../../src/bubbletea"
 require "lipgloss"
 require "./context"
 require "atomic"

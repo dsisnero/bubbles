@@ -1,4 +1,3 @@
-require "../../../../src/bubbletea"
 require "atomic"
 
 module Bubbles

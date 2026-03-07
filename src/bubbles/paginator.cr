@@ -1,4 +1,3 @@
-require "../../../../src/bubbletea"
 require "./key"
 
 module Bubbles

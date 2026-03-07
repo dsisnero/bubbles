@@ -5,6 +5,7 @@ module Bubbles
 end
 
 # Require all component modules
+require "bubbletea"
 require "./bubbles/key"
 require "./bubbles/textinput"
 require "./bubbles/filepicker"

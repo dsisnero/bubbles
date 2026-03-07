@@ -1,6 +1,5 @@
 require "atomic"
 require "math"
-require "../../../../src/bubbletea"
 require "harmonica"
 require "lipgloss"
 

@@ -1,5 +1,4 @@
 require "digest/sha256"
-require "../../../../src/bubbletea"
 require "./cursor"
 require "./key"
 require "./viewport"

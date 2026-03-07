@@ -1,4 +1,3 @@
-require "../../../../src/bubbletea"
 require "./key"
 require "ansi"
 require "lipgloss"

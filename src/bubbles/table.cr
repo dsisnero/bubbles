@@ -1,6 +1,5 @@
 require "ansi"
 require "lipgloss"
-require "../../../../src/bubbletea"
 require "./help"
 require "./key"
 require "./viewport"
