@@ -1,15 +1,46 @@
-# Bubbles (Crystal Port)
+<p align="center">
+  <strong>A Crystal port of Charmbracelet's Bubbles TUI components library</strong><br>
+  Terminal UI components for building interactive command-line applications
+</p>
 
-This is a Crystal port of [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles),
-a collection of components for terminal user interface applications.
+<p align="center">
+  <a href="docs/architecture.md">Architecture</a> &middot;
+  <a href="docs/development.md">Development</a> &middot;
+  <a href="docs/coding-guidelines.md">Guidelines</a> &middot;
+  <a href="docs/testing.md">Testing</a> &middot;
+  <a href="docs/pr-workflow.md">PR Workflow</a> &middot;
+  <a href="docs/porting-parity.md">Porting Parity</a>
+</p>
 
-The original Go source code is available in the `vendor/bubbles/` directory. This port
-aims to provide equivalent functionality in Crystal while following Crystal
-language idioms and conventions.
+---
 
-**Note:** This is a work in progress. Not all components have been ported yet.
+Bubbles are self-contained, reusable UI components that float together to create rich terminal interfaces.
 
-## Components
+---
+
+## Quick Start
+
+1. Add the dependency to your `shard.yml`:
+
+   ```yaml
+   dependencies:
+     bubbles:
+       github: dsisnero/bubbles
+   ```
+
+2. Run `shards install`
+
+3. Use in your Crystal code:
+
+    ```crystal
+    require "bubbles"
+
+    # Use individual components as needed
+    spinner = Bubbles::Spinner.new
+   text_input = Bubbles::TextInput.new
+   ```
+
+## Features
 
 The bubbles library includes various UI components for terminal applications:
 
@@ -28,29 +59,7 @@ The bubbles library includes various UI components for terminal applications:
 - **Timer** - Time-based utilities
 - **Stopwatch** - Timing utilities
 
-## Installation
-
-1. Add the dependency to your `shard.yml`:
-
-   ```yaml
-   dependencies:
-     bubbles:
-       github: dsisnero/bubbles
-   ```
-
-2. Run `shards install`
-
-## Usage
-
-```crystal
-require "bubbles"
-
-# Use individual components as needed
-spinner = Bubbles::Spinner.new
-text_input = Bubbles::TextInput.new
-```
-
-See the `examples/` directory (when available) for complete usage examples.
+**Note:** This is a work in progress. Not all components have been ported yet.
 
 ## Development
 
@@ -59,12 +68,25 @@ make install    # Install dependencies
 make format     # Check code formatting
 make lint       # Run linter (ameba)
 make test       # Run tests
+rumdl fmt docs/ *.md  # Format markdown documentation
 ```
+
+See [Development Guide](docs/development.md) for full setup instructions.
+
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [Architecture](docs/architecture.md) | System design and data flow |
+| [Development](docs/development.md) | Setup and daily workflow |
+| [Coding Guidelines](docs/coding-guidelines.md) | Code style and conventions |
+| [Testing](docs/testing.md) | Test commands and patterns |
+| [PR Workflow](docs/pr-workflow.md) | Commits, PRs, and review process |
+| [Porting Parity](docs/porting-parity.md) | Upstream source tracking |
 
 ## Porting Guidelines
 
-This is a Crystal port of Go code. All logic should match the Go implementation
-exactly, differing only in Crystal language idioms and standard library usage.
+This is a Crystal port of Go code. All logic should match the Go implementation exactly, differing only in Crystal language idioms and standard library usage.
 
 - The Go code in `vendor/bubbles/` is the source of truth
 - Port Go tests to Crystal specs to verify behavior
@@ -73,11 +95,11 @@ exactly, differing only in Crystal language idioms and standard library usage.
 
 ## Contributing
 
-1. Fork it (<https://github.com/dsisnero/bubbles/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+1. Create an issue: `/forge-create-issue`
+2. Implement: `/forge-implement-issue <number>`
+3. Self-review: `/forge-reflect-pr`
+4. Address feedback: `/forge-address-pr-feedback`
+5. Update changelog: `/forge-update-changelog`
 
 ## License
 

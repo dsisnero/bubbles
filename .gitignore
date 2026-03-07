@@ -22,3 +22,4 @@
 /docs/*.backup
 /docs/*.updated
 /docs/*.new
+.claude/
