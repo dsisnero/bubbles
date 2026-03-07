@@ -170,11 +170,11 @@ module Bubbles
       property cursor : String
       property key_map : KeyMap
       property styles : Styles
-      property show_permissions : Bool
-      property show_size : Bool
-      property show_hidden : Bool
-      property dir_allowed : Bool
-      property file_allowed : Bool
+      property? show_permissions : Bool
+      property? show_size : Bool
+      property? show_hidden : Bool
+      property? dir_allowed : Bool
+      property? file_allowed : Bool
 
       def initialize
         @id = Filepicker.next_id
@@ -203,26 +203,6 @@ module Bubbles
 
       def id : Int32
         @id
-      end
-
-      def file_allowed? : Bool
-        @file_allowed
-      end
-
-      def dir_allowed? : Bool
-        @dir_allowed
-      end
-
-      def show_permissions? : Bool
-        @show_permissions
-      end
-
-      def show_size? : Bool
-        @show_size
-      end
-
-      def show_hidden? : Bool
-        @show_hidden
       end
 
       def auto_height? : Bool
