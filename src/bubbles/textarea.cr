@@ -1691,8 +1691,8 @@ module Bubbles
 
         # Return batched commands
         batched = Tea.batch
-        cmds.each do |c|
-          batched = Tea.batch(batched, c)
+        cmds.each do |lcmd|
+          batched = Tea.batch(batched, lcmd)
         end
         {self, batched}
       end

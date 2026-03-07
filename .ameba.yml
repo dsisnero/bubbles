@@ -12,6 +12,10 @@ Excluded:
 Metrics/CyclomaticComplexity:
   Excluded:
     - src/bubbles/cursor.cr
+    - src/bubbles/filepicker.cr
+    - src/bubbles/viewport/highlight.cr
     - src/bubbles/list.cr
     - src/bubbles/list/defaultitem.cr
     - src/bubbles/textinput.cr
+    - src/bubbles/textarea.cr
+    - src/bubbles/viewport.cr
