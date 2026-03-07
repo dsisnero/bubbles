@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/filepicker"
 
 describe Bubbles::Filepicker do
   it "supports height property" do

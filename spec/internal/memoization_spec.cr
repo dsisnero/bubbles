@@ -1,5 +1,4 @@
 require "../spec_helper"
-require "../../src/bubbles/internal/memoization"
 
 describe Bubbles::Internal::Memoization do
   it "TestCache" do

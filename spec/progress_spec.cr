@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/progress"
 
 describe Bubbles::Progress do
   it "TestBlend" do

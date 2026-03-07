@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/list"
 
 private struct TestListItem
   include Bubbles::List::Item

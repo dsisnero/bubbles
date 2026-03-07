@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/viewport"
 
 describe Bubbles::Viewport do
   it "TestNew" do

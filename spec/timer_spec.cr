@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/timer"
 
 describe Bubbles::Timer do
   it "creates with default settings" do

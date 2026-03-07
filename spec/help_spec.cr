@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/help"
 require "ansi"
 
 class TestKeyMap

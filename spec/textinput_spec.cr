@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/textinput"
 
 describe Bubbles::TextInput do
   it "Test_CurrentSuggestion" do

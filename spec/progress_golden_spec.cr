@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/progress"
 require "golden"
 
 describe Bubbles::Progress do

@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/stopwatch"
 
 describe Bubbles::Stopwatch do
   it "creates with default interval and id" do

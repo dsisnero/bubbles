@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/key"
 
 describe Bubbles::Key do
   describe "Binding" do

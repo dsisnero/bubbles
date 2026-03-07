@@ -1,5 +1,4 @@
 require "../spec_helper"
-require "../../src/bubbles/internal/runeutil"
 
 describe Bubbles::Internal::Runeutil do
   it "TestSanitize" do

@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/textarea"
 
 describe Bubbles::Textarea do
   it "TestSetValue" do

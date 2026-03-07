@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/table"
 
 describe Bubbles::Table do
   ansi_strip = ->(s : String) { Ansi.strip(s.gsub("\r\n", "\n")) }

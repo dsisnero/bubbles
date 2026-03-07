@@ -95,13 +95,13 @@ module Bubbles
       fuzzy_find(term, targets, sort_results: false)
     end
 
-    private FIRST_CHAR_MATCH_BONUS            = 10
-    private MATCH_FOLLOWING_SEPARATOR_BONUS   = 20
-    private CAMEL_CASE_MATCH_BONUS            = 20
-    private ADJACENT_MATCH_BONUS              = 5
-    private UNMATCHED_LEADING_CHAR_PENALTY    = -5
+    private FIRST_CHAR_MATCH_BONUS             =  10
+    private MATCH_FOLLOWING_SEPARATOR_BONUS    =  20
+    private CAMEL_CASE_MATCH_BONUS             =  20
+    private ADJACENT_MATCH_BONUS               =   5
+    private UNMATCHED_LEADING_CHAR_PENALTY     =  -5
     private MAX_UNMATCHED_LEADING_CHAR_PENALTY = -15
-    private SEPARATORS = "/-_ .\\"
+    private SEPARATORS                         = "/-_ .\\"
 
     private def self.fuzzy_find(term : String, targets : Array(String), sort_results : Bool) : Array(Rank)
       return [] of Rank if term.empty?

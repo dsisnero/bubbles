@@ -924,7 +924,7 @@ module Bubbles
           when key_matches(msg, @key_map.delete_before_cursor)
             delete_before_cursor
           when key_matches(msg, @key_map.paste)
-            return {self, ->{ TextInput.paste.as(Tea::Msg | Nil) }}
+            return {self, -> { TextInput.paste.as(Tea::Msg | Nil) }}
           when key_matches(msg, @key_map.delete_word_forward)
             delete_word_forward
           when key_matches(msg, @key_map.next_suggestion)

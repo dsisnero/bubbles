@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/cursor"
 
 describe Bubbles::Cursor do
   describe "mode constants" do

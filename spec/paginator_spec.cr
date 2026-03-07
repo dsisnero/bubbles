@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/paginator"
 
 describe Bubbles::Paginator do
   it "TestNew" do

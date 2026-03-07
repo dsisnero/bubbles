@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/bubbles/spinner"
 
 describe Bubbles::Spinner do
   it "TestSpinnerNew default and with spinner" do
