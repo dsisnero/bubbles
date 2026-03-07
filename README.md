@@ -9,12 +9,14 @@
   <a href="docs/coding-guidelines.md">Guidelines</a> &middot;
   <a href="docs/testing.md">Testing</a> &middot;
   <a href="docs/pr-workflow.md">PR Workflow</a> &middot;
-  <a href="docs/porting-parity.md">Porting Parity</a>
+  <a href="docs/porting-parity.md">Porting Parity</a> &middot;
+  <a href="docs/upgrade_guide_v2.md">Upgrading</a>
 </p>
 
 ---
 
-Bubbles are self-contained, reusable UI components that float together to create rich terminal interfaces.
+Bubbles are self-contained, reusable UI components that float together to create
+rich terminal interfaces.
 
 ---
 
@@ -83,15 +85,18 @@ See [Development Guide](docs/development.md) for full setup instructions.
 | [Testing](docs/testing.md) | Test commands and patterns |
 | [PR Workflow](docs/pr-workflow.md) | Commits, PRs, and review process |
 | [Porting Parity](docs/porting-parity.md) | Upstream source tracking |
+| [Upgrading to v2](docs/upgrade_guide_v2.md) | Migration from Go Bubbles v1 to Crystal v2 |
 
 ## Porting Guidelines
 
-This is a Crystal port of Go code. All logic should match the Go implementation exactly, differing only in Crystal language idioms and standard library usage.
+This is a Crystal port of Go code. All logic should match the Go implementation
+exactly, differing only in Crystal language idioms and standard library usage.
 
 - The Go code in `vendor/bubbles/` is the source of truth
 - Port Go tests to Crystal specs to verify behavior
 - Use Crystal's type system and idioms where appropriate
-- Follow Crystal naming conventions (snake_case for methods, CamelCase for classes)
+- Follow Crystal naming conventions (snake_case for methods, CamelCase for
+  classes)
 
 ## Contributing
 
