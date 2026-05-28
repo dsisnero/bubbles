@@ -11,3 +11,26 @@ spinner.go::struct::Model	struct	ported	src/bubbles/spinner.cr:44-68	Public spin
 spinner.go::struct::Spinner	struct	ported	src/bubbles/spinner.cr:13-19	Frames and FPS fields
 spinner.go::struct::TickMsg	struct	ported	src/bubbles/spinner.cr:34-41	Public time/id, private tag
 spinner.go::type::Option	type	ported	src/bubbles/spinner.cr:119	Proc(Model, Nil) matches Go func(*Model)
+textarea.go::field::Model.DynamicHeight	field	ported	src/bubbles/textarea.cr:337	v2.1.0: dynamic_height property
+textarea.go::field::Model.MinHeight	field	ported	src/bubbles/textarea.cr:338	v2.1.0: min_height property
+textarea.go::field::Model.MaxContentHeight	field	ported	src/bubbles/textarea.cr:339	v2.1.0: max_content_height property
+textarea.go::method::Model.totalVisualLines	method	ported	src/bubbles/textarea.cr:1055	v2.1.0: counts display lines across soft wraps
+textarea.go::method::Model.recalculateHeight	method	ported	src/bubbles/textarea.cr:1067	v2.1.0: dynamic height recalc, no-op when disabled
+textarea.go::method::Model.atContentLimit	method	ported	src/bubbles/textarea.cr:1084	v2.1.0: checks MaxContentHeight or MaxHeight
+textarea.go::method::Model.visualLinesForInsert	method	ported	src/bubbles/textarea.cr:1093	v2.1.0: estimates visual lines from insert
+textarea_test.go::test::TestDynamicHeight_DefaultUnchanged	test	ported	spec/textarea_spec.cr:111-121	v2.1.0
+textarea_test.go::test::TestDynamicHeight_GrowsOnNewline	test	ported	spec/textarea_spec.cr:123-141	v2.1.0
+textarea_test.go::test::TestDynamicHeight_GrowsOnSoftWrap	test	ported	spec/textarea_spec.cr:143-148	v2.1.0
+textarea_test.go::test::TestDynamicHeight_ShrinksOnLineDeletion	test	ported	spec/textarea_spec.cr:150-164	v2.1.0
+textarea_test.go::test::TestDynamicHeight_RespectsMinHeight	test	ported	spec/textarea_spec.cr:166-170	v2.1.0
+textarea_test.go::test::TestDynamicHeight_RespectsMaxHeight	test	ported	spec/textarea_spec.cr:172-179	v2.1.0
+textarea_test.go::test::TestDynamicHeight_GrowsOnPaste	test	ported	spec/textarea_spec.cr:181-186	v2.1.0
+textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetWidth	test	ported	spec/textarea_spec.cr:188-196	v2.1.0
+textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetValue	test	ported	spec/textarea_spec.cr:198-202	v2.1.0
+textarea_test.go::test::TestDynamicHeight_CursorPositionAfterGrow	test	ported	spec/textarea_spec.cr:204-220	v2.1.0
+textarea_test.go::test::TestDynamicHeight_CursorPositionAfterShrink	test	ported	spec/textarea_spec.cr:222-242	v2.1.0
+textarea_test.go::test::TestDynamicHeight_CursorPositionAfterPaste	test	ported	spec/textarea_spec.cr:244-256	v2.1.0
+textarea_test.go::test::TestMaxContentHeight_ScrollsBeyondMaxHeight	test	ported	spec/textarea_spec.cr:258-269	v2.1.0
+textarea_test.go::test::TestMaxContentHeight_BlocksAtLimit	test	ported	spec/textarea_spec.cr:271-285	v2.1.0
+textarea_test.go::test::TestMaxContentHeight_BackwardCompat	test	ported	spec/textarea_spec.cr:287-301	v2.1.0
+textarea_test.go::test::TestMaxContentHeight_WithoutDynamicHeight	test	ported	spec/textarea_spec.cr:303-318	v2.1.0

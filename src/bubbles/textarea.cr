@@ -334,6 +334,12 @@ module Bubbles
       property height : Int32
       property row : Int32
       property col : Int32
+      property dynamic_height : Bool
+      property min_height : Int32
+      property max_content_height : Int32
+      property max_height : Int32
+      property max_width : Int32
+      property viewport : Bubbles::Viewport::Model
 
       @value : Array(Array(Char))
       @scroll_y_offset : Int32
@@ -343,6 +349,9 @@ module Bubbles
       @end_of_buffer_character : Char
       @max_height : Int32
       @max_width : Int32
+      @dynamic_height : Bool
+      @min_height : Int32
+      @max_content_height : Int32
       @focus : Bool
       @rsan : Internal::Runeutil::Sanitizer?
       @cache : Internal::Memoization::MemoCache(Line, Array(Array(Char)))
@@ -360,6 +369,9 @@ module Bubbles
         @char_limit = DEFAULT_CHAR_LIMIT
         @max_height = DEFAULT_MAX_HEIGHT
         @max_width = DEFAULT_MAX_WIDTH
+        @dynamic_height = false
+        @min_height = 1
+        @max_content_height = 0
         @width = DEFAULT_WIDTH
         @height = DEFAULT_HEIGHT
         @row = 0
@@ -524,6 +536,7 @@ module Bubbles
         @row = 0
         @viewport.goto_top
         set_cursor_column(0)
+        recalculate_height
       end
 
       # san returns the rune sanitizer for the model.
@@ -540,6 +553,7 @@ module Bubbles
       def set_value(s : String) # ameba:disable Naming/AccessorMethodName
         reset
         insert_string(s)
+        recalculate_height
       end
 
       def value=(s : String)
@@ -552,6 +566,7 @@ module Bubbles
 
       def insert_string(s : String)
         s.each_char { |char| insert_rune(char) }
+        recalculate_height
       end
 
       def insert_rune(r : Char)
@@ -615,6 +630,17 @@ module Bubbles
         if MAX_LINES > 0 && @value.size + lines.size - 1 > MAX_LINES
           allowed_height = Math.max(0, MAX_LINES - @value.size + 1)
           lines = lines[0, allowed_height]
+        end
+
+        # Obey MaxContentHeight in visual rows when set.
+        if @max_content_height > 0
+          budget = @max_content_height - total_visual_lines
+          while lines.size > 1 && visual_lines_for_insert(lines) > budget
+            lines = lines[0, lines.size - 1]
+          end
+          if visual_lines_for_insert(lines) > budget
+            return
+          end
         end
 
         return if lines.empty?
@@ -936,6 +962,7 @@ module Bubbles
 
         @viewport.set_width(input_width - reserved_outer)
         @width = input_width - reserved_outer - reserved_inner
+        recalculate_height
       end
 
       def width=(w : Int32)
@@ -1013,7 +1040,7 @@ module Bubbles
       # cursorLineNumber returns the line number that the cursor is on.
       # This accounts for soft wrapped lines.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1619
-      private def cursor_line_number : Int32
+      def cursor_line_number : Int32
         line = 0
         @row.times do |i|
           # Calculate the number of lines that the current line will be split
@@ -1022,6 +1049,65 @@ module Bubbles
         end
         line += line_info.row_offset
         line
+      end
+
+      # totalVisualLines returns the total number of display lines across all
+      # logical lines, accounting for soft wraps.
+      # Ported from Go: vendor/bubbles/textarea/textarea.go:1666 (v2.1.0)
+      def total_visual_lines : Int32
+        n = 0
+        @value.each do |line|
+          n += memoized_wrap(line, @width).size
+        end
+        n
+      end
+
+      # recalculateHeight recomputes and applies the textarea height based on
+      # content when DynamicHeight is enabled. It is a no-op otherwise.
+      # Ported from Go: vendor/bubbles/textarea/textarea.go:1676 (v2.1.0)
+      private def recalculate_height
+        return unless @dynamic_height
+
+        min_h = Math.max(@min_height, MIN_HEIGHT)
+        total = total_visual_lines
+        h = Math.max(total, min_h)
+        if @max_height > 0
+          h = Math.min(h, @max_height)
+        end
+        if (max_offset = total - h)
+          @viewport.y_offset > max_offset
+          @viewport.set_y_offset(Math.max(0, max_offset))
+        end
+        set_height(h)
+      end
+
+      # atContentLimit reports whether the textarea has reached its content limit.
+      # Ported from Go: vendor/bubbles/textarea/textarea.go:1694 (v2.1.0)
+      private def at_content_limit : Bool
+        if @max_content_height > 0
+          return total_visual_lines >= @max_content_height
+        end
+        @max_height > 0 && @value.size >= @max_height
+      end
+
+      # visualLinesForInsert estimates how many additional visual lines would result
+      # from inserting the given lines at the current cursor position.
+      # Ported from Go: vendor/bubbles/textarea/textarea.go:1705 (v2.1.0)
+      private def visual_lines_for_insert(lines : Array(Array(Char))) : Int32
+        return 0 if lines.empty?
+
+        current_row_visual = memoized_wrap(@value[@row], @width).size
+
+        merged = @value[@row][0, @col] + lines[0]
+        merged = merged + @value[@row][@col..] if lines.size == 1
+        delta = memoized_wrap(merged, @width).size - current_row_visual
+
+        lines.each_with_index do |content, i|
+          content = content + @value[@row][@col..] if i == lines.size - 1
+          delta += memoized_wrap(content, @width).size
+        end
+
+        delta
       end
 
       # memoizedWrap returns the wrapped lines for the given runes and width.
@@ -1673,6 +1759,8 @@ module Bubbles
         @viewport = vp
         cmds << cmd if cmd
 
+        recalculate_height
+
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)
 
@@ -1753,8 +1841,7 @@ module Bubbles
           end
           delete_word_right
         elsif Key.matches?(key_str, @key_map.insert_newline)
-          # Check MaxHeight constraint (Go: if m.MaxHeight > 0 && len(m.value) >= m.MaxHeight)
-          if @max_height > 0 && @value.size >= @max_height
+          if at_content_limit
             return MaxHeightHitMsg.new
           end
           @col = clamp(@col, 0, @value[@row].size)
