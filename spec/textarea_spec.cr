@@ -322,4 +322,90 @@ describe Bubbles::Textarea do
 
     ta.height.should eq(3)
   end
+
+  it "TestMaxContentHeight_CursorVisibleWhileScrolling" do
+    ta = new_dynamic_textarea(1, 5)
+    ta.max_content_height = 10
+
+    8.times do
+      ta, _ = ta.update(Tea.key('x'))
+      ta, _ = ta.update(Tea.key(Tea::KeyEnter))
+    end
+    ta, _ = ta.update(Tea.key('y'))
+
+    cursor_line = ta.cursor_line_number
+    min_visible = ta.viewport.y_offset
+    max_visible = min_visible + ta.viewport.height - 1
+    cursor_line.should be >= min_visible
+    cursor_line.should be <= max_visible
+  end
+
+  it "TestMaxContentHeight_PasteCapped" do
+    ta = Bubbles::Textarea.new
+    ta.prompt = ""
+    ta.show_line_numbers = false
+    ta.max_content_height = 5
+    ta.set_width(20)
+    ta.focus
+
+    paste = Tea::PasteMsg.new(content: "1\n2\n3\n4\n5\n6\n7\n8\n9\n10")
+    ta, _ = ta.update(paste)
+
+    ta.total_visual_lines.should be <= 5
+  end
+
+  it "TestDynamicHeight_ShrinksWhenScrolledAndLinesDeleted" do
+    ta = new_dynamic_textarea(1, 5)
+    ta.max_content_height = 10
+
+    # Type 8 lines so we exceed MaxHeight (5) and start scrolling
+    7.times do
+      ta, _ = ta.update(Tea.key('x'))
+      ta, _ = ta.update(Tea.key(Tea::KeyEnter))
+    end
+    ta, _ = ta.update(Tea.key('x'))
+
+    ta.height.should eq(5)
+    ta.line_count.should eq(8)
+
+    # Delete lines from the bottom by backspacing
+    while ta.line_count > 4
+      ta.cursor_end
+      while ta.col > 0
+        ta, _ = ta.update(Tea.key(Tea::KeyBackspace))
+      end
+      ta, _ = ta.update(Tea.key(Tea::KeyBackspace))
+    end
+
+    ta.height.should eq(4)
+    ta.viewport.y_offset.should eq(0)
+  end
+
+  it "TestDynamicHeight_ShrinksWhenScrolledNoMaxContent" do
+    ta = new_dynamic_textarea(1, 99)
+
+    7.times do
+      ta, _ = ta.update(Tea.key('x'))
+      ta, _ = ta.update(Tea.key(Tea::KeyEnter))
+    end
+    ta, _ = ta.update(Tea.key('x'))
+
+    ta.height.should eq(8)
+
+    # Set a smaller MaxHeight to simulate scrolling scenario
+    ta.max_height = 5
+    # Trigger height recalculation by re-setting the width (which calls recalculateHeight)
+    ta.set_width(ta.width)
+
+    while ta.line_count > 3
+      ta.cursor_end
+      while ta.col > 0
+        ta, _ = ta.update(Tea.key(Tea::KeyBackspace))
+      end
+      ta, _ = ta.update(Tea.key(Tea::KeyBackspace))
+    end
+
+    ta.height.should eq(3)
+    ta.viewport.y_offset.should eq(0)
+  end
 end
