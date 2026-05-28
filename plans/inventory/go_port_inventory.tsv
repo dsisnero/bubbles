@@ -1,36 +1,1017 @@
 # go_id	kind	status	crystal_refs	notes
-spinner_test.go::test::TestSpinnerNew	test	ported	spec/spinner_spec.cr:4-35	All test cases ported
-spinner.go::func::New	func	ported	src/bubbles/spinner.cr:121-130	Exact Go logic with variadic options
-spinner.go::func::WithSpinner	func	ported	src/bubbles/spinner.cr:133-135	Returns Option that sets spinner
-spinner.go::func::WithStyle	func	ported	src/bubbles/spinner.cr:137-139	Returns Option that sets style
-spinner.go::method::Model.ID	method	ported	src/bubbles/spinner.cr:70-72	Returns spinner's unique ID
-spinner.go::method::Model.Tick	method	ported	src/bubbles/spinner.cr:104-106	Returns TickMsg with time, id, tag
-spinner.go::method::Model.Update	method	ported	src/bubbles/spinner.cr:74-98	Exact Go logic with ID/tag filtering
-spinner.go::method::Model.View	method	ported	src/bubbles/spinner.cr:100-104	Renders frame with style, error check
-spinner.go::struct::Model	struct	ported	src/bubbles/spinner.cr:44-68	Public spinner/style, private frame/id/tag
-spinner.go::struct::Spinner	struct	ported	src/bubbles/spinner.cr:13-19	Frames and FPS fields
-spinner.go::struct::TickMsg	struct	ported	src/bubbles/spinner.cr:34-41	Public time/id, private tag
-spinner.go::type::Option	type	ported	src/bubbles/spinner.cr:119	Proc(Model, Nil) matches Go func(*Model)
-textarea.go::field::Model.DynamicHeight	field	ported	src/bubbles/textarea.cr:337	v2.1.0: dynamic_height property
-textarea.go::field::Model.MinHeight	field	ported	src/bubbles/textarea.cr:338	v2.1.0: min_height property
-textarea.go::field::Model.MaxContentHeight	field	ported	src/bubbles/textarea.cr:339	v2.1.0: max_content_height property
-textarea.go::method::Model.totalVisualLines	method	ported	src/bubbles/textarea.cr:1055	v2.1.0: counts display lines across soft wraps
-textarea.go::method::Model.recalculateHeight	method	ported	src/bubbles/textarea.cr:1067	v2.1.0: dynamic height recalc, no-op when disabled
-textarea.go::method::Model.atContentLimit	method	ported	src/bubbles/textarea.cr:1084	v2.1.0: checks MaxContentHeight or MaxHeight
-textarea.go::method::Model.visualLinesForInsert	method	ported	src/bubbles/textarea.cr:1093	v2.1.0: estimates visual lines from insert
-textarea_test.go::test::TestDynamicHeight_DefaultUnchanged	test	ported	spec/textarea_spec.cr:111-121	v2.1.0
-textarea_test.go::test::TestDynamicHeight_GrowsOnNewline	test	ported	spec/textarea_spec.cr:123-141	v2.1.0
-textarea_test.go::test::TestDynamicHeight_GrowsOnSoftWrap	test	ported	spec/textarea_spec.cr:143-148	v2.1.0
-textarea_test.go::test::TestDynamicHeight_ShrinksOnLineDeletion	test	ported	spec/textarea_spec.cr:150-164	v2.1.0
-textarea_test.go::test::TestDynamicHeight_RespectsMinHeight	test	ported	spec/textarea_spec.cr:166-170	v2.1.0
-textarea_test.go::test::TestDynamicHeight_RespectsMaxHeight	test	ported	spec/textarea_spec.cr:172-179	v2.1.0
-textarea_test.go::test::TestDynamicHeight_GrowsOnPaste	test	ported	spec/textarea_spec.cr:181-186	v2.1.0
-textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetWidth	test	ported	spec/textarea_spec.cr:188-196	v2.1.0
-textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetValue	test	ported	spec/textarea_spec.cr:198-202	v2.1.0
-textarea_test.go::test::TestDynamicHeight_CursorPositionAfterGrow	test	ported	spec/textarea_spec.cr:204-220	v2.1.0
-textarea_test.go::test::TestDynamicHeight_CursorPositionAfterShrink	test	ported	spec/textarea_spec.cr:222-242	v2.1.0
-textarea_test.go::test::TestDynamicHeight_CursorPositionAfterPaste	test	ported	spec/textarea_spec.cr:244-256	v2.1.0
-textarea_test.go::test::TestMaxContentHeight_ScrollsBeyondMaxHeight	test	ported	spec/textarea_spec.cr:258-269	v2.1.0
-textarea_test.go::test::TestMaxContentHeight_BlocksAtLimit	test	ported	spec/textarea_spec.cr:271-285	v2.1.0
-textarea_test.go::test::TestMaxContentHeight_BackwardCompat	test	ported	spec/textarea_spec.cr:287-301	v2.1.0
-textarea_test.go::test::TestMaxContentHeight_WithoutDynamicHeight	test	ported	spec/textarea_spec.cr:303-318	v2.1.0
+
+cursor/cursor.go::const::CursorBlink	const	ported	-	ported; all specs green
+
+cursor/cursor.go::const::CursorHide	const	ported	-	ported; all specs green
+
+cursor/cursor.go::const::CursorStatic	const	ported	-	ported; all specs green
+
+cursor/cursor.go::func::Blink	func	ported	-	ported; all specs green
+
+cursor/cursor.go::func::New	func	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Mode.String	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.Blink	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.Blur	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.Focus	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.Mode	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.SetChar	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.SetMode	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.Update	method	ported	-	ported; all specs green
+
+cursor/cursor.go::method::Model.View	method	ported	-	ported; all specs green
+
+cursor/cursor.go::struct::BlinkMsg	struct	ported	-	ported; all specs green
+
+cursor/cursor.go::struct::Model	struct	ported	-	ported; all specs green
+
+cursor/cursor.go::type::Mode	type	ported	-	ported; all specs green
+
+cursor/cursor_test.go::test::TestBlinkCmdDataRace	test	ported	-	ported; all specs green
+
+filepicker/filepicker.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+filepicker/filepicker.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+filepicker/filepicker.go::func::New	func	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.DidSelectDisabledFile	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.DidSelectFile	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.Height	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.HighlightedPath	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.Init	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.SetHeight	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.Update	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::method::Model.View	method	ported	-	ported; all specs green
+
+filepicker/filepicker.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+filepicker/filepicker.go::struct::Model	struct	ported	-	ported; all specs green
+
+filepicker/filepicker.go::struct::Styles	struct	ported	-	ported; all specs green
+
+filepicker/hidden_unix.go::func::IsHidden	func	ported	-	ported; all specs green
+
+filepicker/hidden_windows.go::func::IsHidden	func	ported	-	ported; all specs green
+
+help/help.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
+
+help/help.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
+
+help/help.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+help/help.go::func::New	func	ported	-	ported; all specs green
+
+help/help.go::method::Model.FullHelpView	method	ported	-	ported; all specs green
+
+help/help.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+help/help.go::method::Model.ShortHelpView	method	ported	-	ported; all specs green
+
+help/help.go::method::Model.Update	method	ported	-	ported; all specs green
+
+help/help.go::method::Model.View	method	ported	-	ported; all specs green
+
+help/help.go::method::Model.Width	method	ported	-	ported; all specs green
+
+help/help.go::struct::Model	struct	ported	-	ported; all specs green
+
+help/help.go::struct::Styles	struct	ported	-	ported; all specs green
+
+help/help.go::type::KeyMap	type	ported	-	ported; all specs green
+
+help/help_test.go::test::TestFullHelp	test	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::HInt.Hash	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::HString.Hash	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::T].Capacity	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::T].Get	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::T].Set	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::method::T].Size	method	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::struct::MemoCache	struct	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::type::HInt	type	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::type::HString	type	ported	-	ported; all specs green
+
+internal/memoization/memoization.go::type::Hasher	type	ported	-	ported; all specs green
+
+internal/memoization/memoization_test.go::test::TestCache	test	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::func::NewSanitizer	func	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::func::ReplaceNewlines	func	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::func::ReplaceTabs	func	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::method::sanitizer.Sanitize	method	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::type::Option	type	ported	-	ported; all specs green
+
+internal/runeutil/runeutil.go::type::Sanitizer	type	ported	-	ported; all specs green
+
+internal/runeutil/runeutil_test.go::test::TestSanitize	test	ported	-	ported; all specs green
+
+key/key.go::func::NewBinding	func	ported	-	ported; all specs green
+
+key/key.go::func::WithDisabled	func	ported	-	ported; all specs green
+
+key/key.go::func::WithHelp	func	ported	-	ported; all specs green
+
+key/key.go::func::WithKeys	func	ported	-	ported; all specs green
+
+key/key.go::method::Binding.Enabled	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.Help	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.Keys	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.SetEnabled	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.SetHelp	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.SetKeys	method	ported	-	ported; all specs green
+
+key/key.go::method::Binding.Unbind	method	ported	-	ported; all specs green
+
+key/key.go::struct::Binding	struct	ported	-	ported; all specs green
+
+key/key.go::struct::Help	struct	ported	-	ported; all specs green
+
+key/key.go::type::BindingOpt	type	ported	-	ported; all specs green
+
+key/key_test.go::test::TestBinding_Enabled	test	ported	-	ported; all specs green
+
+list/defaultitem.go::func::NewDefaultDelegate	func	ported	-	ported; all specs green
+
+list/defaultitem.go::func::NewDefaultItemStyles	func	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.FullHelp	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.Height	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.Render	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.SetHeight	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.SetSpacing	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.ShortHelp	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.Spacing	method	ported	-	ported; all specs green
+
+list/defaultitem.go::method::DefaultDelegate.Update	method	ported	-	ported; all specs green
+
+list/defaultitem.go::struct::DefaultDelegate	struct	ported	-	ported; all specs green
+
+list/defaultitem.go::struct::DefaultItemStyles	struct	ported	-	ported; all specs green
+
+list/defaultitem.go::type::DefaultItem	type	ported	-	ported; all specs green
+
+list/keys.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+list/keys.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+list/list.go::const::FilterApplied	const	ported	-	ported; all specs green
+
+list/list.go::const::Filtering	const	ported	-	ported; all specs green
+
+list/list.go::const::Unfiltered	const	ported	-	ported; all specs green
+
+list/list.go::func::DefaultFilter	func	ported	-	ported; all specs green
+
+list/list.go::func::New	func	ported	-	ported; all specs green
+
+list/list.go::func::UnsortedFilter	func	ported	-	ported; all specs green
+
+list/list.go::method::FilterState.String	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Cursor	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.CursorDown	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.CursorUp	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.DisableQuitKeybindings	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.FilterState	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.FilterValue	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.FilteringEnabled	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.FullHelp	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.GlobalIndex	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.GoToEnd	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.GoToStart	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Height	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Index	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.InsertItem	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.IsFiltered	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Items	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.MatchesForItem	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.NewStatusMessage	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.NextPage	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.PrevPage	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.RemoveItem	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ResetFilter	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ResetSelected	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Select	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SelectedItem	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetDelegate	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetFilterState	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetFilterText	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetFilteringEnabled	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetHeight	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetItem	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetItems	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetShowFilter	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetShowHelp	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetShowPagination	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetShowStatusBar	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetShowTitle	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetSize	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetSpinner	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetStatusBarItemName	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.SettingFilter	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShortHelp	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShowFilter	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShowHelp	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShowPagination	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShowStatusBar	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ShowTitle	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.StartSpinner	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.StatusBarItemName	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.StopSpinner	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.ToggleSpinner	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Update	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.View	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.VisibleItems	method	ported	-	ported; all specs green
+
+list/list.go::method::Model.Width	method	ported	-	ported; all specs green
+
+list/list.go::struct::Model	struct	ported	-	ported; all specs green
+
+list/list.go::struct::Rank	struct	ported	-	ported; all specs green
+
+list/list.go::type::FilterFunc	type	ported	-	ported; all specs green
+
+list/list.go::type::FilterMatchesMsg	type	ported	-	ported; all specs green
+
+list/list.go::type::FilterState	type	ported	-	ported; all specs green
+
+list/list.go::type::Item	type	ported	-	ported; all specs green
+
+list/list.go::type::ItemDelegate	type	ported	-	ported; all specs green
+
+list/list_test.go::test::TestCustomStatusBarItemName	test	ported	-	ported; all specs green
+
+list/list_test.go::test::TestSetFilterState	test	ported	-	ported; all specs green
+
+list/list_test.go::test::TestSetFilterText	test	ported	-	ported; all specs green
+
+list/list_test.go::test::TestStatusBarItemName	test	ported	-	ported; all specs green
+
+list/list_test.go::test::TestStatusBarWithoutItems	test	ported	-	ported; all specs green
+
+list/style.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+list/style.go::struct::Styles	struct	ported	-	ported; all specs green
+
+paginator/paginator.go::const::Arabic	const	ported	-	ported; all specs green
+
+paginator/paginator.go::const::Dots	const	ported	-	ported; all specs green
+
+paginator/paginator.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+paginator/paginator.go::func::New	func	ported	-	ported; all specs green
+
+paginator/paginator.go::func::WithPerPage	func	ported	-	ported; all specs green
+
+paginator/paginator.go::func::WithTotalPages	func	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.GetSliceBounds	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.ItemsOnPage	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.NextPage	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.OnFirstPage	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.OnLastPage	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.PrevPage	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.SetTotalPages	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.Update	method	ported	-	ported; all specs green
+
+paginator/paginator.go::method::Model.View	method	ported	-	ported; all specs green
+
+paginator/paginator.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+paginator/paginator.go::struct::Model	struct	ported	-	ported; all specs green
+
+paginator/paginator.go::type::Option	type	ported	-	ported; all specs green
+
+paginator/paginator.go::type::Type	type	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestItemsOnPage	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestNew	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestNextPage	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestOnFirstPage	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestOnLastPage	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestPrevPage	test	ported	-	ported; all specs green
+
+paginator/paginator_test.go::test::TestSetTotalPages	test	ported	-	ported; all specs green
+
+progress/progress.go::const::DefaultEmptyCharBlock	const	ported	-	ported; all specs green
+
+progress/progress.go::const::DefaultFullCharFullBlock	const	ported	-	ported; all specs green
+
+progress/progress.go::const::DefaultFullCharHalfBlock	const	ported	-	ported; all specs green
+
+progress/progress.go::func::New	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithColorFunc	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithColors	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithDefaultBlend	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithFillCharacters	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithScaled	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithSpringOptions	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithWidth	func	ported	-	ported; all specs green
+
+progress/progress.go::func::WithoutPercentage	func	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.DecrPercent	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.IncrPercent	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.Init	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.IsAnimating	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.Percent	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.SetPercent	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.SetSpringOptions	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.Update	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.View	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.ViewAs	method	ported	-	ported; all specs green
+
+progress/progress.go::method::Model.Width	method	ported	-	ported; all specs green
+
+progress/progress.go::struct::FrameMsg	struct	ported	-	ported; all specs green
+
+progress/progress.go::struct::Model	struct	ported	-	ported; all specs green
+
+progress/progress.go::type::ColorFunc	type	ported	-	ported; all specs green
+
+progress/progress.go::type::Option	type	ported	-	ported; all specs green
+
+progress/progress_test.go::test::TestBlend	test	ported	-	ported; all specs green
+
+spinner/spinner.go::func::New	func	ported	src/bubbles/spinner.cr:121-130	Exact Go logic with variadic options
+
+spinner/spinner.go::func::WithSpinner	func	ported	src/bubbles/spinner.cr:133-135	Returns Option that sets spinner
+
+spinner/spinner.go::func::WithStyle	func	ported	src/bubbles/spinner.cr:137-139	Returns Option that sets style
+
+spinner/spinner.go::method::Model.ID	method	ported	src/bubbles/spinner.cr:70-72	Returns spinner's unique ID
+
+spinner/spinner.go::method::Model.Tick	method	ported	src/bubbles/spinner.cr:104-106	Returns TickMsg with time, id, tag
+
+spinner/spinner.go::method::Model.Update	method	ported	src/bubbles/spinner.cr:74-98	Exact Go logic with ID/tag filtering
+
+spinner/spinner.go::method::Model.View	method	ported	src/bubbles/spinner.cr:100-104	Renders frame with style, error check
+
+spinner/spinner.go::struct::Model	struct	ported	src/bubbles/spinner.cr:44-68	Public spinner/style, private frame/id/tag
+
+spinner/spinner.go::struct::Spinner	struct	ported	src/bubbles/spinner.cr:13-19	Frames and FPS fields
+
+spinner/spinner.go::struct::TickMsg	struct	ported	src/bubbles/spinner.cr:34-41	Public time/id, private tag
+
+spinner/spinner.go::type::Option	type	ported	src/bubbles/spinner.cr:119	Proc(Model, Nil) matches Go func(*Model)
+
+spinner/spinner_test.go::test::TestSpinnerNew	test	ported	spec/spinner_spec.cr:4-35	All test cases ported
+
+stopwatch/stopwatch.go::func::New	func	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::func::WithInterval	func	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Elapsed	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.ID	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Init	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Reset	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Running	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Start	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Stop	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Toggle	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.Update	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::method::Model.View	method	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::struct::Model	struct	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::struct::ResetMsg	struct	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::struct::TickMsg	struct	ported	-	ported; all specs green
+
+stopwatch/stopwatch.go::type::Option	type	ported	-	ported; all specs green
+
+table/table.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+table/table.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+table/table.go::func::New	func	ported	-	ported; all specs green
+
+table/table.go::func::WithColumns	func	ported	-	ported; all specs green
+
+table/table.go::func::WithFocused	func	ported	-	ported; all specs green
+
+table/table.go::func::WithHeight	func	ported	-	ported; all specs green
+
+table/table.go::func::WithKeyMap	func	ported	-	ported; all specs green
+
+table/table.go::func::WithRows	func	ported	-	ported; all specs green
+
+table/table.go::func::WithStyles	func	ported	-	ported; all specs green
+
+table/table.go::func::WithWidth	func	ported	-	ported; all specs green
+
+table/table.go::method::KeyMap.FullHelp	method	ported	-	ported; all specs green
+
+table/table.go::method::KeyMap.ShortHelp	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Blur	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Columns	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Cursor	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Focus	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Focused	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.FromValues	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.GotoBottom	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.GotoTop	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Height	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.HelpView	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.MoveDown	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.MoveUp	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Rows	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SelectedRow	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetColumns	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetCursor	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetHeight	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetRows	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetStyles	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Update	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.UpdateViewport	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.View	method	ported	-	ported; all specs green
+
+table/table.go::method::Model.Width	method	ported	-	ported; all specs green
+
+table/table.go::struct::Column	struct	ported	-	ported; all specs green
+
+table/table.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+table/table.go::struct::Model	struct	ported	-	ported; all specs green
+
+table/table.go::struct::Styles	struct	ported	-	ported; all specs green
+
+table/table.go::type::Option	type	ported	-	ported; all specs green
+
+table/table.go::type::Row	type	ported	-	ported; all specs green
+
+table/table_test.go::test::TestCursorNavigation	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_FromValues	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_FromValues_WithTabSeparator	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_RenderRow	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_RenderRow_AnsiWidth	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_SetColumns	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_SetRows	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_View	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestModel_View_CenteredInABox	test	skipped	-	skipped in Go upstream
+table/table_test.go::test::TestNew	test	ported	-	ported; all specs green
+
+table/table_test.go::test::TestTableAlignment	test	ported	-	ported; all specs green
+
+textarea/textarea.go::func::Blink	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::New	func	ported	-	ported; all specs green
+
+textarea/textarea.go::func::Paste	func	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Blur	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Column	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Cursor	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.CursorDown	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.CursorEnd	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.CursorStart	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.CursorUp	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Focus	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Focused	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Height	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.InsertRune	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.InsertString	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Length	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Line	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.LineCount	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.LineInfo	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.MoveToBegin	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.MoveToEnd	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.PageDown	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.PageUp	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Reset	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.ScrollPercent	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.ScrollYOffset	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetCursorColumn	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetHeight	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetPromptFunc	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetStyles	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetValue	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetVirtualCursor	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Styles	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Update	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Value	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.View	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.VirtualCursor	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Width	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::Model.Word	method	ported	-	ported; all specs green
+
+textarea/textarea.go::method::line.Hash	method	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::CursorStyle	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::LineInfo	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::Model	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::PromptInfo	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::StyleState	struct	ported	-	ported; all specs green
+
+textarea/textarea.go::struct::Styles	struct	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestCanHandleEmoji	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterGrow	test	ported	spec/textarea_spec.cr:204-220	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterPaste	test	ported	spec/textarea_spec.cr:244-256	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterShrink	test	ported	spec/textarea_spec.cr:222-242	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_DefaultUnchanged	test	ported	spec/textarea_spec.cr:111-121	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_GrowsOnNewline	test	ported	spec/textarea_spec.cr:123-141	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_GrowsOnPaste	test	ported	spec/textarea_spec.cr:181-186	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_GrowsOnSoftWrap	test	ported	spec/textarea_spec.cr:143-148	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetValue	test	ported	spec/textarea_spec.cr:198-202	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_RecalculatesOnSetWidth	test	ported	spec/textarea_spec.cr:188-196	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_RespectsMaxHeight	test	ported	spec/textarea_spec.cr:172-179	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_RespectsMinHeight	test	ported	spec/textarea_spec.cr:166-170	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_ShrinksOnLineDeletion	test	ported	spec/textarea_spec.cr:150-164	v2.1.0
+
+textarea/textarea_test.go::test::TestDynamicHeight_ShrinksWhenScrolledAndLinesDeleted	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestDynamicHeight_ShrinksWhenScrolledNoMaxContent	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestInsertString	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestMaxContentHeight_BackwardCompat	test	ported	spec/textarea_spec.cr:287-301	v2.1.0
+
+textarea/textarea_test.go::test::TestMaxContentHeight_BlocksAtLimit	test	ported	spec/textarea_spec.cr:271-285	v2.1.0
+
+textarea/textarea_test.go::test::TestMaxContentHeight_CursorVisibleWhileScrolling	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestMaxContentHeight_PasteCapped	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestMaxContentHeight_ScrollsBeyondMaxHeight	test	ported	spec/textarea_spec.cr:258-269	v2.1.0
+
+textarea/textarea_test.go::test::TestMaxContentHeight_WithoutDynamicHeight	test	ported	spec/textarea_spec.cr:303-318	v2.1.0
+
+textarea/textarea_test.go::test::TestSetValue	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestValueSoftWrap	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestVerticalNavigationKeepsCursorHorizontalPosition	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestVerticalNavigationShouldRememberPositionWhileTraversing	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestVerticalScrolling	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestView	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestWord	test	ported	-	ported; all specs green
+
+textarea/textarea_test.go::test::TestWordWrapOverflowing	test	ported	-	ported; all specs green
+
+textinput/styles.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
+
+textinput/styles.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
+
+textinput/styles.go::func::DefaultStyles	func	ported	-	ported; all specs green
+
+textinput/styles.go::struct::CursorStyle	struct	ported	-	ported; all specs green
+
+textinput/styles.go::struct::StyleState	struct	ported	-	ported; all specs green
+
+textinput/styles.go::struct::Styles	struct	ported	-	ported; all specs green
+
+textinput/textinput.go::const::EchoNone	const	ported	-	ported; all specs green
+
+textinput/textinput.go::const::EchoNormal	const	ported	-	ported; all specs green
+
+textinput/textinput.go::const::EchoPassword	const	ported	-	ported; all specs green
+
+textinput/textinput.go::func::Blink	func	ported	-	ported; all specs green
+
+textinput/textinput.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+textinput/textinput.go::func::New	func	ported	-	ported; all specs green
+
+textinput/textinput.go::func::Paste	func	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.AvailableSuggestions	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Blur	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.CurrentSuggestion	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.CurrentSuggestionIndex	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Cursor	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.CursorEnd	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.CursorStart	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Focus	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Focused	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.MatchedSuggestions	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Position	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Reset	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetCursor	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetStyles	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetSuggestions	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetValue	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetVirtualCursor	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Styles	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Update	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Value	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.View	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.VirtualCursor	method	ported	-	ported; all specs green
+
+textinput/textinput.go::method::Model.Width	method	ported	-	ported; all specs green
+
+textinput/textinput.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+textinput/textinput.go::struct::Model	struct	ported	-	ported; all specs green
+
+textinput/textinput.go::type::EchoMode	type	ported	-	ported; all specs green
+
+textinput/textinput.go::type::ValidateFunc	type	ported	-	ported; all specs green
+
+textinput/textinput_test.go::test::TestChinesePlaceholder	test	skipped	-	flaky in Go upstream
+textinput/textinput_test.go::test::TestPlaceholderTruncate	test	skipped	-	flaky in Go upstream
+textinput/textinput_test.go::test::Test_CurrentSuggestion	test	ported	-	ported; all specs green
+
+textinput/textinput_test.go::test::Test_SlicingOutsideCap	test	ported	-	ported; all specs green
+
+timer/timer.go::func::New	func	ported	-	ported; all specs green
+
+timer/timer.go::func::WithInterval	func	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.ID	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Init	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Running	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Start	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Stop	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Timedout	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Toggle	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.Update	method	ported	-	ported; all specs green
+
+timer/timer.go::method::Model.View	method	ported	-	ported; all specs green
+
+timer/timer.go::struct::Model	struct	ported	-	ported; all specs green
+
+timer/timer.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
+
+timer/timer.go::struct::TickMsg	struct	ported	-	ported; all specs green
+
+timer/timer.go::struct::TimeoutMsg	struct	ported	-	ported; all specs green
+
+timer/timer.go::type::Option	type	ported	-	ported; all specs green
+
+viewport/keymap.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
+
+viewport/keymap.go::struct::KeyMap	struct	ported	-	ported; all specs green
+
+viewport/viewport.go::func::New	func	ported	-	ported; all specs green
+
+viewport/viewport.go::func::WithHeight	func	ported	-	ported; all specs green
+
+viewport/viewport.go::func::WithWidth	func	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.AtBottom	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.AtTop	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ClearHighlights	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.EnsureVisible	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.GetContent	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.GotoBottom	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.GotoTop	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.HalfPageDown	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.HalfPageUp	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.Height	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.HighlightNext	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.HighlightPrevious	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.HorizontalScrollPercent	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.Init	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.PageDown	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.PageUp	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.PastBottom	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ScrollDown	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ScrollLeft	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ScrollPercent	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ScrollRight	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.ScrollUp	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetContent	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetContentLines	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetHeight	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetHighlights	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetHorizontalStep	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetWidth	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetXOffset	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.SetYOffset	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.TotalLineCount	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.Update	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.View	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.VisibleLineCount	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.Width	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.XOffset	method	ported	-	ported; all specs green
+
+viewport/viewport.go::method::Model.YOffset	method	ported	-	ported; all specs green
+
+viewport/viewport.go::struct::GutterContext	struct	ported	-	ported; all specs green
+
+viewport/viewport.go::struct::Model	struct	ported	-	ported; all specs green
+
+viewport/viewport.go::type::GutterFunc	type	ported	-	ported; all specs green
+
+viewport/viewport.go::type::Option	type	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestMatchesToHighlights	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestMoveLeft	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestMoveRight	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestNew	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestResetIndent	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestRightOverscroll	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestSetHorizontalStep	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestSetInitialValues	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestSizing	test	ported	-	ported; all specs green
+
+viewport/viewport_test.go::test::TestVisibleLines	test	ported	-	ported; all specs green
+
