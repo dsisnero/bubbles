@@ -11,10 +11,6 @@ license: MIT
 dependencies:
   bubbletea:
     github: dsisnero/bubbletea.cr
-  golden:
-    github: dsisnero/golden
-  teatest:
-    github: dsisnero/teatest
   harmonica:
     github: dsisnero/harmonica
   easyclip:
