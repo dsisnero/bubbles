@@ -4,8 +4,6 @@
 
 - **Crystal** >= 1.19.1
 - **Git** with submodule support
-- **rumdl** (for markdown formatting): Install via Rust/Cargo:
-  `cargo install rumdl`
 
 ## Setup
 
@@ -33,7 +31,7 @@
 1. **Start development session**:
 
    ```bash
-   make install  # Ensure dependencies are up to date
+   make install
    ```
 
 2. **Run tests while developing**:
@@ -47,7 +45,6 @@
    ```bash
    make format
    make lint
-   rumdl fmt docs/ *.md  # Format markdown documentation
    ```
 
 4. **Clean up temporary files**:
@@ -67,21 +64,15 @@
 | `make test` | Run all Crystal specs |
 | `make clean` | Remove temporary files from ./temp directory |
 
-## Porting Guidelines
+## Quality Gates
 
-This is a Crystal port of Go code. All logic should match the Go implementation
-exactly, differing only in Crystal language idioms and standard library usage.
+Before committing, run all checks:
 
-- The Go code in `vendor/bubbles/` is the source of truth
-- Port Go tests to Crystal specs to verify behavior
-- Use Crystal's type system and idioms where appropriate
-- Follow Crystal naming conventions (snake_case for methods, CamelCase for
-  classes)
+```bash
+make lint
+make test
+```
 
-## Contributing via Forge
+## Porting Guidance
 
-1. Create an issue: `/forge-create-issue`
-2. Implement: `/forge-implement-issue <number>`
-3. Self-review: `/forge-reflect-pr`
-4. Address feedback: `/forge-address-pr-feedback`
-5. Update changelog: `/forge-update-changelog`
+Porting guidance has moved to [plans/development.md](../plans/development.md).

@@ -5,14 +5,15 @@ describe Bubbles::TextInput do
     textinput = Bubbles::TextInput.new
     textinput.show_suggestions = true
 
-    suggestion = textinput.current_suggestion
-    suggestion.should eq("")
+    textinput.current_suggestion.should eq("")
 
     textinput.set_suggestions(["test1", "test2", "test3"])
     textinput.current_suggestion.should eq("")
 
     textinput.set_value("test")
-    textinput.current_suggestion.should eq("")
+    textinput.update_suggestions
+    textinput.next_suggestion
+    textinput.current_suggestion.should eq("test2")
 
     textinput.blur
     textinput.view.ends_with?("test2").should be_false

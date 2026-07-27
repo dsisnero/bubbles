@@ -16,7 +16,7 @@
 ---
 
 Self-contained, reusable UI components that compose together to create rich
-terminal interfaces.
+terminal interfaces. A Crystal port of <a href="https://github.com/charmbracelet/bubbles">Charmbracelet Bubbles</a>.
 
 ---
 
@@ -37,21 +37,23 @@ terminal interfaces.
     ```crystal
     require "bubbles"
 
-    spinner = Bubbles::Spinner.new
     text_input = Bubbles::TextInput.new
     text_area = Bubbles::TextArea.new
+    spinner = Bubbles::Spinner.new
     ```
 
 ## Components
 
 ### Spinner
 
-Animated spinner for indicating that an operation is happening. Several built-in
-styles are available, and you can define custom frame sequences.
+<img src="https://stuff.charm.sh/bubbles-examples/spinner.gif" width="400" alt="Spinner">
+
+An animated spinner, useful for indicating an operation is happening. Several
+built-in styles are available, and you can define custom frame sequences.
 
 ```crystal
 s = Bubbles::Spinner.new
-s.spinner = Bubbles::Spinner::Dot  # Choose a style
+s.spinner = Bubbles::Spinner::Dot
 ```
 
 **Spinner types:** `Line`, `Dot`, `MiniDot`, `Jump`, `Pulse`, `Points`, `Globe`,
@@ -59,8 +61,10 @@ s.spinner = Bubbles::Spinner::Dot  # Choose a style
 
 ### Text Input
 
-Single-line text input field, akin to `<input type="text">` in HTML. Supports
-unicode, pasting, in-place scrolling when the value exceeds the width, and many
+<img src="https://stuff.charm.sh/bubbles-examples/textinput.gif" width="400" alt="Text Input">
+
+A text input field, akin to `<input type="text">` in HTML. Supports unicode,
+pasting, in-place scrolling when the value exceeds the width, and many
 customization options.
 
 ```crystal
@@ -68,12 +72,13 @@ ti = Bubbles::TextInput.new
 ti.set_width(40)
 ti.placeholder = "Enter text..."
 ti.prompt = "> "
-km = Bubbles::TextInput.default_key_map
 ```
 
 ### Text Area
 
-Multi-line text input area, akin to `<textarea />` in HTML. Supports unicode,
+<img src="https://stuff.charm.sh/bubbles-examples/textarea.gif" width="400" alt="Text Area">
+
+A multi-line text input area, akin to `<textarea />` in HTML. Supports unicode,
 pasting, vertical scrolling, dynamic height, and full customization.
 
 ```crystal
@@ -81,72 +86,76 @@ ta = Bubbles::TextArea.new
 ta.set_width(60)
 ta.set_height(10)
 ta.prompt = "> "
-ta.dynamic_height = true
-ta.min_height = 3
-ta.max_height = 20
 ```
 
 ### Table
 
-Display and navigate tabular data (columns and rows). Supports vertical
-scrolling, column alignment, and customizable borders and styles.
+<img src="https://stuff.charm.sh/bubbles-examples/table.gif" width="400" alt="Table">
+
+A component for displaying and navigating tabular data (columns and rows).
+Supports vertical scrolling, column alignment, and customizable borders/styles.
 
 ```crystal
-columns = [
-  Bubbles::Table::Column.new(title: "Name", width: 20),
-  Bubbles::Table::Column.new(title: "Population", width: 15),
-]
-rows = [
-  Bubbles::Table::Row.new(["China", "1.4B"]),
-  Bubbles::Table::Row.new(["India", "1.4B"]),
-]
-t = Bubbles::Table.new
-t.set_columns(columns)
-t.set_rows(rows)
+t = Bubbles::Table.new(
+  Bubbles::Table.with_columns([
+    Bubbles::Table::Column.new("Name", 20),
+    Bubbles::Table::Column.new("Population", 15),
+  ]),
+  Bubbles::Table.with_rows([
+    ["China", "1.4B"],
+    ["India", "1.4B"],
+  ]),
+)
 t.set_width(40)
 t.set_height(10)
 ```
 
 ### Progress
 
-Progress bar with optional spring animation via Harmonica. Supports solid and
-gradient fills, customizable characters, and percentage display.
+<img src="https://stuff.charm.sh/bubbles-examples/progress.gif" width="800" alt="Progress">
+
+A simple, customizable progress meter with optional spring animation via
+[Harmonica][harmonica]. Supports solid and gradient fills.
 
 ```crystal
-p = Bubbles::Progress.new(
-  width: 40,
-  full_color: Lipgloss.color("#5A56E0"),
-)
-p.view_as(0.75)  # Render at 75%
+p = Bubbles::Progress.new(width: 40, full_color: Lipgloss.color("#5A56E0"))
+p.view_as(0.75)
 ```
+
+[harmonica]: https://github.com/charmbracelet/harmonica
 
 ### Viewport
 
-Scrollable viewport for vertically scrolling content. Includes standard pager
-keybindings and mouse wheel support. A high performance mode is available.
+<img src="https://stuff.charm.sh/bubbles-examples/viewport.gif" width="600" alt="Viewport">
+
+A viewport for vertically scrolling content. Includes standard pager
+keybindings and mouse wheel support. Soft-wrapping and gutter support included.
 
 ```crystal
-vp = Bubbles::Viewport.new(width: 80, height: 24)
+vp = Bubbles::Viewport.new(Bubbles::Viewport.with_width(80), Bubbles::Viewport.with_height(24))
 vp.set_content("long content...")
 vp.soft_wrap = true
-vp.key_map = Bubbles::Viewport.default_key_map
 ```
 
 ### List
 
-Batteries-included component for browsing a set of items. Features pagination,
-fuzzy filtering, auto-generated help, an activity spinner, and status messages.
+<img src="https://stuff.charm.sh/bubbles-examples/list.gif" width="600" alt="List">
+
+A batteries-included component for browsing a set of items. Features
+pagination, fuzzy filtering, auto-generated help, an activity spinner, and
+status messages. Extrapolated from [Glow][glow].
 
 ```crystal
-items = [
-  Bubbles::List::DefaultItem.new(title: "Item 1", description: "First item"),
-  Bubbles::List::DefaultItem.new(title: "Item 2", description: "Second item"),
-]
-delegate = Bubbles::List.new_default_delegate
-l = Bubbles::List.new(items, delegate, width: 40, height: 20)
+items = [TestListItem.new("foo"), TestListItem.new("bar")] of Bubbles::List::Item
+delegate = TestListDelegate.new
+l = Bubbles::List.new(items, delegate, 40, 20)
 ```
 
+[glow]: https://github.com/charmbracelet/glow
+
 ### File Picker
+
+<img src="https://vhs.charm.sh/vhs-yET2HNiJNEbyqaVfYuLnY.gif" width="600" alt="File picker">
 
 Navigate the file system to pick files or directories. Supports filtering by
 file extension, showing hidden files, and displaying permissions.
@@ -155,10 +164,12 @@ file extension, showing hidden files, and displaying permissions.
 fp = Bubbles::FilePicker.new
 fp.set_height(20)
 fp.show_hidden = true
-fp.allowed_extensions = [".cr", ".md"]
+fp.allowed_types = [".cr", ".md"]
 ```
 
 ### Help
+
+<img src="https://stuff.charm.sh/bubbles-examples/help.gif" width="500" alt="Help">
 
 Auto-generated help view from your keybindings. Supports single-line and
 multi-line modes, with graceful truncation when the terminal is too narrow.
@@ -166,41 +177,44 @@ multi-line modes, with graceful truncation when the terminal is too narrow.
 ```crystal
 h = Bubbles::Help.new
 h.styles = Bubbles::Help.default_dark_styles
-
-# In your Bubble Tea update:
-# h.view(key_map)  # Renders help from your key bindings
+h.view(key_map)
 ```
 
 ### Paginator
 
+<img src="https://stuff.charm.sh/bubbles-examples/pagination.gif" width="200" alt="Paginator">
+
 Handles pagination logic and optionally draws a pagination UI. Supports
-dot-style and numeric page indicators.
+"dot-style" (like iOS) and numeric page indicators.
 
 ```crystal
 p = Bubbles::Paginator.new
-p.set_width(20)
-p.type = Bubbles::Paginator::Dots
-p.total_pages = 5
+p.set_total_pages(5)
 p.page = 2
+p.type = Bubbles::Paginator::Type::Dots
 p.view  # Renders "● ○ ○ ○ ○"
 ```
 
 ### Timer
 
-Countdown timer. The update frequency and output format are customizable.
+<img src="https://stuff.charm.sh/bubbles-examples/timer.gif" width="400" alt="Timer">
+
+A simple, flexible component for counting down. The update frequency and output
+can be customized as you like.
 
 ```crystal
 t = Bubbles::Timer.new(30.seconds, interval: 100.milliseconds)
-# Sends TickMsg on each interval, TimeoutMsg when done
 ```
 
 ### Stopwatch
 
-Count-up timer. The update frequency and output format are customizable.
+<img src="https://stuff.charm.sh/bubbles-examples/stopwatch.gif" width="400" alt="Stopwatch">
+
+A simple, flexible component for counting up. The update frequency and output
+can be customized as you like.
 
 ```crystal
 sw = Bubbles::Stopwatch.new(interval: 100.milliseconds)
-# Sends TickMsg on each interval
 ```
 
 ### Cursor
@@ -210,7 +224,7 @@ position.
 
 ```crystal
 c = Bubbles::Cursor.new
-c.style = Bubbles::Cursor::CursorBlink  # Blinking cursor
+c.set_mode(Bubbles::Cursor::Mode::Blink)
 ```
 
 ### Key
@@ -219,7 +233,6 @@ Non-visual component for managing keybindings. Useful for custom key remapping
 and generating help views.
 
 ```crystal
-km = Bubbles::Key::Binding.new
 Bubbles::Key.new_binding(
   Bubbles::Key.with_keys("k", "up"),
   Bubbles::Key.with_help("↑/k", "move up"),
@@ -230,13 +243,13 @@ Bubbles::Key.new_binding(
 
 | Document | Purpose |
 |----------|---------|
-| [Architecture](docs/architecture.md) | System design and data flow |
-| [Development](docs/development.md) | Setup and daily workflow (including porting guide) |
-| [Coding Guidelines](docs/coding-guidelines.md) | Code style and conventions |
-| [Testing](docs/testing.md) | Test commands and patterns |
-| [PR Workflow](docs/pr-workflow.md) | Commits, PRs, and review process |
-| [Porting Parity](docs/porting-parity.md) | Upstream source tracking |
-| [Upgrading to v2](docs/upgrade_guide_v2.md) | Migration from Go Bubbles v1 to Crystal v2 |
+| [Architecture](docs/architecture.md) | System design, data flow, package responsibilities |
+| [Development](docs/development.md) | Prerequisites, setup, daily workflow |
+| [Coding Guidelines](docs/coding-guidelines.md) | Code style, error handling, naming conventions |
+| [Testing](docs/testing.md) | Test commands, conventions, patterns |
+| [PR Workflow](docs/pr-workflow.md) | Commits, PRs, branch naming, review process |
+| [Porting Parity](docs/porting-parity.md) | Upstream source tracking and parity verification |
+| [Upgrade Guide v2](docs/upgrade_guide_v2.md) | Migration from Go Bubbles v1 to Crystal v2 |
 
 ## Contributing
 

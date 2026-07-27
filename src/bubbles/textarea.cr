@@ -334,7 +334,7 @@ module Bubbles
       property height : Int32
       property row : Int32
       property col : Int32
-      property dynamic_height : Bool
+      property? dynamic_height : Bool
       property min_height : Int32
       property max_content_height : Int32
       property max_height : Int32
@@ -346,10 +346,9 @@ module Bubbles
       @prompt_func : (PromptInfo -> String)?
       @prompt_width : Int32
       @styles : Styles
-      @end_of_buffer_character : Char
+      property end_of_buffer_character : Char
       @max_height : Int32
       @max_width : Int32
-      @dynamic_height : Bool
       @min_height : Int32
       @max_content_height : Int32
       @focus : Bool
@@ -564,28 +563,18 @@ module Bubbles
         @value.map(&.join).join("\n")
       end
 
-      def insert_string(s : String)
-        s.each_char { |char| insert_rune(char) }
+      # insertRune inserts a single rune at the cursor position.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:462
+      def insert_rune(r : Char)
+        insert_runes_from_user_input([r])
         recalculate_height
       end
 
-      def insert_rune(r : Char)
-        return if @char_limit > 0 && length >= @char_limit
-
-        if r == '\n'
-          current = @value[@row]
-          left = current[0, @col]
-          right = current[@col..] || [] of Char
-          @value[@row] = left
-          @value.insert(@row + 1, right)
-          @row += 1
-          @col = 0
-          return
-        end
-
-        line = @value[@row]
-        line.insert(@col, r)
-        @col += 1
+      # insertString inserts a string at the cursor position.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:455
+      def insert_string(s : String)
+        insert_runes_from_user_input(s.chars)
+        recalculate_height
       end
 
       # insert_runes_from_user_input inserts runes from user input (e.g., pasting or typing).
@@ -796,18 +785,24 @@ module Bubbles
       end
 
       def word : String
-        line_chars = @value[@row]
-        return "" if line_chars.empty?
-        start_idx = @col - 1
-        start_idx = 0 if start_idx < 0
-        while start_idx > 0 && !line_chars[start_idx - 1].whitespace?
-          start_idx -= 1
+        line = @value[@row]
+        col = @col - 1
+
+        return "" if col < 0
+        return "" if col >= line.size
+        return "" if line[col].whitespace?
+
+        start = col
+        while start > 0 && !line[start - 1].whitespace?
+          start -= 1
         end
-        end_idx = @col
-        while end_idx < line_chars.size && !line_chars[end_idx].whitespace?
-          end_idx += 1
+
+        finish = col
+        while finish < line.size && !line[finish].whitespace?
+          finish += 1
         end
-        line_chars[start_idx...end_idx].join
+
+        line[start...finish].join
       end
 
       # deleteBeforeCursor deletes all text before the cursor.
@@ -1064,7 +1059,7 @@ module Bubbles
 
       # recalculateHeight recomputes and applies the textarea height based on
       # content when DynamicHeight is enabled. It is a no-op otherwise.
-      # Ported from Go: vendor/bubbles/textarea/textarea.go:1676 (v2.1.0)
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1676
       private def recalculate_height
         return unless @dynamic_height
 
@@ -1074,8 +1069,8 @@ module Bubbles
         if @max_height > 0
           h = Math.min(h, @max_height)
         end
-        if max_offset = total - h
-          @viewport.y_offset > max_offset
+        max_offset = total - h
+        if @viewport.y_offset > max_offset
           @viewport.set_y_offset(Math.max(0, max_offset))
         end
         set_height(h)
@@ -1124,30 +1119,25 @@ module Bubbles
       end
 
       # mergeLineBelow merges the current line the cursor is on with the line below.
-      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1631
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1734
       private def merge_line_below(row : Int32)
         return if row >= @value.size - 1
 
-        # To perform a merge, we will need to combine the two lines and then
-        # re-wrap the resulting line.
         @value[row] = @value[row] + @value[row + 1]
-        @value.delete_at(row + 1)
 
-        # If we removed the last line, add a new empty line.
-        if @value.empty?
-          @value << [] of Char
+        # Shift all lines up by one (matching Go's 'for i := row + 1; i < len(m.value)-1; i++' pattern)
+        (row + 1).upto(@value.size - 2) do |i|
+          @value[i] = @value[i + 1]
         end
 
-        # Adjust cursor position if necessary.
-        if @row > row
-          @row -= 1
-        elsif @row == row && @col > @value[row].size - @value[row + 1].size
-          @col = @value[row].size - @value[row + 1].size
+        # Remove the last line
+        if @value.size > 0
+          @value = @value[0, @value.size - 1]
         end
       end
 
       # mergeLineAbove merges the current line the cursor is on with the line above.
-      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1651
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1754
       private def merge_line_above(row : Int32)
         return if row <= 0
 
@@ -1157,11 +1147,15 @@ module Bubbles
 
         # Merge the lines.
         @value[row - 1] = @value[row - 1] + @value[row]
-        @value.delete_at(row)
 
-        # If we removed the last line, add a new empty line.
-        if @value.empty?
-          @value << [] of Char
+        # Shift all lines up by one
+        row.upto(@value.size - 2) do |i|
+          @value[i] = @value[i + 1]
+        end
+
+        # Remove the last line
+        if @value.size > 0
+          @value = @value[0, @value.size - 1]
         end
       end
 
@@ -1750,14 +1744,14 @@ module Bubbles
           @err = paste_err_msg.error
         end
 
+        recalculate_height
+
         # Make sure we set the content of the viewport before updating it.
         view_result = view_internal
         @viewport.set_content(view_result)
         vp, cmd = @viewport.update(msg)
         @viewport = vp
         cmds << cmd if cmd
-
-        recalculate_height
 
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)

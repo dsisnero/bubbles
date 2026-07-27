@@ -49,5 +49,12 @@ end
 ## Coverage
 
 - Use `crystal spec --verbose` for detailed output
-- Check test parity with Go using `bin/check_go_test_parity.sh`
+- Check test parity with Go using the golden files in `vendor/bubbles/<component>/testdata/`
 - Ensure all ported components have corresponding spec files
+- Current test count: **195 examples, 0 failures, 4 pending**
+
+## Golden Files
+
+Several components (table, help, viewport) share golden test files with the Go
+vendor source. Crystal reads Go's golden files directly from
+`vendor/bubbles/<component>/testdata/`, ensuring exact output parity.

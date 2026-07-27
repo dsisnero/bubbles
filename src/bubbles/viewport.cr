@@ -83,7 +83,7 @@ module Bubbles
       @height : Int32
       @y_offset : Int32
       @x_offset : Int32
-      @horizontal_step : Int32
+      property horizontal_step : Int32
       @lines : Array(String)
       @longest_line_width : Int32
       @highlights : Array(HighlightInfo)
@@ -161,10 +161,12 @@ module Bubbles
         y_offset > max_y_offset
       end
 
+      # ScrollPercent returns the amount scrolled as a float between 0 and 1.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:200
       def scroll_percent : Float64
-        total = total_line_count
-        return 1.0 if height >= total
-        v = y_offset.to_f / (total - height).to_f
+        total, _, _ = calculate_line(0)
+        return 1.0 if @height >= total
+        v = @y_offset.to_f / (total - @height).to_f
         clampf(v, 0.0, 1.0)
       end
 
@@ -217,8 +219,12 @@ module Bubbles
         get_content
       end
 
+      # TotalLineCount returns the total number of lines (both hidden and visible)
+      # within the viewport, accounting for soft wrapping.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:570
       def total_line_count : Int32
-        @lines.size
+        total, _, _ = calculate_line(0)
+        total
       end
 
       def visible_line_count : Int32
@@ -276,6 +282,34 @@ module Bubbles
 
       def scroll_right(cols : Int32)
         set_x_offset(@x_offset + cols)
+      end
+
+      # PageDown moves the view down by the number of lines in the viewport.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:486
+      def page_down
+        return if at_bottom
+        scroll_down(@height)
+      end
+
+      # PageUp moves the view up by one height of the viewport.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:494
+      def page_up
+        return if at_top
+        scroll_up(@height)
+      end
+
+      # HalfPageDown moves the view down by half the height of the viewport.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:501
+      def half_page_down
+        return if at_bottom
+        scroll_down(@height // 2)
+      end
+
+      # HalfPageUp moves the view up by half the height of the viewport.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:509
+      def half_page_up
+        return if at_top
+        scroll_up(@height // 2)
       end
 
       def goto_top
@@ -377,10 +411,28 @@ module Bubbles
         end
       end
 
+      # View renders the viewport into a string.
+      # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:728
       def view : String
-        return "" if @width <= 0 || @height <= 0
-        content = visible_lines.join("\n")
-        Lipgloss.new_style.width(@width).height(@height).render(content)
+        w = @width
+        h = @height
+        sw = @style.get_width
+        w = Math.min(w, sw) if sw != 0
+        sh = @style.get_height
+        h = Math.min(h, sh) if sh != 0
+
+        return "" if w == 0 || h == 0
+
+        content_width = w - @style.get_horizontal_frame_size
+        content_height = h - @style.get_vertical_frame_size
+        contents = Lipgloss::Style.new
+          .width(content_width)
+          .height(content_height)
+          .render(visible_lines.join("\n"))
+        @style
+          .unset_width
+          .unset_height
+          .render(contents)
       end
 
       private def visible_lines : Array(String)

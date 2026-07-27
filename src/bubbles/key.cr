@@ -12,8 +12,9 @@ module Bubbles
       end
 
       # SetKeys sets the keys for the keybinding.
+      # No-arg case: creates an empty (non-nil) key list to keep binding enabled (Go parity).
       def set_keys
-        @keys = nil
+        @keys = [] of String
       end
 
       def set_keys(*keys : String) # ameba:disable Naming/AccessorMethodName
@@ -94,7 +95,7 @@ module Bubbles
 
     # WithKeys initializes a keybinding with the given keystrokes.
     def self.with_keys : BindingOpt
-      ->(b : Binding) { b.keys = nil }
+      ->(b : Binding) { b.keys = [] of String }
     end
 
     def self.with_keys(*keys : String) : BindingOpt

@@ -13,23 +13,60 @@ describe Bubbles::Table do
     Bubbles::Table::Column.new("col3", 10),
   ]
 
-  it "TestNew" do
-    model = Bubbles::Table.new
-    model.cursor.should eq(0)
-    model.viewport_height.should eq(20)
+  describe "TestNew" do
+    it "Default" do
+      model = Bubbles::Table.new
+      model.cursor.should eq(0)
+      model.viewport_height.should eq(20)
+      model.viewport_width.should eq(0)
+      model.focused?.should be_false
+      model.columns.size.should eq(0)
+      model.rows.size.should eq(0)
+    end
 
-    model = Bubbles::Table.new(
-      Bubbles::Table.with_columns([Bubbles::Table::Column.new("Foo", 1), Bubbles::Table::Column.new("Bar", 2)]),
-      Bubbles::Table.with_rows([["1", "Foo"], ["2", "Bar"]]),
-      Bubbles::Table.with_height(10),
-      Bubbles::Table.with_width(10),
-      Bubbles::Table.with_focused(true)
-    )
-    model.columns.size.should eq(2)
-    model.rows.size.should eq(2)
-    model.viewport_height.should eq(9)
-    model.viewport_width.should eq(10)
-    model.focused?.should be_true
+    it "WithColumns" do
+      model = Bubbles::Table.new(
+        Bubbles::Table.with_columns([Bubbles::Table::Column.new("Foo", 1), Bubbles::Table::Column.new("Bar", 2)]),
+      )
+      model.columns.size.should eq(2)
+      model.viewport_height.should eq(20)
+    end
+
+    it "WithColumns; WithRows" do
+      model = Bubbles::Table.new(
+        Bubbles::Table.with_columns([Bubbles::Table::Column.new("Foo", 1), Bubbles::Table::Column.new("Bar", 2)]),
+        Bubbles::Table.with_rows([["1", "Foo"], ["2", "Bar"]]),
+      )
+      model.columns.size.should eq(2)
+      model.rows.size.should eq(2)
+    end
+
+    it "WithHeight" do
+      model = Bubbles::Table.new(Bubbles::Table.with_height(10))
+      model.viewport_height.should eq(9)
+    end
+
+    it "WithWidth" do
+      model = Bubbles::Table.new(Bubbles::Table.with_width(10))
+      model.viewport_width.should eq(10)
+    end
+
+    it "WithFocused" do
+      model = Bubbles::Table.new(Bubbles::Table.with_focused(true))
+      model.focused?.should be_true
+    end
+
+    it "WithStyles" do
+      s = Bubbles::Table::Styles.new
+      model = Bubbles::Table.new(Bubbles::Table.with_styles(s))
+      model.styles.should eq(s)
+    end
+
+    it "WithKeyMap" do
+      km = Bubbles::Table::KeyMap.new
+      model = Bubbles::Table.new(Bubbles::Table.with_key_map(km))
+      model.key_map.should eq(km)
+    end
   end
 
   it "TestModel_FromValues" do
@@ -48,15 +85,36 @@ describe Bubbles::Table do
     table.rows.should eq([["foo1.", "bar1"], ["foo,bar,baz", "bar,2"]])
   end
 
-  it "TestModel_RenderRow" do
-    table = Bubbles::Table.new(
-      Bubbles::Table.with_columns(test_cols),
-      Bubbles::Table.with_rows([["Foooooo", "Baaaaar", "Baaaaaz"]])
-    )
-    row = table.render_row(0)
-    row.should contain("Foooooo")
-    row.should contain("Baaaaar")
-    row.should contain("Baaaaaz")
+  describe "TestModel_RenderRow" do
+    it "simple row" do
+      styles = Bubbles::Table::Styles.new(cell: Lipgloss::Style.new)
+      table = Bubbles::Table.new(
+        Bubbles::Table.with_columns(test_cols),
+        Bubbles::Table.with_rows([["Foooooo", "Baaaaar", "Baaaaaz"]]),
+        Bubbles::Table.with_styles(styles)
+      )
+      ansi_strip.call(table.render_row(0)).should eq("Foooooo   Baaaaar   Baaaaaz   ")
+    end
+
+    it "simple row with truncations" do
+      styles = Bubbles::Table::Styles.new(cell: Lipgloss::Style.new)
+      table = Bubbles::Table.new(
+        Bubbles::Table.with_columns(test_cols),
+        Bubbles::Table.with_rows([["Foooooooooo", "Baaaaaaaaar", "Quuuuuuuuux"]]),
+        Bubbles::Table.with_styles(styles)
+      )
+      ansi_strip.call(table.render_row(0)).should eq("Foooooooo…Baaaaaaaa…Quuuuuuuu…")
+    end
+
+    it "simple row avoiding truncations" do
+      styles = Bubbles::Table::Styles.new(cell: Lipgloss::Style.new)
+      table = Bubbles::Table.new(
+        Bubbles::Table.with_columns(test_cols),
+        Bubbles::Table.with_rows([["Fooooooooo", "Baaaaaaaar", "Quuuuuuuux"]]),
+        Bubbles::Table.with_styles(styles)
+      )
+      ansi_strip.call(table.render_row(0)).should eq("FoooooooooBaaaaaaaarQuuuuuuuux")
+    end
   end
 
   it "TestCursorNavigation" do

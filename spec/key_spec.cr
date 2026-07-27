@@ -81,17 +81,17 @@ describe Bubbles::Key do
       Bubbles::Key.matches?("any", binding).should be_false
     end
 
-    it "WithKeys with no arguments creates nil keys (Go parity)" do
+    it "WithKeys with no arguments creates empty keys (Go parity)" do
       binding = Bubbles::Key.new_binding(Bubbles::Key.with_keys)
-      binding.keys.should be_nil
-      binding.enabled?.should be_false
+      binding.keys.should eq([] of String)
+      binding.enabled?.should be_true
     end
 
-    it "SetKeys with no arguments sets nil keys (Go parity)" do
+    it "SetKeys with no arguments sets empty keys (Go parity)" do
       binding = Bubbles::Key::Binding.new
       binding.set_keys
-      binding.keys.should be_nil
-      binding.enabled?.should be_false
+      binding.keys.should eq([] of String)
+      binding.enabled?.should be_true
     end
 
     it "Enabled matches Go behavior for empty vs nil keys" do

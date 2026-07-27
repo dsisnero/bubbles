@@ -764,7 +764,9 @@ module Bubbles
         !@matched_suggestions.empty?
       end
 
-      private def update_suggestions
+      # update_suggestions refreshes the list of matching suggestions.
+      # Made public for test parity with Go (Go test in same package calls it directly).
+      def update_suggestions
         return unless @show_suggestions
 
         if @value.empty? || @suggestions.empty?
@@ -788,14 +790,18 @@ module Bubbles
         @matched_suggestions = matches
       end
 
-      private def next_suggestion
+      # next_suggestion selects the next suggestion.
+      # Made public for test parity with Go (Go test in same package calls it directly).
+      def next_suggestion
         @current_suggestion_index += 1
         if @current_suggestion_index >= @matched_suggestions.size
           @current_suggestion_index = 0
         end
       end
 
-      private def previous_suggestion
+      # previous_suggestion selects the previous suggestion.
+      # Made public for test parity with Go (Go test in same package calls it directly).
+      def previous_suggestion
         @current_suggestion_index -= 1
         if @current_suggestion_index < 0
           @current_suggestion_index = @matched_suggestions.size - 1
