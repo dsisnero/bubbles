@@ -26,7 +26,8 @@ Format: `<type>/<issue-number>-<short-kebab-description>`
 
 ## PR Checklist
 
-- [ ] Code follows project guidelines (see [Coding Guidelines](coding-guidelines.md))
+- [ ] Code follows project guidelines (see
+      [Coding Guidelines](coding-guidelines.md))
 - [ ] Tests added/updated (see [Testing](testing.md))
 - [ ] Documentation updated (if applicable)
 - [ ] CHANGELOG.md updated for user-facing changes
@@ -38,6 +39,7 @@ Format: `<type>/<issue-number>-<short-kebab-description>`
 1. **Self-review** using `/forge-reflect-pr` before requesting review
 2. **Address feedback** using `/forge-address-pr-feedback` for reviewer comments
 3. **Verify quality gates**:
+
    ```bash
    crystal tool format --check
    ameba --fix
@@ -45,4 +47,5 @@ Format: `<type>/<issue-number>-<short-kebab-description>`
    crystal spec
    rumdl fmt docs/ *.md
    ```
+
 4. **Update changelog** for user-facing changes using `/forge-update-changelog`

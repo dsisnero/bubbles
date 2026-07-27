@@ -39,6 +39,7 @@ Format: `<type>(<scope>): <description>`
 Types: feat, fix, docs, refactor, test, chore, perf
 
 Examples:
+
 - `feat(textinput): add placeholder support`
 - `fix(list): handle empty list edge case`
 - `test(spinner): port Go spinner tests`
@@ -62,6 +63,7 @@ rumdl fmt docs/ *.md
 ## Debugging
 
 When something breaks:
+
 1. Check Go source in `vendor/bubbles/` for reference implementation
 2. Verify test parity with Go tests
 3. Run `make lint` and `make test` to identify issues

@@ -4,6 +4,18 @@ All notable user-facing changes to this project will be documented in this file.
 
 Changes are grouped by release date and category. Only user-facing changes are included — internal refactors, test updates, and CI changes are omitted.
 
+## [2.1.1] - 2026-07-27
+
+### Changed
+- **Textarea prompt rendering fix** — `prompt_view` now applies prompt style
+  internally, matching upstream Go v2.1.1 fix (`charmbracelet/bubbles#921`).
+  Fixes placeholder prompts not being styled.
+- Vendor submodule updated to `charmbracelet/bubbles` v2.1.1.
+
+### Notes
+- No breaking changes; all existing APIs unchanged.
+- 156 examples, 0 failures, 4 pending (skipped in upstream).
+
 ## [2.1.0] - 2026-05-28
 
 ### Added

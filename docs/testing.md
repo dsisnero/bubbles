@@ -7,6 +7,7 @@ make test  # Run all Crystal specs
 ```
 
 For individual test files:
+
 ```bash
 crystal spec spec/textinput_spec.cr
 ```
@@ -21,13 +22,16 @@ crystal spec spec/textinput_spec.cr
 ## Writing Tests
 
 When porting Go tests to Crystal:
+
 1. **Preserve test logic exactly** - Don't change assertions or expected values
 2. **Convert Go test tables** to Crystal `it` blocks with `describe`/`context`
 3. **Use `pending` for missing functionality** - Mark tests that can't run yet
 4. **Maintain test coverage** - Port all Go test cases, including edge cases
-5. **Verify against Go implementation** - Ensure Crystal behavior matches Go exactly
+5. **Verify against Go implementation** - Ensure Crystal behavior matches Go
+   exactly
 
 Example test structure:
+
 ```crystal
 describe Bubbles::TextInput do
   describe "#update" do

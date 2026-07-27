@@ -12,7 +12,8 @@
 - Use Crystal's exception hierarchy appropriately
 - Preserve error semantics from Go implementation
 - When porting Go error handling, match error messages and conditions exactly
-- Use `raise` for unrecoverable errors, return `nil` or error types for recoverable cases
+- Use `raise` for unrecoverable errors, return `nil` or error types for
+  recoverable cases
 
 ## Naming Conventions
 

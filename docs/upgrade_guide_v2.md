@@ -1,8 +1,12 @@
 # Upgrading to Bubbles v2 (Crystal Port)
 
-This guide covers the changes when migrating from the Go Bubbles v1 to the Crystal port of Bubbles v2. Since this is a Crystal port, the changes are both about the v2 API changes and the language transition from Go to Crystal.
+This guide covers the changes when migrating from the Go Bubbles v1 to the
+Crystal port of Bubbles v2. Since this is a Crystal port, the changes are both
+about the v2 API changes and the language transition from Go to Crystal.
 
-> **Note:** This Crystal port targets the Bubbles v2 API from `charm.land/bubbles/v2`. The upstream Go source is pinned in `vendor/bubbles/`.
+> **Note:** This Crystal port targets the Bubbles v2 API from
+> `charm.land/bubbles/v2`. The upstream Go source is pinned in
+> `vendor/bubbles/`.
 
 ---
 
@@ -31,7 +35,8 @@ This guide covers the changes when migrating from the Go Bubbles v1 to the Cryst
 
 ## 1. Import Paths
 
-In Crystal, imports work differently than Go. You require the entire `bubbles` module or specific components:
+In Crystal, imports work differently than Go. You require the entire `bubbles`
+module or specific components:
 
 ```crystal
 # Before (Go)
@@ -55,7 +60,8 @@ help = Bubbles::Help.new
 key = Bubbles::Key.new
 ```
 
-> **Note:** The `runeutil` and `memoization` packages are internal and not directly accessible.
+> **Note:** The `runeutil` and `memoization` packages are internal and not
+> directly accessible.
 
 ---
 
@@ -65,7 +71,8 @@ These patterns repeat across multiple components in the Crystal port.
 
 ### 2a. `Tea::KeyMsg` → `Tea::KeyPressMsg`
 
-Bubble Tea v2 renames `Tea::KeyMsg` to `Tea::KeyPressMsg`. Update your `update` methods:
+Bubble Tea v2 renames `Tea::KeyMsg` to `Tea::KeyPressMsg`. Update your `update`
+methods:
 
 ```crystal
 # Before (Go-style thinking)
@@ -95,7 +102,8 @@ model.set_height(20)
 puts model.width, model.height
 ```
 
-**Affected components:** `filepicker`, `help`, `progress`, `table`, `textinput`, `viewport`.
+**Affected components:** `filepicker`, `help`, `progress`, `table`, `textinput`,
+`viewport`.
 
 ### 2c. `DefaultKeyMap` Variables → Class Methods
 
@@ -116,6 +124,7 @@ km.paste.set_enabled(false)
 ### 2d. Crystal Naming Conventions
 
 Follow Crystal naming conventions:
+
 - Methods: `snake_case` (e.g., `set_width`, `default_key_map`)
 - Classes/Modules: `CamelCase` (e.g., `Bubbles::TextInput`)
 - Constants: `SCREAMING_SNAKE_CASE` (e.g., `DEFAULT_WIDTH`)
@@ -157,6 +166,7 @@ model, cmd = cursor.blink
 | `_ = model.Height` | `_ = model.height` |
 
 Boolean properties use `property?` syntax in Crystal:
+
 ```crystal
 fp = Bubbles::FilePicker.new
 fp.show_permissions? = true  # Setter
@@ -174,6 +184,7 @@ end
 | `NewModel()` | `new` |
 
 New methods:
+
 - `default_styles(is_dark : Bool) : Styles`
 - `default_dark_styles : Styles`
 - `default_light_styles : Styles`
@@ -194,7 +205,9 @@ h.styles = Bubbles::Help.default_styles(is_dark)
 | `styles.FilterCursor` | `styles.filter.cursor` |
 | `NewModel(...)` | `new(...)` |
 
-The `Styles.filter_prompt` and `Styles.filter_cursor` fields have been consolidated into `Styles.filter`, which is a `Bubbles::TextInput::Styles` struct.
+The `Styles.filter_prompt` and `Styles.filter_cursor` fields have been
+consolidated into `Styles.filter`, which is a `Bubbles::TextInput::Styles`
+struct.
 
 ### Paginator
 
@@ -213,6 +226,7 @@ The `Styles.filter_prompt` and `Styles.filter_cursor` fields have been consolida
 This component has extensive changes in the Crystal port.
 
 #### Width
+
 ```crystal
 # Before (Go-style thinking)
 p.width = 40
@@ -224,6 +238,7 @@ puts p.width
 ```
 
 #### Colors
+
 Color handling differs in Crystal:
 
 ```crystal
@@ -236,6 +251,7 @@ p.empty_color = Colorful::Color.new("#333333")
 ```
 
 #### Options Pattern
+
 ```crystal
 # Crystal uses initializer parameters or builder pattern
 p = Bubbles::Progress.new(
@@ -284,12 +300,14 @@ The table already had `set_width`/`set_height`/`width`/`height` methods.
 ### Textarea
 
 #### KeyMap
+
 ```crystal
 # Crystal uses class methods
 km = Bubbles::TextArea.default_key_map
 ```
 
 #### Styles
+
 The styling system follows Crystal patterns:
 
 ```crystal
@@ -300,6 +318,7 @@ ta.styles.blurred.base = Lipgloss::Style.new.border(Lipgloss::Border::Hidden)
 ```
 
 #### Cursor
+
 ```crystal
 # Crystal uses Tea::Cursor directly
 ta.cursor                    # Returns Tea::Cursor
@@ -310,16 +329,19 @@ ta.virtual_cursor = true     # Use virtual cursor mode
 ### Textinput
 
 #### KeyMap
+
 ```crystal
 km = Bubbles::TextInput.default_key_map
 ```
 
 #### Width
+
 ```crystal
 ti.set_width(40)
 ```
 
 #### Styles
+
 Individual style fields are in a `Styles` struct:
 
 ```crystal
@@ -344,6 +366,7 @@ t = Bubbles::Timer.new(30.seconds, interval: 100.milliseconds)
 ### Viewport
 
 #### Constructor
+
 ```crystal
 # Before (Go-style)
 vp = Bubbles::Viewport.new(80, 24)
@@ -357,6 +380,7 @@ vp.set_height(24)
 ```
 
 #### Width, Height, YOffset
+
 ```crystal
 vp.set_width(80)
 vp.set_height(24)
@@ -365,8 +389,10 @@ puts vp.width, vp.height, vp.y_offset
 ```
 
 #### New Features (Crystal implementation)
+
 - **Soft wrapping:** `vp.soft_wrap = true`
 - **Left gutter** for line numbers (Crystal lambda syntax):
+
   ```crystal
   vp.left_gutter_func = ->(info : Bubbles::Viewport::GutterContext) do
     if info.soft
@@ -378,7 +404,9 @@ puts vp.width, vp.height, vp.y_offset
     end
   end
   ```
+
 - **Highlighting:**
+
   ```crystal
   vp.set_highlights(regex.find_all(content).map(&.begin_end))
   vp.highlight_next
@@ -393,6 +421,7 @@ puts vp.width, vp.height, vp.y_offset
 The Crystal port requires explicit light/dark style selection.
 
 ### Query via Bubble Tea
+
 ```crystal
 def init : Tea::Cmd
   Tea.request_background_color
@@ -411,6 +440,7 @@ end
 ```
 
 ### Manual Selection
+
 ```crystal
 h.styles = Bubbles::Help.default_dark_styles   # force dark
 h.styles = Bubbles::Help.default_light_styles  # force light
@@ -421,6 +451,7 @@ h.styles = Bubbles::Help.default_light_styles  # force light
 ## 5. Crystal-Specific Changes
 
 ### Type System
+
 Crystal has a strong static type system. Pay attention to types:
 
 ```crystal
@@ -433,6 +464,7 @@ end
 ```
 
 ### Error Handling
+
 Crystal uses exceptions instead of error returns:
 
 ```crystal
@@ -447,6 +479,7 @@ validate!(input)  # raises exception on error
 ```
 
 ### Concurrency
+
 Crystal uses fibers and channels instead of goroutines:
 
 ```crystal
@@ -462,6 +495,7 @@ end
 ```
 
 ### Time Handling
+
 Crystal has built-in time types:
 
 ```crystal
@@ -472,6 +506,7 @@ duration = 2.minutes + 30.seconds
 ```
 
 ### Collections
+
 Crystal collections have different APIs:
 
 ```crystal
@@ -492,6 +527,7 @@ end
 ```
 
 ### Testing
+
 Crystal uses `spec` for testing:
 
 ```crystal
@@ -509,7 +545,8 @@ end
 
 ## Summary
 
-The Crystal port of Bubbles v2 maintains the same API concepts as the Go version but adapts them to Crystal idioms:
+The Crystal port of Bubbles v2 maintains the same API concepts as the Go version
+but adapts them to Crystal idioms:
 
 1. **Crystal naming conventions** (snake_case methods, CamelCase classes)
 2. **Crystal type system** (strong static typing, generic support)
@@ -518,10 +555,12 @@ The Crystal port of Bubbles v2 maintains the same API concepts as the Go version
 5. **Crystal time handling** (Time, Time::Span, number methods like `.seconds`)
 
 When porting Go code to use this Crystal library:
+
 1. Update import/require statements
 2. Follow Crystal naming conventions
 3. Adapt to Crystal's type system
 4. Use Crystal's error handling patterns
 5. Update test code to use Crystal's spec framework
 
-Refer to the `spec/` directory for examples of how to use each component in Crystal.
+Refer to the `spec/` directory for examples of how to use each component in
+Crystal.

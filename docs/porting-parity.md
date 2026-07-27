@@ -1,6 +1,6 @@
 ---
 upstream_repo: "https://github.com/charmbracelet/bubbles"
-pinned_revision: "8d9107f"
+pinned_revision: "d2b2217"
 import_mode: "submodule"
 upstream_submodule_path: "vendor/bubbles/"
 ---
@@ -10,7 +10,7 @@ upstream_submodule_path: "vendor/bubbles/"
 ## Upstream Source of Truth
 
 - Repository: `https://github.com/charmbracelet/bubbles`
-- Pinned revision: `8d9107f`
+- Pinned revision: `d2b2217` (v2.1.1)
 - Import mode: `submodule`
 - Upstream path: `vendor/bubbles/`
 
@@ -18,20 +18,20 @@ upstream_submodule_path: "vendor/bubbles/"
 
 | Upstream Module/Path | Crystal Target | Status | Notes |
 |----------------------|----------------|--------|-------|
-| `textinput/` | `src/bubbles/textinput.cr` | Ported | Basic functionality complete |
-| `textarea/` | `src/bubbles/textarea.cr` | Ported | Basic functionality complete |
-| `list/` | `src/bubbles/list.cr` | Ported | Basic functionality complete |
-| `spinner/` | `src/bubbles/spinner.cr` | Ported | Basic functionality complete |
-| `progress/` | `src/bubbles/progress.cr` | Ported | Basic functionality complete |
-| `viewport/` | `src/bubbles/viewport.cr` | Ported | Basic functionality complete |
-| `filepicker/` | `src/bubbles/filepicker.cr` | Ported | Basic functionality complete |
-| `help/` | `src/bubbles/help.cr` | Ported | Basic functionality complete |
-| `cursor/` | `src/bubbles/cursor.cr` | Ported | Basic functionality complete |
-| `key/` | `src/bubbles/key.cr` | Ported | Basic functionality complete |
-| `paginator/` | `src/bubbles/paginator.cr` | Ported | Basic functionality complete |
-| `timer/` | `src/bubbles/timer.cr` | Ported | Basic functionality complete |
-| `stopwatch/` | `src/bubbles/stopwatch.cr` | Ported | Basic functionality complete |
-| `table/` | `src/bubbles/table.cr` | TODO | Not yet ported |
+| `textinput/` | `src/bubbles/textinput.cr` | Ported | v2.1.1 |
+| `textarea/` | `src/bubbles/textarea.cr` | Ported | v2.1.1 — prompt render fix applied |
+| `list/` | `src/bubbles/list.cr` | Ported | v2.1.1 |
+| `spinner/` | `src/bubbles/spinner.cr` | Ported | v2.1.1 |
+| `progress/` | `src/bubbles/progress.cr` | Ported | v2.1.1 |
+| `viewport/` | `src/bubbles/viewport.cr` | Ported | v2.1.1 |
+| `filepicker/` | `src/bubbles/filepicker.cr` | Ported | v2.1.1 |
+| `help/` | `src/bubbles/help.cr` | Ported | v2.1.1 |
+| `cursor/` | `src/bubbles/cursor.cr` | Ported | v2.1.1 |
+| `key/` | `src/bubbles/key.cr` | Ported | v2.1.1 |
+| `paginator/` | `src/bubbles/paginator.cr` | Ported | v2.1.1 |
+| `timer/` | `src/bubbles/timer.cr` | Ported | v2.1.1 |
+| `stopwatch/` | `src/bubbles/stopwatch.cr` | Ported | v2.1.1 |
+| `table/` | `src/bubbles/table.cr` | Ported | v2.1.1 — TODO: verify full test parity |
 
 ## Behavior Checklist
 
@@ -58,7 +58,7 @@ upstream_submodule_path: "vendor/bubbles/"
 | `paginator/*_test.go` | `spec/paginator_spec.cr` | Partial | Some tests pending |
 | `timer/*_test.go` | `spec/timer_spec.cr` | Partial | Some tests pending |
 | `stopwatch/*_test.go` | `spec/stopwatch_spec.cr` | Partial | Some tests pending |
-| `table/*_test.go` | TODO | TODO | Not yet ported |
+| `table/*_test.go` | `spec/table_spec.cr` | Ported | Ported from Go v2.1.1 |
 
 ## Known Deviations
 

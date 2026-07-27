@@ -1074,7 +1074,7 @@ module Bubbles
         if @max_height > 0
           h = Math.min(h, @max_height)
         end
-        if (max_offset = total - h)
+        if max_offset = total - h
           @viewport.y_offset > max_offset
           @viewport.set_y_offset(Math.max(0, max_offset))
         end
@@ -1318,7 +1318,6 @@ module Bubbles
 
           wrapped_lines.each_with_index do |wrapped_line, wrapped_idx|
             prompt = prompt_view(display_line)
-            prompt = styles.computed_prompt.render(prompt)
             output << style.render(prompt)
             display_line += 1
 
@@ -1454,7 +1453,6 @@ module Bubbles
 
           # render prompt
           prompt = prompt_view(i)
-          prompt = styles.computed_prompt.render(prompt)
           buf << line_style.render(prompt)
 
           # when show line numbers enabled:
