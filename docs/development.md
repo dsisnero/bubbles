@@ -81,6 +81,14 @@ installed `cross-language-crystal-parity` skill scripts; the copies under
 `scripts/` are historical. See
 [plans/vendor-v2.2.2.md](../plans/vendor-v2.2.2.md) for the last refresh.
 
+## Example GIFs
+
+The README component GIFs live in `docs/assets/` and are recorded from
+[dsisnero/bubbles-examples](https://github.com/dsisnero/bubbles-examples) with
+VHS. Regenerate them with `make gifs` in that repository, then copy `gifs/*.gif`
+into `docs/assets/`. See [docs/assets/README.md](assets/README.md) for the
+mapping and requirements.
+
 ## Porting Guidance
 
 Porting guidance has moved to [plans/development.md](../plans/development.md).

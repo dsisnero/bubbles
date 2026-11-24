@@ -22,6 +22,10 @@ terminal interfaces. A Crystal port of
 Ports **Bubbles v2.2.2** (`charmbracelet/bubbles` @ `0c1a491`), including the
 new `tree` bubble, textarea selection/copy, and grapheme-aware editing.
 
+All component GIFs below are recorded from our own Crystal examples with
+[VHS](https://github.com/charmbracelet/vhs); see
+[docs/assets](docs/assets/README.md) to regenerate them.
+
 ---
 
 ## Quick Start
@@ -50,7 +54,7 @@ new `tree` bubble, textarea selection/copy, and grapheme-aware editing.
 
 ### Spinner
 
-<img src="https://stuff.charm.sh/bubbles-examples/spinner.gif" width="400" alt="Spinner">
+<img src="docs/assets/spinner.gif" width="400" alt="Spinner">
 
 An animated spinner, useful for indicating an operation is happening. Several
 built-in styles are available, and you can define custom frame sequences.
@@ -65,7 +69,7 @@ s.spinner = Bubbles::Spinner::Dot
 
 ### Text Input
 
-<img src="https://stuff.charm.sh/bubbles-examples/textinput.gif" width="400" alt="Text Input">
+<img src="docs/assets/textinput.gif" width="400" alt="Text Input">
 
 A text input field, akin to `<input type="text">` in HTML. Supports unicode,
 pasting, in-place scrolling when the value exceeds the width, and many
@@ -80,7 +84,7 @@ ti.prompt = "> "
 
 ### Text Area
 
-<img src="https://stuff.charm.sh/bubbles-examples/textarea.gif" width="400" alt="Text Area">
+<img src="docs/assets/textarea.gif" width="400" alt="Text Area">
 
 A multi-line text input area, akin to `<textarea />` in HTML. Supports unicode,
 pasting, vertical scrolling, dynamic height, selection with clipboard copy, and
@@ -94,6 +98,8 @@ ta.prompt = "> "
 ```
 
 ### Tree
+
+<img src="docs/assets/tree.gif" width="400" alt="Tree">
 
 A hierarchical tree view with keyboard navigation, expand/collapse, and a
 scrollable viewport. Ported from the new `tree` bubble in Bubbles v2.2.2.
@@ -109,7 +115,7 @@ tree.view
 
 ### Table
 
-<img src="https://stuff.charm.sh/bubbles-examples/table.gif" width="400" alt="Table">
+<img src="docs/assets/table.gif" width="400" alt="Table">
 
 A component for displaying and navigating tabular data (columns and rows).
 Supports vertical scrolling, column alignment, and customizable borders/styles.
@@ -131,7 +137,7 @@ t.set_height(10)
 
 ### Progress
 
-<img src="https://stuff.charm.sh/bubbles-examples/progress.gif" width="800" alt="Progress">
+<img src="docs/assets/progress.gif" width="600" alt="Progress">
 
 A simple, customizable progress meter with optional spring animation via
 [Harmonica][harmonica]. Supports solid and gradient fills.
@@ -148,7 +154,7 @@ p.view_as(0.75)
 
 ### Viewport
 
-<img src="https://stuff.charm.sh/bubbles-examples/viewport.gif" width="600" alt="Viewport">
+<img src="docs/assets/viewport.gif" width="600" alt="Viewport">
 
 A viewport for vertically scrolling content. Includes standard pager
 keybindings and mouse wheel support. Soft-wrapping and gutter support included.
@@ -161,7 +167,7 @@ vp.soft_wrap = true
 
 ### List
 
-<img src="https://stuff.charm.sh/bubbles-examples/list.gif" width="600" alt="List">
+<img src="docs/assets/list.gif" width="600" alt="List">
 
 A batteries-included component for browsing a set of items. Features
 pagination, fuzzy filtering, auto-generated help, an activity spinner, and
@@ -177,7 +183,7 @@ l = Bubbles::List.new(items, delegate, 40, 20)
 
 ### File Picker
 
-<img src="https://vhs.charm.sh/vhs-yET2HNiJNEbyqaVfYuLnY.gif" width="600" alt="File picker">
+<img src="docs/assets/filepicker.gif" width="600" alt="File picker">
 
 Navigate the file system to pick files or directories. Supports filtering by
 file extension, showing hidden files, and displaying permissions.
@@ -191,7 +197,7 @@ fp.allowed_types = [".cr", ".md"]
 
 ### Help
 
-<img src="https://stuff.charm.sh/bubbles-examples/help.gif" width="500" alt="Help">
+<img src="docs/assets/help.gif" width="500" alt="Help">
 
 Auto-generated help view from your keybindings. Supports single-line and
 multi-line modes, with graceful truncation when the terminal is too narrow.
@@ -204,7 +210,7 @@ h.view(key_map)
 
 ### Paginator
 
-<img src="https://stuff.charm.sh/bubbles-examples/pagination.gif" width="200" alt="Paginator">
+<img src="docs/assets/pagination.gif" width="200" alt="Paginator">
 
 Handles pagination logic and optionally draws a pagination UI. Supports
 "dot-style" (like iOS) and numeric page indicators.
@@ -219,7 +225,7 @@ p.view  # Renders "● ○ ○ ○ ○"
 
 ### Timer
 
-<img src="https://stuff.charm.sh/bubbles-examples/timer.gif" width="400" alt="Timer">
+<img src="docs/assets/timer.gif" width="400" alt="Timer">
 
 A simple, flexible component for counting down. The update frequency and output
 can be customized as you like.
@@ -230,7 +236,7 @@ t = Bubbles::Timer.new(30.seconds, Bubbles::Timer.with_interval(100.milliseconds
 
 ### Stopwatch
 
-<img src="https://stuff.charm.sh/bubbles-examples/stopwatch.gif" width="400" alt="Stopwatch">
+<img src="docs/assets/stopwatch.gif" width="400" alt="Stopwatch">
 
 A simple, flexible component for counting up. The update frequency and output
 can be customized as you like.
