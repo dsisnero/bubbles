@@ -1,6 +1,6 @@
 ---
 upstream_repo: "https://github.com/charmbracelet/bubbles"
-pinned_revision: "d2b2217"
+pinned_revision: "0c1a491"
 import_mode: "submodule"
 upstream_submodule_path: "vendor/bubbles/"
 ---
@@ -10,13 +10,17 @@ upstream_submodule_path: "vendor/bubbles/"
 ## Upstream Source of Truth
 
 - Repository: `https://github.com/charmbracelet/bubbles`
-- Pinned revision: `d2b2217` (v2.1.1)
+- Pinned revision: `0c1a491` (v2.2.2)
+- Port baseline: v2.1.1; the v2.2.2 delta is tracked in
+  [plans/vendor-v2.2.2.md](../plans/vendor-v2.2.2.md)
 - Import mode: `submodule`
 - Upstream path: `vendor/bubbles/`
 
 ## Parity Scope
 
-All 14 upstream Go modules are ported to Crystal:
+All 14 modules from the v2.1.1 port baseline are ported. v2.2.2 adds `tree/`,
+which is not started. `v2.1.1` in the Notes column means the module's port
+baseline, not the current pin.
 
 | Upstream Module | Crystal Target | Status | Tests | Notes |
 |-----------------|----------------|--------|-------|-------|
@@ -34,6 +38,7 @@ All 14 upstream Go modules are ported to Crystal:
 | `timer/` | `src/bubbles/timer.cr` | ✅ Ported | — | v2.1.1 |
 | `stopwatch/` | `src/bubbles/stopwatch.cr` | ✅ Ported | 8 | v2.1.1 |
 | `table/` | `src/bubbles/table.cr` | ✅ Ported | 22 | v2.1.1 |
+| `tree/` | `src/bubbles/tree.cr` (planned) | ⬜ Not started | — | New in v2.2.2 |
 
 ## Test Parity
 
@@ -53,6 +58,7 @@ All 14 upstream Go modules are ported to Crystal:
 | timer | — | — | ⚠️ No spec yet |
 | progress | — | — | ⚠️ No spec yet |
 | spinner | — | — | ⚠️ No spec yet |
+| tree | 8 | 0 | ⬜ Not started (new in v2.2.2) |
 
 **Total: 198 examples, 0 failures, 4 pending** (pending = skipped in upstream
 Go)

@@ -1,14 +1,48 @@
 # Parity Plan: Bubbles (Go → Crystal)
 
-Upstream: [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles) at `v2.1.0`
-Pinned: `vendor/bubbles/` at `f1daacf` (v2.1.0)
-Status: `152 examples, 0 failures, 0 errors, 4 pending`
+- Upstream: [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles) at
+  `v2.2.2`
+- Pinned: `vendor/bubbles/` at `0c1a491` (v2.2.2)
+- Status: `198 examples, 0 failures, 0 errors, 4 pending`
+
+**Vendor delta:** `v2.1.1 -> v2.2.2` is planned in
+[vendor-v2.2.2.md](vendor-v2.2.2.md) — the new `tree` bubble, textarea
+selection/copy, and the remaining component deltas.
+
+## Where we are
+
+- **Current focus:** Phase 1 — port the new `tree` bubble (82 source ids, 8
+  tests).
+- **Next up:** Phase 2 — textarea selection/copy/grapheme (14 ids, 59 tests);
+  Phase 3 — remaining component deltas (1 id, 65 tests).
+- **Upstream:** `charmbracelet/bubbles` v2.2.2 at `0c1a491` (`vendor/bubbles`).
+- **Port baseline:** everything from v2.1.1 is ported and green.
+- **Last commit:** vendor refresh to v2.2.2 with regenerated manifests.
+- **Gates:** `crystal spec` 198 / 0 failures / 4 pending; `ameba` 0 findings;
+  `crystal tool format --check` clean; source parity 532; test parity 206;
+  port inventory 532 source / 738 total rows.
 
 ## Feature Roadmap
 
+### Open (v2.2.2)
+
+- [ ] **Tree bubble** — new component; see [vendor-v2.2.2.md](vendor-v2.2.2.md).
+- [ ] **Textarea selection/copy** — selection, grapheme cursor, clipboard.
+- [ ] **v2.2.2 component deltas** — textinput, timer, table, viewport, and the
+  smaller components.
+
+### Completed (v2.1.1)
+
+- [x] **Textarea prompt styling** — `prompt_view` always applies
+  `computed_prompt`; closes the `dynamic_textarea` example golden gap
+  (upstream `d2b2217`).
+
 ### Completed (v2.1.0)
 
-- [x] **Textarea Dynamic Height** — new fields `DynamicHeight`, `MinHeight`, `MaxContentHeight`, methods `recalculateHeight`, `atContentLimit`, `totalVisualLines`, `visualLinesForInsert`. 16 tests ported from `textarea/textarea_test.go`.
+- [x] **Textarea Dynamic Height** — new fields `DynamicHeight`, `MinHeight`,
+      `MaxContentHeight`, methods `recalculateHeight`, `atContentLimit`,
+      `totalVisualLines`, `visualLinesForInsert`. 16 tests ported from
+      `textarea/textarea_test.go`.
 
 ### Completed (v2.0.0 baseline — all tests green)
 
