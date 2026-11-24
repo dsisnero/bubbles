@@ -443,4 +443,172 @@ describe Bubbles::Table do
   pending "TestModel_View_CenteredInABox" do
     # Upstream Go test is skipped.
   end
+
+  # Go: TestSetRows_CursorClampsOnShrink
+  it "clamps the cursor when rows shrink" do
+    tbl = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("Name", 10)]),
+      Bubbles::Table.with_rows([["a"], ["b"], ["c"]]),
+      Bubbles::Table.with_height(5)
+    )
+    tbl.goto_bottom
+    tbl.set_rows([["x"]])
+    tbl.cursor.should eq(0)
+  end
+
+  # Go: TestSetRows_CursorClampsToZeroOnEmpty
+  it "keeps the cursor non-negative on an empty table" do
+    tbl = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("Name", 10)]),
+      Bubbles::Table.with_rows([["a"], ["b"], ["c"]]),
+      Bubbles::Table.with_height(5)
+    )
+    tbl.goto_bottom
+    tbl.cursor.should eq(2)
+    tbl.set_rows([] of Bubbles::Table::Row)
+    tbl.cursor.should be >= 0
+  end
+
+  # Go: TestModel_FromValues_MoreValuesThanColumns
+  it "accepts more values than columns" do
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([
+        Bubbles::Table::Column.new("Foo", 5),
+        Bubbles::Table::Column.new("Bar", 5),
+      ])
+    )
+    table.from_values("foo1,bar1\nfoo2,bar2,baz2", ",")
+    table.rows.size.should eq(2)
+  end
+
+  # Go: TestModel_RenderRow_MoreCellsThanColumns
+  it "renders only as many cells as there are columns" do
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([
+        Bubbles::Table::Column.new("col1", 10),
+        Bubbles::Table::Column.new("col2", 10),
+        Bubbles::Table::Column.new("col3", 10),
+      ]),
+      Bubbles::Table.with_rows([["Foooooo", "Baaaaar", "Baaaaaz", "Quuuuux"]])
+    )
+    styles = table.styles
+    styles.cell = Lipgloss::Style.new
+    styles.selected = Lipgloss::Style.new
+    table.styles = styles
+    table.render_row(0).should eq("Foooooo   Baaaaar   Baaaaaz   ")
+  end
+
+  # Go: TestModel_SetRows_NoColumns
+  it "accepts rows without columns" do
+    table = Bubbles::Table.new
+    table.set_rows([["one"]])
+    table.rows.size.should eq(1)
+  end
+
+  # Go: TestNew_RowsWithoutColumns
+  it "constructs with rows and no columns" do
+    table = Bubbles::Table.new(Bubbles::Table.with_rows([["one"]]))
+    table.rows.size.should eq(1)
+  end
+
+  # Go: TestRenderRowConfiguredColumns
+  it "renders a row with configured columns" do
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([
+        Bubbles::Table::Column.new("col1", 10),
+        Bubbles::Table::Column.new("col2", 10),
+        Bubbles::Table::Column.new("col3", 10),
+      ]),
+      Bubbles::Table.with_rows([["Foooooo", "Baaaaar", "Baaaaaz"]])
+    )
+    styles = table.styles
+    styles.cell = Lipgloss::Style.new
+    styles.selected = Lipgloss::Style.new
+    table.styles = styles
+    table.render_row(0).should eq("Foooooo   Baaaaar   Baaaaaz   ")
+  end
+
+  # Go: TestRenderRowDoesNotDiscardExtraData
+  it "does not discard extra row data while rendering" do
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("one", 5)]),
+      Bubbles::Table.with_rows([["one", "extra"]])
+    )
+    table.view
+    table.rows[0].size.should eq(2)
+    table.rows[0][1].should eq("extra")
+  end
+
+  # Go: TestSetCursor_TabJumpVisible
+  it "keeps a jumped-to cursor visible" do
+    rows = (0...30).map { |i| ["item-#{i}"] }
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("Item", 10)]),
+      Bubbles::Table.with_rows(rows),
+      Bubbles::Table.with_width(20),
+      Bubbles::Table.with_height(11)
+    )
+    table.set_cursor(table.cursor + 9)
+    Ansi.strip(table.view).should contain("item-9")
+    table.set_cursor(table.cursor + 9)
+    Ansi.strip(table.view).should contain("item-18")
+  end
+
+  # Go: TestSetCursor_ViewportVisibility
+  it "keeps every cursor target inside the viewport" do
+    rows = (0...30).map { |i| ["r%02d" % i] }
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("Col", 10)]),
+      Bubbles::Table.with_rows(rows),
+      Bubbles::Table.with_width(20),
+      Bubbles::Table.with_height(6)
+    )
+    table.viewport.height.should eq(5)
+
+    {3 => 3, 5 => 5, 10 => 10, 28 => 28, 29 => 29, 0 => 0, 15 => 15, 100 => 29, -5 => 0}.each do |cursor, want|
+      table.set_cursor(cursor)
+      table.cursor.should eq(want)
+      cursor_idx = table.cursor - table.start
+      offset = table.viewport.y_offset
+      cursor_idx.should be >= offset
+      cursor_idx.should be < offset + table.viewport.height
+      Ansi.strip(table.view).should contain(rows[want][0])
+    end
+  end
+
+  # Go: TestMoveUpFromBottomKeepsViewport
+  it "keeps the viewport steady when moving up from the bottom" do
+    rows = (0...30).map { |i| ["r%02d" % i] }
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("c", 4)]),
+      Bubbles::Table.with_rows(rows),
+      Bubbles::Table.with_width(10),
+      Bubbles::Table.with_height(6)
+    )
+    table.goto_bottom
+    before = Ansi.strip(table.view).lines[1]
+    table.move_up(1)
+    after = Ansi.strip(table.view).lines[1]
+    table.cursor.should eq(28)
+    after.should eq(before)
+  end
+
+  # Go: TestMoveDownAfterUpsKeepsViewport
+  it "keeps the viewport steady when moving down after moving up" do
+    rows = (0...30).map { |i| ["r%02d" % i] }
+    table = Bubbles::Table.new(
+      Bubbles::Table.with_columns([Bubbles::Table::Column.new("c", 4)]),
+      Bubbles::Table.with_rows(rows),
+      Bubbles::Table.with_width(10),
+      Bubbles::Table.with_height(6)
+    )
+    table.goto_bottom
+    before = Ansi.strip(table.view).lines[1]
+    table.move_up(1)
+    table.move_up(1)
+    table.move_down(1)
+    after = Ansi.strip(table.view).lines[1]
+    table.cursor.should eq(28)
+    after.should eq(before)
+  end
 end

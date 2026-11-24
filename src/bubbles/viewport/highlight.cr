@@ -46,9 +46,19 @@ module Bubbles
       byte_pos = 0
 
       highlights = [] of HighlightInfo
-      stripped = Ansi.strip(content)
-      bytes = stripped.to_slice
-      iterator = TextSegment.each_grapheme(stripped)
+      remaining = content
+      state = 0_u8
+
+      next_sequence = -> : Tuple(String, Int32, Int32)? do
+        if remaining.empty?
+          nil
+        else
+          seq, width, n, new_state = Ansi.decode_sequence(remaining, state, nil)
+          state = new_state
+          remaining = remaining[n..]? || ""
+          {seq, width, n}
+        end
+      end
 
       matches.each do |match|
         byte_start, byte_end = match[0], match[1]
@@ -60,16 +70,18 @@ module Bubbles
         # find the beginning of this byte range, setup current line and
         # grapheme position.
         while byte_start > byte_pos
-          cluster = iterator.next
-          break if cluster.is_a?(Iterator::Stop)
+          item = next_sequence.call
+          break unless item
 
-          if byte_pos < bytes.size && bytes[byte_pos] == '\n'.ord.to_u8
+          seq, width, n = item
+          if seq == "\n"
             previous_lines_offset = grapheme_pos + 1
             line += 1
+            grapheme_pos += 1
+          elsif width > 0
+            grapheme_pos += Math.max(1, width)
           end
-
-          grapheme_pos += Math.max(1, UnicodeCharWidth.width(cluster.str))
-          byte_pos += cluster.str.bytesize
+          byte_pos += n
         end
 
         highlight_info.line_start = line
@@ -79,13 +91,14 @@ module Bubbles
 
         # loop until we find the end
         while byte_end > byte_pos
-          cluster = iterator.next
-          break if cluster.is_a?(Iterator::Stop)
+          item = next_sequence.call
+          break unless item
 
+          seq, width, n = item
           # if it ends with a new line, add the range, increase line, and continue
-          if byte_pos < bytes.size && bytes[byte_pos] == '\n'.ord.to_u8
+          if seq == "\n"
             colstart = Math.max(0, grapheme_start - previous_lines_offset)
-            colend = Math.max(grapheme_pos - previous_lines_offset + 1, colstart) # +1 its \n itself
+            colend = Math.max(grapheme_pos - previous_lines_offset + 1, colstart) # +1 for the newline
 
             if colend > colstart
               highlight_info.lines[line] = {colstart, colend}
@@ -94,10 +107,11 @@ module Bubbles
 
             previous_lines_offset = grapheme_pos + 1
             line += 1
+            grapheme_pos += 1
+          elsif width > 0
+            grapheme_pos += Math.max(1, width)
           end
-
-          grapheme_pos += Math.max(1, UnicodeCharWidth.width(cluster.str))
-          byte_pos += cluster.str.bytesize
+          byte_pos += n
         end
 
         # we found it!, add highlight and continue

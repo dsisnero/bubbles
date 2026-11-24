@@ -121,7 +121,34 @@ module Bubbles
         end
       end
 
-      scored_ranks.map { |scored| Rank.new(scored.index, scored.indices) }
+      scored_ranks.map do |scored|
+        Rank.new(scored.index, rune_indexes(targets[scored.index], scored.indices))
+      end
+    end
+
+    # runeIndexes converts byte offsets into rune offsets. MatchesForItem
+    # documents rune positions and StyleRunes consumes them, so byte offsets
+    # would highlight the wrong runes for multi-byte text.
+    private def self.rune_indexes(target : String, byte_indexes : Array(Int32)) : Array(Int32)
+      return byte_indexes if byte_indexes.empty?
+
+      out = Array(Int32).new(byte_indexes.size, 0)
+      next_index = 0
+      rune_index = 0
+      byte_offset = 0
+      target.each_char do |char|
+        while next_index < byte_indexes.size && byte_indexes[next_index] == byte_offset
+          out[next_index] = rune_index
+          next_index += 1
+        end
+        byte_offset += char.bytesize
+        rune_index += 1
+      end
+      while next_index < byte_indexes.size
+        out[next_index] = rune_index
+        next_index += 1
+      end
+      out
     end
 
     private def self.fuzzy_score(pattern : Array(Char), target : String, index : Int32) : ScoredRank?
@@ -389,7 +416,14 @@ module Bubbles
         if @filter_state != FilterState::Unfiltered
           filtered = @filtered_items
           if filtered
-            updated_filtered = remove_filter_match_from_slice(filtered, index)
+            # Rebuild so entries after the removed global index shift down.
+            updated_filtered = [] of FilteredItem
+            filtered.each do |filtered_item|
+              next if filtered_item.index == index
+              updated = filtered_item
+              updated.index -= 1 if filtered_item.index > index
+              updated_filtered << updated
+            end
             @filtered_items = updated_filtered
             reset_filtering if updated_filtered.empty?
           end
@@ -896,7 +930,7 @@ module Bubbles
         Tea.batch(cmds)
       end
 
-      private def title_view : String
+      def title_view : String
         view = ""
         title_bar_style = @styles.title_bar
         spinner_txt = spinner_view
@@ -914,8 +948,10 @@ module Bubbles
           end
 
           view += @styles.title.render(@title)
-          if @filter_state != FilterState::Filtering
+          if @filter_state != FilterState::Filtering && !@status_message.empty?
             view += "  " + @status_message
+          end
+          if @filter_state != FilterState::Filtering
             view = truncate(view, @width - spinner_width, ELLIPSIS)
           end
         end

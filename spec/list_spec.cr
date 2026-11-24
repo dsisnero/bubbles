@@ -101,4 +101,52 @@ describe Bubbles::List do
     footer = list.view.split('\n').last
     footer.includes?("clear").should be_true
   end
+
+  # Go: TestDefaultKeyMapQuit
+  it "uses q and esc for quit with q help" do
+    quit = Bubbles::List.default_key_map.quit
+    quit.keys.should eq(["q", "esc"])
+    quit.help.key.should eq("q")
+    quit.help.desc.should eq("quit")
+  end
+
+  # Go: TestFilterMatchedIndexesAreRunePositions
+  it "reports matched indexes as rune positions" do
+    {
+      {"b", "abc", [1]},
+      {"b", "日本b", [2]},
+      {"x", "café x", [5]},
+    }.each do |term, target, want|
+      [Bubbles::List.default_filter(term, [target]), Bubbles::List.unsorted_filter(term, [target])].each do |ranks|
+        ranks.size.should eq(1)
+        ranks[0].matched_indexes.should eq(want)
+      end
+    end
+  end
+
+  # Go: TestRemoveItemWithFilter
+  it "keeps the filtered list consistent when removing items" do
+    items = [TestListItem.new("foo"), TestListItem.new("bar"), TestListItem.new("baz")] of Bubbles::List::Item
+    list = Bubbles::List.new(items, TestListDelegate.new, 10, 10)
+    list.set_filter_text("ba")
+    list.set_filter_state(Bubbles::List::FilterState::FilterApplied)
+
+    list.remove_item(0)
+    list.visible_items.map(&.as(TestListItem).value).should eq(["bar", "baz"])
+
+    list.remove_item(0)
+    list.visible_items.map(&.as(TestListItem).value).should eq(["baz"])
+  end
+
+  # Go: TestTitleViewWithoutStatusMessageDoesNotTruncate
+  it "does not truncate the title when there is no status message" do
+    list = Bubbles::List.new([] of Bubbles::List::Item, TestListDelegate.new, 20, 10)
+    list.title = "List Title ABCDEFG"
+    styles = list.styles
+    styles.title = styles.title.padding(0)
+    styles.title_bar = styles.title_bar.padding(0)
+    list.styles = styles
+
+    Ansi.strip(list.title_view).should eq(list.title)
+  end
 end

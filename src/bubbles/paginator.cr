@@ -78,7 +78,7 @@ module Bubbles
       end
 
       def set_total_pages(items : Int32) : Int32 # ameba:disable Naming/AccessorMethodName
-        return @total_pages if items < 1
+        return @total_pages if items < 1 || @per_page < 1
         n = items // @per_page
         n += 1 if items % @per_page > 0
         @total_pages = n

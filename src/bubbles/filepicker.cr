@@ -205,6 +205,11 @@ module Bubbles
         @id
       end
 
+      # selectedIndex returns the current selection index (Go exposes the field).
+      def selected_index : Int32
+        @selected
+      end
+
       def auto_height? : Bool
         @auto_height
       end
@@ -213,8 +218,16 @@ module Bubbles
       def height=(h : Int32)
         @height = h
         if @max_idx > @height - 1
-          @max_idx = @min_idx + @height - 1
+          @max_idx = bottom_idx(@min_idx)
         end
+      end
+
+      # bottomIdx returns the index of the last visible entry for a viewport
+      # whose first visible entry is top. With no height, show one entry so the
+      # view is never blank.
+      def bottom_idx(top : Int32) : Int32
+        return top if @height < 1
+        top + @height - 1
       end
 
       # Height returns the height of the file picker.
@@ -244,14 +257,14 @@ module Bubbles
           read_dir_msg = msg.as(ReadDirMsg)
           return {self, NO_OP_CMD} unless read_dir_msg.id == @id
           @files = read_dir_msg.entries
-          @max_idx = Math.max(@max_idx, height - 1)
+          @max_idx = Math.max(@max_idx, bottom_idx(@min_idx))
           {self, NO_OP_CMD}
         when Tea::WindowSizeMsg
           window_size_msg = msg.as(Tea::WindowSizeMsg)
           if @auto_height
             self.height = window_size_msg.height - MARGIN_BOTTOM
           end
-          @max_idx = height - 1
+          @max_idx = bottom_idx(@min_idx)
           {self, NO_OP_CMD}
         when Tea::KeyPressMsg
           key_msg = msg.as(Tea::KeyPressMsg)
@@ -266,15 +279,15 @@ module Bubbles
         when Key.matches?(msg, @key_map.go_to_top)
           @selected = 0
           @min_idx = 0
-          @max_idx = height - 1
+          @max_idx = bottom_idx(0)
         when Key.matches?(msg, @key_map.go_to_last)
-          @selected = @files.size - 1
-          @min_idx = @files.size - height
+          @selected = Math.max(@files.size - 1, 0)
+          @min_idx = Math.max(@files.size - height, 0)
           @max_idx = @files.size - 1
         when Key.matches?(msg, @key_map.down)
           @selected += 1
           if @selected >= @files.size
-            @selected = @files.size - 1
+            @selected = Math.max(@files.size - 1, 0)
           end
           if @selected > @max_idx
             @min_idx += 1
@@ -292,14 +305,14 @@ module Bubbles
         when Key.matches?(msg, @key_map.page_down)
           @selected += height
           if @selected >= @files.size
-            @selected = @files.size - 1
+            @selected = Math.max(@files.size - 1, 0)
           end
           @min_idx += height
           @max_idx += height
 
           if @max_idx >= @files.size
             @max_idx = @files.size - 1
-            @min_idx = @max_idx - height
+            @min_idx = Math.max(@max_idx - height, 0)
           end
         when Key.matches?(msg, @key_map.page_up)
           @selected -= height
@@ -320,7 +333,7 @@ module Bubbles
           else
             @selected = 0
             @min_idx = 0
-            @max_idx = height - 1
+            @max_idx = bottom_idx(0)
           end
           return {self, read_dir(@current_directory, @show_hidden)}
         when Key.matches?(msg, @key_map.open)
@@ -357,7 +370,7 @@ module Bubbles
           push_view(@selected, @min_idx, @max_idx)
           @selected = 0
           @min_idx = 0
-          @max_idx = height - 1
+          @max_idx = bottom_idx(0)
           return {self, read_dir(@current_directory, @show_hidden)}
         end
 
@@ -438,8 +451,9 @@ module Bubbles
           end
 
           # Fill remaining height with newlines
-          (lines_rendered..height).each do
+          while lines_rendered < height
             io << '\n'
+            lines_rendered += 1
           end
         end
       end
@@ -495,7 +509,7 @@ module Bubbles
           end
         end
 
-        if (!is_dir && @file_allowed) || (is_dir && @dir_allowed) && !@path.empty?
+        if ((!is_dir && @file_allowed) || (is_dir && @dir_allowed)) && !@path.empty?
           return {true, @path}
         end
 

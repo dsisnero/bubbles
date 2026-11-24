@@ -5,6 +5,7 @@ require "uniwidth"
 require "textseg"
 require "easyclip"
 require "colorful"
+require "ansi"
 
 module Bubbles
   module TextInput
@@ -30,11 +31,13 @@ module Bubbles
       def initialize(@content : String); end
     end
 
-    class PasteErrMsg
+    class PasteErrMsg < Exception
       include Tea::Msg
-      property error : Exception?
+      getter error : Exception?
 
-      def initialize(@error : Exception?); end
+      def initialize(@error : Exception?)
+        super(@error.try(&.message), @error)
+      end
     end
 
     # Blink is a command used to initialize cursor blinking.
@@ -98,11 +101,11 @@ module Bubbles
         character_backward: Key.new_binding(Key.with_keys("left", "ctrl+b")),
         word_forward: Key.new_binding(Key.with_keys("alt+right", "ctrl+right", "alt+f")),
         word_backward: Key.new_binding(Key.with_keys("alt+left", "ctrl+left", "alt+b")),
-        delete_word_backward: Key.new_binding(Key.with_keys("alt+backspace", "ctrl+w")),
-        delete_word_forward: Key.new_binding(Key.with_keys("alt+delete", "alt+d")),
+        delete_word_backward: Key.new_binding(Key.with_keys("alt+backspace", "ctrl+w", "ctrl+backspace")),
+        delete_word_forward: Key.new_binding(Key.with_keys("alt+delete", "alt+d", "ctrl+delete")),
         delete_after_cursor: Key.new_binding(Key.with_keys("ctrl+k")),
         delete_before_cursor: Key.new_binding(Key.with_keys("ctrl+u")),
-        delete_character_backward: Key.new_binding(Key.with_keys("backspace", "ctrl+h")),
+        delete_character_backward: Key.new_binding(Key.with_keys("backspace", "shift+backspace", "ctrl+h")),
         delete_character_forward: Key.new_binding(Key.with_keys("delete", "ctrl+d")),
         line_start: Key.new_binding(Key.with_keys("home", "ctrl+a")),
         line_end: Key.new_binding(Key.with_keys("end", "ctrl+e")),
@@ -356,6 +359,7 @@ module Bubbles
         sanitized = san.sanitize(runes)
         err = validate(sanitized)
         set_value_internal(sanitized, err)
+        update_suggestions
       end
 
       def value=(s : String)
@@ -415,7 +419,9 @@ module Bubbles
 
       # CurrentSuggestion returns the currently selected suggestion.
       def current_suggestion : String
-        return "" if @current_suggestion_index >= @matched_suggestions.size
+        if @current_suggestion_index < 0 || @current_suggestion_index >= @matched_suggestions.size
+          return ""
+        end
         @matched_suggestions[@current_suggestion_index].join
       end
 
@@ -593,7 +599,8 @@ module Bubbles
       end
 
       private def key_matches(msg : Tea::Msg, binding : Key::Binding) : Bool
-        msg.is_a?(Tea::KeyPressMsg) && Key.matches?(msg, binding)
+        return false unless msg.is_a?(Tea::KeyPressMsg)
+        Key.matches?(msg.as(Tea::KeyPressMsg).keystroke, binding)
       end
 
       private def delete_before_cursor
@@ -700,25 +707,15 @@ module Bubbles
         end
 
         old_pos = @pos
-        set_cursor(@pos + 1)
-        while @value[@pos]?.try(&.whitespace?)
-          break if @pos >= @value.size
-          set_cursor(@pos + 1)
+        finish = old_pos
+        while finish < @value.size && @value[finish].whitespace?
+          finish += 1
+        end
+        while finish < @value.size && !@value[finish].whitespace?
+          finish += 1
         end
 
-        while @pos < @value.size
-          if !@value[@pos].whitespace?
-            set_cursor(@pos + 1)
-          else
-            break
-          end
-        end
-
-        if @pos > @value.size
-          @value = @value[0, old_pos]
-        else
-          @value = @value[0, old_pos] + @value[@pos..]
-        end
+        @value = @value[0, old_pos] + @value[finish..]
         @err = validate(@value)
         set_cursor(old_pos)
       end
@@ -804,7 +801,7 @@ module Bubbles
       def previous_suggestion
         @current_suggestion_index -= 1
         if @current_suggestion_index < 0
-          @current_suggestion_index = @matched_suggestions.size - 1
+          @current_suggestion_index = Math.max(0, @matched_suggestions.size - 1)
         end
       end
 
@@ -820,11 +817,15 @@ module Bubbles
         UnicodeCharWidth.width(str)
       end
 
-      private def completion_view(offset : Int32) : String
+      private def completion_view(offset : Int32, max_width : Int32) : String
         return "" unless can_accept_suggestion
+
         suggestion = @matched_suggestions[@current_suggestion_index]
-        return "" if @value.size >= suggestion.size
-        active_style.suggestion.inline(true).render(suggestion[@value.size + offset..].join)
+        return "" if @value.size >= suggestion.size || max_width <= 0
+
+        tail = suggestion[@value.size + offset..].join
+        tail = Ansi.truncate(tail, max_width, "")
+        active_style.suggestion.inline(true).render(tail)
       end
 
       private def prompt_view : String
@@ -835,8 +836,8 @@ module Bubbles
         styles = active_style
         render = ->(s : String) { styles.placeholder.render(s) }
 
-        p = Array(Char).new(max(0, @width) + 1, '\0')
         placeholder_runes = @placeholder.chars
+        p = Array(Char).new(Math.max(@width + 1, placeholder_runes.size), '\0')
         copy_n = min(p.size, placeholder_runes.size)
         i = 0
         while i < copy_n
@@ -856,7 +857,7 @@ module Bubbles
         v = @virtual_cursor.view
         @virtual_cursor.text_style = previous_text_style
 
-        if @width < 1 && p.size <= 1
+        if @width < 1 && placeholder_runes.size <= 1
           return styles.prompt.render(@prompt) + v
         end
 
@@ -955,7 +956,7 @@ module Bubbles
         when PasteMsg
           insert_runes_from_user_input(msg.content.chars)
         when PasteErrMsg
-          @err = msg.error
+          @err = msg.as(PasteErrMsg)
         end
 
         cmds = [] of Tea::Cmd
@@ -997,7 +998,8 @@ module Bubbles
         return nil if @use_virtual_cursor || !@focus
 
         prompt_width = Lipgloss.width(prompt_view)
-        x_offset = @pos + prompt_width
+        end_pos = Math.max(@offset, @pos)
+        x_offset = prompt_width + string_width(@value[@offset...end_pos].join)
         if @width > 0
           x_offset = min(x_offset, @width + prompt_width)
         end
@@ -1072,16 +1074,24 @@ module Bubbles
 
         styles = active_style
         style_text = ->(s : String) { styles.text.inline(true).render(s) }
+        @virtual_cursor.text_style = styles.text
         value = @value[@offset...@offset_right]
         pos = max(0, @pos - @offset)
         v = style_text.call(echo_transform(value[0, pos].join))
+
+        val_width = string_width(value.join)
+
+        # The cursor sits on a character while pos < len(value); at the end it
+        # is appended and consumes one column.
+        cursor_extra = pos < value.size ? 0 : 1
+        completion = ""
 
         if pos < value.size
           char = echo_transform(value[pos].to_s)
           @virtual_cursor.set_char(char)
           v += @virtual_cursor.view
           v += style_text.call(echo_transform(value[pos + 1..].join))
-          v += completion_view(0)
+          completion = completion_view(0, max(0, @width + 1 - val_width))
         else
           if @focus && can_accept_suggestion
             suggestion = @matched_suggestions[@current_suggestion_index]
@@ -1091,7 +1101,7 @@ module Bubbles
               @virtual_cursor.set_char(echo_transform(suggestion[pos].to_s))
               v += @virtual_cursor.view
               @virtual_cursor.text_style = previous_text_style
-              v += completion_view(1)
+              completion = completion_view(1, max(0, @width - val_width))
             else
               @virtual_cursor.set_char(" ")
               v += @virtual_cursor.view
@@ -1101,15 +1111,11 @@ module Bubbles
             v += @virtual_cursor.view
           end
         end
+        v += completion unless completion.empty?
 
-        # If a max width and background color were set fill the empty spaces with
-        # the background color.
-        val_width = string_width(value.join)
+        # Fill the remaining width when a width is configured.
         if @width > 0 && val_width <= @width
-          padding = max(0, @width - val_width)
-          if val_width + padding <= @width && pos < value.size
-            padding += 1
-          end
+          padding = max(0, @width + 1 - val_width - cursor_extra - Ansi.string_width(completion))
           v += style_text.call(" " * padding)
         end
 

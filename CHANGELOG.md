@@ -7,6 +7,10 @@ Changes are grouped by release date and category. Only user-facing changes are i
 ## [Unreleased]
 
 ### Added
+- **v2.2.2 component deltas** — timer/stopwatch wall-clock timing and debounce,
+  filepicker and table viewport guards, help column padding, list filter/index
+  fixes, viewport frame-aware scrolling and ANSI highlights, paginator guards,
+  progress NaN clamping, and textinput suggestion/paste fixes.
 - **Textarea selection, copy, and grapheme cursor** — drag and keyboard
   selection, clipboard copy, grapheme-aware navigation/deletion/wrapping, and
   the v2.2.2 key bindings.

@@ -24,20 +24,20 @@ port baseline, not the current pin.
 
 | Upstream Module | Crystal Target | Status | Tests | Notes |
 |-----------------|----------------|--------|-------|-------|
-| `textinput/` | `src/bubbles/textinput.cr` | ✅ Ported | 19 | v2.1.1 |
+| `textinput/` | `src/bubbles/textinput.cr` | ✅ Ported | 32 | v2.2.2 delta |
 | `textarea/` | `src/bubbles/textarea.cr` | ✅ Ported | 109 | v2.2.2 selection/copy + 6 bug fixes |
-| `list/` | `src/bubbles/list.cr` | ✅ Ported | 5 | v2.1.1 |
+| `list/` | `src/bubbles/list.cr` | ✅ Ported | 9 | v2.2.2 delta |
 | `spinner/` | `src/bubbles/spinner.cr` | ✅ Ported | — | v2.1.1 |
-| `progress/` | `src/bubbles/progress.cr` | ✅ Ported | — | v2.1.1 |
-| `viewport/` | `src/bubbles/viewport.cr` | ✅ Ported | 23 | v2.1.1 + 3 bug fixes |
-| `filepicker/` | `src/bubbles/filepicker.cr` | ✅ Ported | 7 | v2.1.1 |
-| `help/` | `src/bubbles/help.cr` | ✅ Ported | 1 | v2.1.1 — golden files shared with Go |
+| `progress/` | `src/bubbles/progress.cr` | ✅ Ported | 4 | v2.2.2 delta |
+| `viewport/` | `src/bubbles/viewport.cr` | ✅ Ported | 26 | v2.2.2 delta + 3 bug fixes |
+| `filepicker/` | `src/bubbles/filepicker.cr` | ✅ Ported | 13 | v2.2.2 delta |
+| `help/` | `src/bubbles/help.cr` | ✅ Ported | 4 | v2.2.2 delta — golden files shared with Go |
 | `cursor/` | `src/bubbles/cursor.cr` | ✅ Ported | 25 | v2.1.1 |
 | `key/` | `src/bubbles/key.cr` | ✅ Ported | 12 | v2.1.1 |
-| `paginator/` | `src/bubbles/paginator.cr` | ✅ Ported | 8 | v2.1.1 |
-| `timer/` | `src/bubbles/timer.cr` | ✅ Ported | — | v2.1.1 |
-| `stopwatch/` | `src/bubbles/stopwatch.cr` | ✅ Ported | 8 | v2.1.1 |
-| `table/` | `src/bubbles/table.cr` | ✅ Ported | 22 | v2.1.1 |
+| `paginator/` | `src/bubbles/paginator.cr` | ✅ Ported | 11 | v2.2.2 delta |
+| `timer/` | `src/bubbles/timer.cr` | ✅ Ported | 20 | v2.2.2 delta |
+| `stopwatch/` | `src/bubbles/stopwatch.cr` | ✅ Ported | 14 | v2.2.2 delta |
+| `table/` | `src/bubbles/table.cr` | ✅ Ported | 34 | v2.2.2 delta |
 | `tree/` | `src/bubbles/tree.cr` | ✅ Ported | 10 | New in v2.2.2 — upstream goldens match |
 
 ## Test Parity
@@ -45,22 +45,22 @@ port baseline, not the current pin.
 | Component | Go Tests | Crystal Tests | Status |
 |-----------|----------|---------------|--------|
 | textarea | 30 | 109 | ✅ All ported + strengthened |
-| viewport | ~30 | 23 | ✅ All ported |
-| textinput | 4 | 19 | ✅ All ported + extra coverage |
-| table | 33 | 22 | ✅ All ported (golden files shared) |
-| list | 5 | 5 | ✅ All ported |
-| filepicker | 0 | 7 | ✅ No Go tests, Crystal coverage |
-| help | 3 | 1 | ✅ Golden-driven |
+| viewport | ~30 | 26 | ✅ All ported |
+| textinput | 4 | 32 | ✅ All ported + extra coverage |
+| table | 33 | 34 | ✅ All ported (golden files shared) |
+| list | 5 | 9 | ✅ All ported |
+| filepicker | 0 | 13 | ✅ No Go tests, Crystal coverage |
+| help | 3 | 4 | ✅ Golden-driven |
 | cursor | 1 | 25 | ✅ All ported + extra coverage |
 | key | — | 12 | ✅ Covered in spec |
-| paginator | 7 | 8 | ✅ All ported + 1 extra |
-| stopwatch | 0 | 8 | ✅ No Go tests, Crystal coverage |
-| timer | — | — | ⚠️ No spec yet |
-| progress | — | — | ⚠️ No spec yet |
+| paginator | 7 | 11 | ✅ All ported |
+| stopwatch | 0 | 14 | ✅ No Go tests, Crystal coverage |
+| timer | — | 20 | ✅ Covered in spec |
+| progress | — | 4 | ✅ Covered in spec |
 | spinner | — | — | ⚠️ No spec yet |
 | tree | 8 | 10 | ✅ Ported (new in v2.2.2) |
 
-**Total: 268 examples, 0 failures, 4 pending** (pending = skipped in upstream
+**Total: 333 examples, 0 failures, 4 pending** (pending = skipped in upstream
 Go)
 
 ## Known Deviations

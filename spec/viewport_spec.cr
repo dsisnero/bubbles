@@ -228,4 +228,115 @@ describe Bubbles::Viewport do
     rendered = Ansi.strip(view).lines
     rendered.size.should eq(height)
   end
+
+  # Go: TestMatchesToHighlights_ANSI
+  it "parses matches in ANSI-styled content" do
+    cases = [
+      {
+        "\e[31mX\e[0m padding needle padding\n",
+        ["needle"],
+        {0 => {10, 16}},
+        0,
+      },
+      {
+        "\e[1mfirst\e[0m line with \e[32mneedle\e[0m\nsecond \e[34mneedle\e[0m here\n",
+        ["needle", "needle"],
+        {0 => {16, 22}},
+        0,
+      },
+      {
+        "a\e[32mb\e[0mc\nneed\nle here\n",
+        ["need\nle"],
+        {1 => {0, 5}, 2 => {0, 2}},
+        1,
+      },
+    ]
+
+    cases.each do |content, needles, expected_lines, expected_start|
+      matches = [] of Array(Int32)
+      offset = 0
+      needles.each do |needle|
+        idx = content.index(needle, offset).not_nil!
+        byte_idx = content[0...idx].bytesize
+        matches << [byte_idx, byte_idx + needle.bytesize]
+        offset = idx + needle.size
+      end
+
+      highlights = Bubbles::Viewport.parse_matches(content, matches)
+      highlights.size.should eq(needles.size)
+      highlights.each_with_index do |hl, i|
+        hl.line_start.should eq(expected_start + i)
+        end_offset = i == 0 && expected_lines.size > 1 ? expected_lines.keys.max - expected_lines.keys.min : 0
+        hl.line_end.should eq(expected_start + i + end_offset)
+        if i == 0
+          hl.lines.should eq(expected_lines)
+        end
+      end
+    end
+
+    ["padding padding padding needle padding padding\n",
+     "\e[31mX\e[0m padding padding padding needle padding padding\n"].each do |content|
+      idx = content.index("needle").not_nil!
+      byte_idx = content[0...idx].bytesize
+      vp = Bubbles::Viewport.new(
+        Bubbles::Viewport.with_width(60),
+        Bubbles::Viewport.with_height(3)
+      )
+      vp.highlight_style = Lipgloss::Style.new.reverse(true)
+      vp.selected_highlight_style = Lipgloss::Style.new.reverse(true)
+      vp.set_content(content)
+      vp.set_highlights([[byte_idx, byte_idx + "needle".bytesize]])
+
+      vp.highlights.size.should eq(1)
+      hl = vp.highlights[0].lines[0]
+      Ansi.strip(Ansi.cut(vp.content.lines[0], hl[0], hl[1])).should eq("needle")
+    end
+  end
+
+  # Go: TestPageScrollWithFrame
+  it "pages by the content height inside a frame" do
+    lines = (0...30).map { |i| "line %02d" % i }
+
+    {
+      {0, "down"}      => 8,
+      {16, "up"}       => 8,
+      {0, "half_down"} => 4,
+      {16, "half_up"}  => 12,
+    }.each do |(start, action), want|
+      vp = Bubbles::Viewport.new(
+        Bubbles::Viewport.with_width(20),
+        Bubbles::Viewport.with_height(10)
+      )
+      vp.style = Lipgloss::Style.new.border(Lipgloss.normal_border)
+      vp.set_content(lines.join("\n"))
+      vp.set_y_offset(start)
+      case action
+      when "down"      then vp.page_down
+      when "up"        then vp.page_up
+      when "half_down" then vp.half_page_down
+      when "half_up"   then vp.half_page_up
+      end
+      vp.y_offset.should eq(want)
+    end
+  end
+
+  # Go: TestScrollPercentWithFrame
+  it "computes scroll percent against the framed maximum offset" do
+    lines = (0...20).map { |i| "line %02d" % i }
+    vp = Bubbles::Viewport.new(
+      Bubbles::Viewport.with_width(20),
+      Bubbles::Viewport.with_height(10)
+    )
+    vp.style = Lipgloss::Style.new.border(Lipgloss.normal_border)
+    vp.set_content(lines.join("\n"))
+
+    [{0, 0.0}, {6, 0.5}, {12, 1.0}].each do |offset, want|
+      vp.set_y_offset(offset)
+      vp.scroll_percent.should eq(want)
+    end
+
+    vp.set_content(lines[0...9].join("\n"))
+    vp.goto_top
+    vp.scroll_percent.should eq(0.0)
+  end
 end

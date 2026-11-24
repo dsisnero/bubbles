@@ -78,14 +78,20 @@ module Bubbles
         tick
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?} # ameba:disable Metrics/CyclomaticComplexity
         case msg
         when StartStopMsg
           if msg.id != 0 && msg.id != @id
             return {self, nil.as(Tea::Cmd?)}
           end
+          # Ignore state changes that do not change anything so duplicate
+          # start/stop messages cannot spawn multiple tickers.
+          if @running == msg.running
+            return {self, nil.as(Tea::Cmd?)}
+          end
           @running = msg.running
-          return {self, tick}
+          return {self, tick} if @running
+          return {self, nil.as(Tea::Cmd?)}
         when TickMsg
           if !running? || (msg.id != 0 && msg.id != @id)
             return {self, nil.as(Tea::Cmd?)}
@@ -95,6 +101,7 @@ module Bubbles
           end
 
           @timeout -= @interval
+          @tag += 1
           # Call batch with commands
           if cmd = timedout_cmd
             return {self, Tea.batch(tick.as(Tea::Cmd?), cmd)}
@@ -110,21 +117,26 @@ module Bubbles
         format_duration(@timeout)
       end
 
-      def start : Tea::Cmd
+      def start : Tea::Cmd?
         start_stop(true)
       end
 
-      def stop : Tea::Cmd
+      def stop : Tea::Cmd?
         start_stop(false)
       end
 
-      def toggle : Tea::Cmd
+      def toggle : Tea::Cmd?
         start_stop(!running?)
       end
 
       private def tick : Tea::Cmd
+        # Capture the tick identity now; reading @tag inside the delayed
+        # command would let every pending stream observe the latest tag.
+        id = @id
+        tag = @tag
+        timed_out = timedout?
         Tea.tick(@interval) do
-          TickMsg.new(@id, timedout?, @tag)
+          TickMsg.new(id, timed_out, tag)
         end
       end
 
@@ -133,7 +145,9 @@ module Bubbles
         -> { TimeoutMsg.new(@id).as(Tea::Msg?) }
       end
 
-      private def start_stop(v : Bool) : Tea::Cmd
+      private def start_stop(v : Bool) : Tea::Cmd?
+        # A timer that has already timed out cannot be started again.
+        return nil if v && timedout?
         -> { StartStopMsg.new(@id, v).as(Tea::Msg?) }
       end
 

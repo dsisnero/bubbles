@@ -218,13 +218,19 @@ module Bubbles
         @rows[@cursor]
       end
 
+      def rows : Array(Row)
+        @rows
+      end
+
       def columns : Array(Column)
         @cols
       end
 
       def set_rows(r : Array(Row)) # ameba:disable Naming/AccessorMethodName
         @rows = r
-        if @cursor > @rows.size - 1
+        if @rows.empty?
+          @cursor = 0
+        elsif @cursor > @rows.size - 1
           @cursor = @rows.size - 1
         end
         update_viewport
@@ -265,6 +271,11 @@ module Bubbles
         @viewport.height
       end
 
+      # start returns the index of the first rendered row.
+      def start : Int32
+        @start
+      end
+
       def width : Int32
         @viewport.width
       end
@@ -280,6 +291,18 @@ module Bubbles
       def set_cursor(n : Int32) # ameba:disable Naming/AccessorMethodName
         @cursor = clamp(n, 0, @rows.size - 1)
         update_viewport
+
+        if !@rows.empty? && @viewport.height > 0
+          cursor_idx = @cursor - @start
+          offset = @viewport.y_offset
+          case
+          when cursor_idx < offset
+            offset = cursor_idx
+          when cursor_idx >= offset + @viewport.height
+            offset = cursor_idx - @viewport.height + 1
+          end
+          @viewport.set_y_offset(offset)
+        end
       end
 
       def cursor=(n : Int32)
@@ -298,15 +321,18 @@ module Bubbles
         when offset >= 1
           offset = clamp(offset + n, 1, @viewport.height)
         end
-        @viewport.set_y_offset(offset)
+        # Re-render before applying the offset; SetYOffset clamps against the
+        # current content window.
         update_viewport
+        @viewport.set_y_offset(offset)
       end
 
       def move_down(n : Int32)
         @cursor = clamp(@cursor + n, 0, @rows.size - 1)
-        update_viewport
-
+        # Read the offset before re-rendering; SetContent can clamp it as the
+        # row window shrinks.
         offset = @viewport.y_offset
+        update_viewport
         case
         when @end == @rows.size && offset > 0
           offset = clamp(offset - n, 1, @viewport.height)

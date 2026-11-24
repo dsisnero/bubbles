@@ -152,4 +152,43 @@ describe Bubbles::Paginator do
     # Updated model should have changed
     updated_model.page.should eq(original_page + 1)
   end
+
+  # Go: TestSetTotalPagesCalculatesPages
+  it "calculates total pages from items and per page" do
+    [{1, 5, 5}, {2, 4, 2}, {2, 5, 3}].each do |per_page, items, want|
+      m = Bubbles::Paginator.new(
+        Bubbles::Paginator.with_per_page(per_page),
+        Bubbles::Paginator.with_total_pages(7)
+      )
+      m.set_total_pages(items).should eq(want)
+      m.total_pages.should eq(want)
+    end
+  end
+
+  # Go: TestSetTotalPagesInvalidPageSizeIsNoOp
+  it "leaves pagination unchanged when per page is not positive" do
+    [{0, 0}, {0, 7}, {-1, 7}].each do |per_page, total_pages|
+      m = Bubbles::Paginator.new
+      m.per_page = per_page
+      m.total_pages = total_pages
+      m.page = 3 if total_pages != 0
+
+      total, page = m.total_pages, m.page
+      m.set_total_pages(10).should eq(total)
+      {m.total_pages, m.page, m.per_page}.should eq({total, page, per_page})
+    end
+  end
+
+  # Go: TestSetTotalPagesNonpositiveItemsPreserveState
+  it "preserves pagination for nonpositive item counts" do
+    {0, -1}.each do |items|
+      m = Bubbles::Paginator.new(
+        Bubbles::Paginator.with_per_page(2),
+        Bubbles::Paginator.with_total_pages(7)
+      )
+      m.page = 3
+      m.set_total_pages(items).should eq(7)
+      {m.total_pages, m.page, m.per_page}.should eq({7, 3, 2})
+    end
+  end
 end

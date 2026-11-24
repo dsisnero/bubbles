@@ -216,7 +216,7 @@ module Bubbles
       end
 
       def set_percent(p : Float64) : Tea::Cmd # ameba:disable Naming/AccessorMethodName
-        @target_percent = clamp(p, 0.0, 1.0)
+        @target_percent = clamp_percent(p)
         @tag += 1
         next_frame
       end
@@ -238,6 +238,7 @@ module Bubbles
       end
 
       def view_as(percent : Float64) : String
+        percent = clamp_percent(percent)
         percent_view = percentage_view(percent)
         bar = bar_view(percent, Lipgloss.width(percent_view))
         bar + percent_view
@@ -257,8 +258,11 @@ module Bubbles
       end
 
       def next_frame : Tea::Cmd
+        # Capture the frame identity now; Go does the same to avoid a race.
+        id = @id
+        tag = @tag
         Tea.tick(Time::Span.new(nanoseconds: (1_000_000_000_i64 // FPS).to_i64)) do
-          FrameMsg.new(@id, @tag)
+          FrameMsg.new(id, tag)
         end
       end
 
@@ -345,6 +349,12 @@ module Bubbles
         return lo if v < lo
         return hi if v > hi
         v
+      end
+
+      # clampPercent keeps invalid progress from entering the spring or bar.
+      private def clamp_percent(value : Float64) : Float64
+        return 0.0 if value.nan?
+        clamp(value, 0.0, 1.0)
       end
 
       private def render_empty_fill(count : Int32) : String

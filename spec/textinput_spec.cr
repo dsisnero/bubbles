@@ -1,5 +1,11 @@
 require "./spec_helper"
 
+private class TextInputClipboardError < Exception
+  def initialize(@msg : String)
+    super(@msg)
+  end
+end
+
 describe Bubbles::TextInput do
   it "Test_CurrentSuggestion" do
     textinput = Bubbles::TextInput.new
@@ -29,14 +35,14 @@ describe Bubbles::TextInput do
     textinput = Bubbles::TextInput.new
     textinput.placeholder = "Nickname"
 
-    # With no width set the placeholder shows one rune, its first as the
-    # cursor cell, which is styled.
-    textinput.view.should end_with("N\e[m")
+    # With no width set the full placeholder renders (issue #779), with its
+    # first rune as the cursor cell.
+    Ansi.strip(textinput.view).should contain("Nickname")
 
     textinput.set_value("hi")
-    # The value ends with the cursor's space, unstyled. Go's renderer trims a
-    # blank cell; a styled one is content and paints one cell wider.
-    textinput.view.should end_with("hi\e[m ")
+    # v2.2.2 assigns the text style to the cursor in View, so the trailing
+    # space cell carries that style.
+    Ansi.strip(textinput.view).should end_with("hi ")
   end
 
   it "Test_SlicingOutsideCap" do
@@ -194,5 +200,165 @@ describe Bubbles::TextInput do
       # Offset should be adjusted to handle overflow
       model.offset.should be >= 0
     end
+  end
+
+  # Go: Test_CurrentSuggestionAfterPrevious
+  it "selects the previous suggestion over the current matches" do
+    [
+      {"no suggestions", "", [] of String, ""},
+      {"empty value", "", ["test1", "test2"], ""},
+      {"no matches", "other", ["test1", "test2"], ""},
+      {"one match", "test", ["test1"], "test1"},
+      {"multiple matches", "test", ["test1", "test2", "test3"], "test3"},
+    ].each do |name, value, suggestions, expected|
+      m = Bubbles::TextInput.new
+      m.show_suggestions = true
+      m.set_value(value)
+      m.set_suggestions(suggestions)
+      m.focus
+
+      m, _ = m.update(Tea.key(Tea::KeyUp))
+      m.current_suggestion.should eq(expected), name
+    end
+  end
+
+  # Go: Test_CursorPositionWithScrolledValue
+  it "positions the cursor for a scrolled value" do
+    m = Bubbles::TextInput.new
+    m.set_virtual_cursor(false)
+    m.focus
+    m.set_width(5)
+    m.set_value("abcdefghij")
+    m.set_cursor(8)
+
+    cursor = m.cursor
+    cursor.should_not be_nil
+    cursor.not_nil!.x.should eq(5)
+  end
+
+  # Go: Test_CursorPositionWithWideCharacters
+  it "positions the cursor after wide characters" do
+    m = Bubbles::TextInput.new
+    m.set_virtual_cursor(false)
+    m.focus
+    m.set_width(40)
+    m.set_value("あいう")
+
+    cursor = m.cursor
+    cursor.should_not be_nil
+    cursor.not_nil!.x.should eq(8)
+  end
+
+  # Go: Test_ViewRespectsWidthWithSuggestions
+  it "keeps the view within the configured width with suggestions" do
+    m = Bubbles::TextInput.new
+    m.set_width(20)
+    m.set_value("hel")
+    m.show_suggestions = true
+    m.set_suggestions(["hello world this is a very long suggestion overflow", "second"])
+    m.focus
+    m, _ = m.update(Tea.key('l'))
+
+    Ansi.string_width(m.view).should eq(23)
+  end
+
+  # Go: TestAcceptSuggestionAfterSetValue
+  it "does not complete a long value from a stale suggestion" do
+    m = Bubbles::TextInput.new
+    m.show_suggestions = true
+    m.set_suggestions(["hello"])
+    m.focus
+    m, _ = m.update(Tea.key('h'))
+
+    value = "a much longer value than any suggestion"
+    m.set_value(value)
+    m, _ = m.update(Tea.key(Tea::KeyTab))
+    m.value.should eq(value)
+  end
+
+  # Go: TestDeleteWordForwardAtWordEnd
+  it "deletes the word forward from the cursor" do
+    [
+      {"inside word", "abc d", 1, "a d"},
+      {"last rune of word", "ab c", 1, "a c"},
+      {"last rune of value", "ab", 1, "a"},
+      {"on whitespace", "a bc", 1, "a"},
+      {"unicode word", "a界 c", 1, "a c"},
+    ].each do |name, value, cursor, want|
+      m = Bubbles::TextInput.new
+      m.focus
+      m.set_value(value)
+      m.set_cursor(cursor)
+      m, _ = m.update(Tea.key('d', Ultraviolet::ModAlt))
+      m.value.should eq(want), name
+    end
+  end
+
+  # Go: TestPasteErrMsgUnwrap
+  it "keeps the underlying paste error reachable" do
+    underlying = TextInputClipboardError.new("clipboard read error")
+    m = Bubbles::TextInput.new
+    m.focus
+
+    m, _ = m.update(Bubbles::TextInput::PasteErrMsg.new(underlying))
+    m.err.should_not be_nil
+    m.err.should be_a(Bubbles::TextInput::PasteErrMsg)
+    m.err.try(&.cause).should eq(underlying)
+  end
+
+  # Go: TestPlaceholderFullRenderWithoutWidth
+  it "renders the whole placeholder without a width" do
+    m = Bubbles::TextInput.new
+    m.placeholder = "Nickname"
+    Ansi.strip(m.view).should contain("Nickname")
+  end
+
+  # Go: TestSetValueDoesNotCompleteUnmatchedInput
+  it "does not complete input that matches no suggestion" do
+    m = Bubbles::TextInput.new
+    m.show_suggestions = true
+    m.set_suggestions(["hello"])
+    m.focus
+    m.set_value("other")
+    m, _ = m.update(Tea.key(Tea::KeyTab))
+    m.value.should eq("other")
+  end
+
+  # Go: TestSetValueRefreshesSuggestions
+  it "refreshes suggestions when the value is set" do
+    m = Bubbles::TextInput.new
+    m.show_suggestions = true
+    m.set_suggestions(["hello"])
+    m.focus
+    m, _ = m.update(Tea.key('h'))
+
+    m.set_value("ab")
+    m.matched_suggestions.size.should eq(0)
+    m, _ = m.update(Tea.key(Tea::KeyTab))
+    m.value.should eq("ab")
+
+    m.set_value("he")
+    m, _ = m.update(Tea.key(Tea::KeyTab))
+    m.value.should eq("hello")
+  end
+
+  # Go: TestShiftBackspaceDeletesCharacterBackward
+  it "deletes a character with shift+backspace" do
+    m = Bubbles::TextInput.new
+    m.focus
+    m.set_value("abc")
+    m, _ = m.update(Tea.key(Tea::KeyBackspace, Ultraviolet::ModShift))
+    m.value.should eq("ab")
+  end
+
+  # Go: TestTypedPrefixStillAcceptsSuggestion
+  it "accepts a suggestion after typing its prefix" do
+    m = Bubbles::TextInput.new
+    m.show_suggestions = true
+    m.set_suggestions(["hello"])
+    m.focus
+    "he".each_char { |ch| m, _ = m.update(Tea.key(ch)) }
+    m, _ = m.update(Tea.key(Tea::KeyTab))
+    m.value.should eq("hello")
   end
 end

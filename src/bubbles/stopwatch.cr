@@ -48,13 +48,16 @@ module Bubbles
 
       # Internal field matching Go's 'd' field
       @d : Time::Span = 0.seconds
+      # Monotonic timestamp of the current running segment.
+      @start : Time::Instant = Time.instant
 
       def initialize
-        @interval = 0.seconds
+        @interval = 1.second
         @id = Stopwatch.next_id
         @tag = 0
         @running = false
         @d = 0.seconds
+        @start = Time.instant
       end
 
       def id : Int32
@@ -62,7 +65,11 @@ module Bubbles
       end
 
       def elapsed : Time::Span
-        @d
+        if @running
+          @d + (Time.instant - @start)
+        else
+          @d
+        end
       end
 
       def running : Bool
@@ -106,21 +113,31 @@ module Bubbles
         -> { ResetMsg.new(@id).as(Tea::Msg?) }
       end
 
-      def update(msg : Tea::Msg) : {Model, Tea::Cmd?}
+      def update(msg : Tea::Msg) : {Model, Tea::Cmd?} # ameba:disable Metrics/CyclomaticComplexity
         case msg
         when StartStopMsg
           return {self, nil.as(Tea::Cmd?)} if msg.id != @id
+
+          if msg.running && !@running
+            @start = Time.instant
+          end
+          if !msg.running && @running
+            @d += Time.instant - @start
+          end
           @running = msg.running
         when ResetMsg
           return {self, nil.as(Tea::Cmd?)} if msg.id != @id
           @d = 0.seconds
+          @start = Time.instant
         when TickMsg
           return {self, nil.as(Tea::Cmd?)} if !running? || msg.id != @id
           if msg.tag > 0 && msg.tag != @tag
             return {self, nil.as(Tea::Cmd?)}
           end
 
-          @d += @interval
+          now = Time.instant
+          @d += now - @start
+          @start = now
           @tag += 1
           return {self, tick(@id, @tag, @interval)}
         end
@@ -129,7 +146,12 @@ module Bubbles
       end
 
       def view : String
-        format_duration(@d)
+        interval = @interval
+        interval = 1.second if interval.total_nanoseconds <= 0
+        total = elapsed.total_nanoseconds.to_i64
+        unit = interval.total_nanoseconds.to_i64
+        truncated = Time::Span.new(nanoseconds: (total // unit) * unit)
+        format_duration(truncated)
       end
 
       private def tick(id : Int32, tag : Int32, d : Time::Span) : Tea::Cmd

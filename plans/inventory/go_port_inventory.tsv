@@ -33,11 +33,11 @@ filepicker/filepicker.go::struct::Model	struct	ported	-	ported; all specs green
 filepicker/filepicker.go::struct::Styles	struct	ported	-	ported; all specs green
 filepicker/hidden_unix.go::func::IsHidden	func	ported	-	ported; all specs green
 filepicker/hidden_windows.go::func::IsHidden	func	ported	-	ported; all specs green
-filepicker/filepicker_test.go::test::TestDidSelectFileRequiresPath	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-filepicker/filepicker_test.go::test::TestKeysBeforeEntriesLoad	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-filepicker/filepicker_test.go::test::TestLoadedPickerDoesNotNavigatePastLastEntry	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-filepicker/filepicker_test.go::test::TestLoadedPickerSelectsFile	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-filepicker/filepicker_test.go::test::TestNavigateWithoutWindowSize	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+filepicker/filepicker_test.go::test::TestDidSelectFileRequiresPath	test	ported	spec/filepicker_spec.cr	ported; v2.2.2 filepicker delta
+filepicker/filepicker_test.go::test::TestKeysBeforeEntriesLoad	test	ported	spec/filepicker_spec.cr	ported; v2.2.2 filepicker delta
+filepicker/filepicker_test.go::test::TestLoadedPickerDoesNotNavigatePastLastEntry	test	ported	spec/filepicker_spec.cr	ported; v2.2.2 filepicker delta
+filepicker/filepicker_test.go::test::TestLoadedPickerSelectsFile	test	ported	spec/filepicker_spec.cr	ported; v2.2.2 filepicker delta
+filepicker/filepicker_test.go::test::TestNavigateWithoutWindowSize	test	ported	spec/filepicker_spec.cr	ported; v2.2.2 filepicker delta
 help/help.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 help/help.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
 help/help.go::func::DefaultStyles	func	ported	-	ported; all specs green
@@ -52,9 +52,9 @@ help/help.go::struct::Model	struct	ported	-	ported; all specs green
 help/help.go::struct::Styles	struct	ported	-	ported; all specs green
 help/help.go::type::KeyMap	type	ported	-	ported; all specs green
 help/help_test.go::test::TestFullHelp	test	ported	-	ported; all specs green
-help/help_test.go::test::TestFullHelpStylesColumnPadding	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-help/help_test.go::test::TestFullHelpStylesColumnPaddingSkipsDisabledBindings	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-help/help_test.go::test::TestShortHelpFitsWidth	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+help/help_test.go::test::TestFullHelpStylesColumnPadding	test	ported	spec/help_spec.cr	ported; v2.2.2 help delta
+help/help_test.go::test::TestFullHelpStylesColumnPaddingSkipsDisabledBindings	test	ported	spec/help_spec.cr	ported; v2.2.2 help delta
+help/help_test.go::test::TestShortHelpFitsWidth	test	ported	spec/help_spec.cr	ported; v2.2.2 help delta
 internal/memoization/memoization.go::method::HInt.Hash	method	ported	-	ported; all specs green
 internal/memoization/memoization.go::method::HString.Hash	method	ported	-	ported; all specs green
 internal/memoization/memoization.go::method::T].Capacity	method	ported	-	ported; all specs green
@@ -180,10 +180,10 @@ list/list_test.go::test::TestStatusBarItemName	test	ported	-	ported; all specs g
 list/list_test.go::test::TestStatusBarWithoutItems	test	ported	-	ported; all specs green
 list/style.go::func::DefaultStyles	func	ported	-	ported; all specs green
 list/style.go::struct::Styles	struct	ported	-	ported; all specs green
-list/list_test.go::test::TestDefaultKeyMapQuit	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-list/list_test.go::test::TestFilterMatchedIndexesAreRunePositions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-list/list_test.go::test::TestRemoveItemWithFilter	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-list/list_test.go::test::TestTitleViewWithoutStatusMessageDoesNotTruncate	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+list/list_test.go::test::TestDefaultKeyMapQuit	test	ported	spec/list_spec.cr	ported; v2.2.2 list delta
+list/list_test.go::test::TestFilterMatchedIndexesAreRunePositions	test	ported	spec/list_spec.cr	ported; v2.2.2 list delta
+list/list_test.go::test::TestRemoveItemWithFilter	test	ported	spec/list_spec.cr	ported; v2.2.2 list delta
+list/list_test.go::test::TestTitleViewWithoutStatusMessageDoesNotTruncate	test	ported	spec/list_spec.cr	ported; v2.2.2 list delta
 paginator/paginator.go::const::Arabic	const	ported	-	ported; all specs green
 paginator/paginator.go::const::Dots	const	ported	-	ported; all specs green
 paginator/paginator.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
@@ -210,9 +210,9 @@ paginator/paginator_test.go::test::TestOnFirstPage	test	ported	-	ported; all spe
 paginator/paginator_test.go::test::TestOnLastPage	test	ported	-	ported; all specs green
 paginator/paginator_test.go::test::TestPrevPage	test	ported	-	ported; all specs green
 paginator/paginator_test.go::test::TestSetTotalPages	test	ported	-	ported; all specs green
-paginator/paginator_test.go::test::TestSetTotalPagesCalculatesPages	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-paginator/paginator_test.go::test::TestSetTotalPagesInvalidPageSizeIsNoOp	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-paginator/paginator_test.go::test::TestSetTotalPagesNonpositiveItemsPreserveState	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+paginator/paginator_test.go::test::TestSetTotalPagesCalculatesPages	test	ported	spec/paginator_spec.cr	ported; v2.2.2 paginator delta
+paginator/paginator_test.go::test::TestSetTotalPagesInvalidPageSizeIsNoOp	test	ported	spec/paginator_spec.cr	ported; v2.2.2 paginator delta
+paginator/paginator_test.go::test::TestSetTotalPagesNonpositiveItemsPreserveState	test	ported	spec/paginator_spec.cr	ported; v2.2.2 paginator delta
 progress/progress.go::const::DefaultEmptyCharBlock	const	ported	-	ported; all specs green
 progress/progress.go::const::DefaultFullCharFullBlock	const	ported	-	ported; all specs green
 progress/progress.go::const::DefaultFullCharHalfBlock	const	ported	-	ported; all specs green
@@ -242,8 +242,8 @@ progress/progress.go::struct::Model	struct	ported	-	ported; all specs green
 progress/progress.go::type::ColorFunc	type	ported	-	ported; all specs green
 progress/progress.go::type::Option	type	ported	-	ported; all specs green
 progress/progress_test.go::test::TestBlend	test	ported	-	ported; all specs green
-progress/progress_test.go::test::TestNaNAnimationRecovery	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-progress/progress_test.go::test::TestPercentBounds	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+progress/progress_test.go::test::TestNaNAnimationRecovery	test	ported	spec/progress_spec.cr	ported; v2.2.2 progress delta
+progress/progress_test.go::test::TestPercentBounds	test	ported	spec/progress_spec.cr	ported; v2.2.2 progress delta
 spinner/spinner.go::func::New	func	ported	src/bubbles/spinner.cr:121-130	Exact Go logic with variadic options
 spinner/spinner.go::func::WithSpinner	func	ported	src/bubbles/spinner.cr:133-135	Returns Option that sets spinner
 spinner/spinner.go::func::WithStyle	func	ported	src/bubbles/spinner.cr:137-139	Returns Option that sets style
@@ -273,12 +273,12 @@ stopwatch/stopwatch.go::struct::ResetMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::struct::TickMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::type::Option	type	ported	-	ported; all specs green
-stopwatch/stopwatch_test.go::test::TestElapsedAdvancesWithTimeWhileRunning	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-stopwatch/stopwatch_test.go::test::TestNewDefaultInterval	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-stopwatch/stopwatch_test.go::test::TestPauseFreezesElapsed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-stopwatch/stopwatch_test.go::test::TestResetClearsElapsed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-stopwatch/stopwatch_test.go::test::TestTagDebounceRejectsForeignTags	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-stopwatch/stopwatch_test.go::test::TestViewAlignsToInterval	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestElapsedAdvancesWithTimeWhileRunning	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
+stopwatch/stopwatch_test.go::test::TestNewDefaultInterval	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
+stopwatch/stopwatch_test.go::test::TestPauseFreezesElapsed	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
+stopwatch/stopwatch_test.go::test::TestResetClearsElapsed	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
+stopwatch/stopwatch_test.go::test::TestTagDebounceRejectsForeignTags	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
+stopwatch/stopwatch_test.go::test::TestViewAlignsToInterval	test	ported	spec/stopwatch_spec.cr	ported; v2.2.2 stopwatch delta
 table/table.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
 table/table.go::func::DefaultStyles	func	ported	-	ported; all specs green
 table/table.go::func::New	func	ported	-	ported; all specs green
@@ -332,18 +332,18 @@ table/table_test.go::test::TestModel_View	test	ported	-	ported; all specs green
 table/table_test.go::test::TestModel_View_CenteredInABox	test	skipped	-	skipped in Go upstream
 table/table_test.go::test::TestNew	test	ported	-	ported; all specs green
 table/table_test.go::test::TestTableAlignment	test	ported	-	ported; all specs green
-table/cursor_shrink_test.go::test::TestSetRows_CursorClampsOnShrink	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/cursor_shrink_test.go::test::TestSetRows_CursorClampsToZeroOnEmpty	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestModel_FromValues_MoreValuesThanColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestModel_RenderRow_MoreCellsThanColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestModel_SetRows_NoColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestMoveDownAfterUpsKeepsViewport	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestMoveUpFromBottomKeepsViewport	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestNew_RowsWithoutColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestRenderRowConfiguredColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestRenderRowDoesNotDiscardExtraData	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestSetCursor_TabJumpVisible	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-table/table_test.go::test::TestSetCursor_ViewportVisibility	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/cursor_shrink_test.go::test::TestSetRows_CursorClampsOnShrink	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/cursor_shrink_test.go::test::TestSetRows_CursorClampsToZeroOnEmpty	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestModel_FromValues_MoreValuesThanColumns	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestModel_RenderRow_MoreCellsThanColumns	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestModel_SetRows_NoColumns	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestMoveDownAfterUpsKeepsViewport	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestMoveUpFromBottomKeepsViewport	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestNew_RowsWithoutColumns	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestRenderRowConfiguredColumns	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestRenderRowDoesNotDiscardExtraData	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestSetCursor_TabJumpVisible	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
+table/table_test.go::test::TestSetCursor_ViewportVisibility	test	ported	spec/table_spec.cr	ported; v2.2.2 table delta
 textarea/textarea.go::func::Blink	func	ported	-	ported; all specs green
 textarea/textarea.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 textarea/textarea.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
@@ -540,23 +540,23 @@ textinput/textinput.go::struct::KeyMap	struct	ported	-	ported; all specs green
 textinput/textinput.go::struct::Model	struct	ported	-	ported; all specs green
 textinput/textinput.go::type::EchoMode	type	ported	-	ported; all specs green
 textinput/textinput.go::type::ValidateFunc	type	ported	-	ported; all specs green
-textinput/textinput.go::method::pasteErrMsg.Unwrap	method	missing	-	v2.2.2: upstream delta; phase-3-minor
+textinput/textinput.go::method::pasteErrMsg.Unwrap	method	ported	src/bubbles/textinput.cr	ported; v2.2.2 textinput delta
 textinput/textinput_test.go::test::TestChinesePlaceholder	test	skipped	-	flaky in Go upstream
 textinput/textinput_test.go::test::TestPlaceholderTruncate	test	skipped	-	flaky in Go upstream
 textinput/textinput_test.go::test::Test_CurrentSuggestion	test	ported	-	ported; all specs green
 textinput/textinput_test.go::test::Test_SlicingOutsideCap	test	ported	-	ported; all specs green
-textinput/textinput_test.go::test::TestAcceptSuggestionAfterSetValue	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestDeleteWordForwardAtWordEnd	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestPasteErrMsgUnwrap	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestPlaceholderFullRenderWithoutWidth	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestSetValueDoesNotCompleteUnmatchedInput	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestSetValueRefreshesSuggestions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::TestTypedPrefixStillAcceptsSuggestion	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::Test_CurrentSuggestionAfterPrevious	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::Test_CursorPositionWithScrolledValue	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::Test_CursorPositionWithWideCharacters	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-textinput/textinput_test.go::test::Test_ViewRespectsWidthWithSuggestions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestAcceptSuggestionAfterSetValue	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestDeleteWordForwardAtWordEnd	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestPasteErrMsgUnwrap	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestPlaceholderFullRenderWithoutWidth	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestSetValueDoesNotCompleteUnmatchedInput	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestSetValueRefreshesSuggestions	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::TestTypedPrefixStillAcceptsSuggestion	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::Test_CurrentSuggestionAfterPrevious	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::Test_CursorPositionWithScrolledValue	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::Test_CursorPositionWithWideCharacters	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
+textinput/textinput_test.go::test::Test_ViewRespectsWidthWithSuggestions	test	ported	spec/textinput_spec.cr	ported; v2.2.2 textinput delta
 timer/timer.go::func::New	func	ported	-	ported; all specs green
 timer/timer.go::func::WithInterval	func	ported	-	ported; all specs green
 timer/timer.go::method::Model.ID	method	ported	-	ported; all specs green
@@ -573,21 +573,21 @@ timer/timer.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
 timer/timer.go::struct::TickMsg	struct	ported	-	ported; all specs green
 timer/timer.go::struct::TimeoutMsg	struct	ported	-	ported; all specs green
 timer/timer.go::type::Option	type	ported	-	ported; all specs green
-timer/timer_test.go::test::TestDoubleStartDoesNotSpeedUpTimer	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestDoubleStopDoesNotCauseIssues	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestDuplicateTickStreamDoesNotPermanentlyDoubleSpeed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestIDReturnsCorrectID	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestInitStartsTimer	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestRunningReturnsFalseWhenTimedOut	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestStartReturnsNilWhenTimedOut	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestStartStopMsgFromDifferentTimerIsIgnored	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestTagPreventsStaleTicks	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestTickMsgFromDifferentTimerIsIgnored	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestTickMsgHandling	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestTimeoutMsgSentOnLastTick	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestToggleBehavior	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestUpdateHandlesStartStopMsg	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-timer/timer_test.go::test::TestViewReturnsTimeoutString	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestDoubleStartDoesNotSpeedUpTimer	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestDoubleStopDoesNotCauseIssues	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestDuplicateTickStreamDoesNotPermanentlyDoubleSpeed	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestIDReturnsCorrectID	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestInitStartsTimer	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestRunningReturnsFalseWhenTimedOut	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestStartReturnsNilWhenTimedOut	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestStartStopMsgFromDifferentTimerIsIgnored	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestTagPreventsStaleTicks	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestTickMsgFromDifferentTimerIsIgnored	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestTickMsgHandling	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestTimeoutMsgSentOnLastTick	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestToggleBehavior	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestUpdateHandlesStartStopMsg	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
+timer/timer_test.go::test::TestViewReturnsTimeoutString	test	ported	spec/timer_spec.cr	ported; v2.2.2 timer delta
 tree/node.go::func::NewNode	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
 tree/node.go::func::Root	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
 tree/node.go::method::Node.AllNodes	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
@@ -734,6 +734,6 @@ viewport/viewport_test.go::test::TestSetHorizontalStep	test	ported	-	ported; all
 viewport/viewport_test.go::test::TestSetInitialValues	test	ported	-	ported; all specs green
 viewport/viewport_test.go::test::TestSizing	test	ported	-	ported; all specs green
 viewport/viewport_test.go::test::TestVisibleLines	test	ported	-	ported; all specs green
-viewport/viewport_test.go::test::TestMatchesToHighlights_ANSI	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-viewport/viewport_test.go::test::TestPageScrollWithFrame	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-viewport/viewport_test.go::test::TestScrollPercentWithFrame	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+viewport/viewport_test.go::test::TestMatchesToHighlights_ANSI	test	ported	spec/viewport_spec.cr	ported; v2.2.2 viewport delta
+viewport/viewport_test.go::test::TestPageScrollWithFrame	test	ported	spec/viewport_spec.cr	ported; v2.2.2 viewport delta
+viewport/viewport_test.go::test::TestScrollPercentWithFrame	test	ported	spec/viewport_spec.cr	ported; v2.2.2 viewport delta

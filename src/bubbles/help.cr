@@ -134,15 +134,9 @@ module Bubbles
 
         cols = [] of String
         total_width = 0
-        separator = @styles.full_separator.inline(true).render(@full_separator)
 
         groups.each_with_index do |group, i|
           next if group.empty? || !should_render_column(group)
-
-          sep = ""
-          if total_width > 0 && i < groups.size
-            sep = separator
-          end
 
           keys = [] of String
           descriptions = [] of String
@@ -150,6 +144,14 @@ module Bubbles
             next unless binding.enabled
             keys << binding.help.key
             descriptions << binding.help.desc
+          end
+
+          sep = ""
+          if total_width > 0 && i < groups.size
+            separator_width = Lipgloss.width(@full_separator)
+            separator_lines = Array.new(keys.size, " " * separator_width)
+            separator_lines[0] = @full_separator
+            sep = @styles.full_separator.render(separator_lines.join("\n"))
           end
 
           col = Lipgloss.join_horizontal(
@@ -175,13 +177,14 @@ module Bubbles
       end
 
       private def should_add_item(total_width : Int32, width : Int32) : {String, Bool}
-        if @width > 0 && total_width + width > @width
-          tail = " " + @styles.ellipsis.inline(true).render(@ellipsis)
-          if total_width + Lipgloss.width(tail) < @width
-            return {tail, false}
-          end
+        return {"", true} if @width <= 0 || total_width + width <= @width
+
+        # The item does not fit. End with an ellipsis if there is room for one.
+        tail = " " + @styles.ellipsis.inline(true).render(@ellipsis)
+        if total_width + Lipgloss.width(tail) < @width
+          return {tail, false}
         end
-        {"", true}
+        {"", false}
       end
 
       private def should_render_column(bindings : Array(Bubbles::Key::Binding)) : Bool

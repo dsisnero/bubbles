@@ -164,10 +164,9 @@ module Bubbles
       # ScrollPercent returns the amount scrolled as a float between 0 and 1.
       # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:200
       def scroll_percent : Float64
-        total, _, _ = calculate_line(0)
-        return 1.0 if @height >= total
-        v = @y_offset.to_f / (total - @height).to_f
-        clampf(v, 0.0, 1.0)
+        max_offset = max_y_offset
+        return 1.0 if max_offset == 0
+        clampf(@y_offset.to_f / max_offset.to_f, 0.0, 1.0)
       end
 
       def horizontal_scroll_percent : Float64
@@ -288,28 +287,28 @@ module Bubbles
       # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:486
       def page_down
         return if at_bottom
-        scroll_down(@height)
+        scroll_down(max_height)
       end
 
       # PageUp moves the view up by one height of the viewport.
       # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:494
       def page_up
         return if at_top
-        scroll_up(@height)
+        scroll_up(max_height)
       end
 
       # HalfPageDown moves the view down by half the height of the viewport.
       # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:501
       def half_page_down
         return if at_bottom
-        scroll_down(@height // 2)
+        scroll_down(max_height // 2)
       end
 
       # HalfPageUp moves the view up by half the height of the viewport.
       # Ported exactly from Go: vendor/bubbles/viewport/viewport.go:509
       def half_page_up
         return if at_top
-        scroll_up(@height // 2)
+        scroll_up(max_height // 2)
       end
 
       def goto_top
@@ -330,6 +329,10 @@ module Bubbles
           @y_offset = line_idx - @height + 1
         end
         set_y_offset(@y_offset)
+      end
+
+      def highlights : Array(HighlightInfo)
+        @highlights
       end
 
       def set_highlights(matches : Array(Array(Int32))) # ameba:disable Naming/AccessorMethodName
@@ -602,13 +605,13 @@ module Bubbles
         when Tea::KeyPressMsg
           case
           when Bubbles::Key.matches?(msg, @key_map.page_down)
-            scroll_down(@height)
+            scroll_down(max_height)
           when Bubbles::Key.matches?(msg, @key_map.page_up)
-            scroll_up(@height)
+            scroll_up(max_height)
           when Bubbles::Key.matches?(msg, @key_map.half_page_down)
-            scroll_down(@height // 2)
+            scroll_down(max_height // 2)
           when Bubbles::Key.matches?(msg, @key_map.half_page_up)
-            scroll_up(@height // 2)
+            scroll_up(max_height // 2)
           when Bubbles::Key.matches?(msg, @key_map.down)
             scroll_down(1)
           when Bubbles::Key.matches?(msg, @key_map.up)

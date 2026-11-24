@@ -86,7 +86,7 @@ Deliverables:
   `grapheme_test.go`, `grapheme_cursor_test.go`, and the selection cases in
   `textarea_test.go`.
 
-## Phase 3 — Remaining component deltas
+## Phase 3 — Remaining component deltas — done
 
 Small, independent changes. Land one component per commit:
 
@@ -158,7 +158,7 @@ Artifacts updated:
 
 ## Status
 
-Vendor bumped and manifests refreshed. Phase 1 (`tree`) is complete, and Phase
-2 (textarea selection/copy/graphemes) is complete: 14 source ids and 59 tests
-are ported in `src/bubbles/textarea.cr` + `spec/textarea_v222_spec.cr`, and the
-suite is at 268 specs. Phase 3 (component deltas) remains open.
+Vendor bumped and manifests refreshed. All three phases are complete: `tree`,
+textarea selection/copy/graphemes, and the remaining component deltas. The
+ledger records every v2.2.2 addition as ported (1 source id + 65 tests for
+Phase 3), and the suite is at 333 specs.
