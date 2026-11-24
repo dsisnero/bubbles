@@ -29,7 +29,7 @@ keep their v2.1.1 note; everything else is aligned to the current pin.
 | `list/` | `src/bubbles/list.cr` | ✅ Ported | 9 | v2.2.2 delta |
 | `spinner/` | `src/bubbles/spinner.cr` | ✅ Ported | — | v2.1.1 |
 | `progress/` | `src/bubbles/progress.cr` | ✅ Ported | 4 | v2.2.2 delta |
-| `viewport/` | `src/bubbles/viewport.cr` | ✅ Ported | 26 | v2.2.2 delta + 3 bug fixes |
+| `viewport/` | `src/bubbles/viewport.cr` | ✅ Ported | 28 | v2.2.2 delta + 3 bug fixes |
 | `filepicker/` | `src/bubbles/filepicker.cr` | ✅ Ported | 13 | v2.2.2 delta |
 | `help/` | `src/bubbles/help.cr` | ✅ Ported | 4 | v2.2.2 delta — golden files shared with Go |
 | `cursor/` | `src/bubbles/cursor.cr` | ✅ Ported | 25 | v2.1.1 |
@@ -45,7 +45,7 @@ keep their v2.1.1 note; everything else is aligned to the current pin.
 | Component | Go Tests | Crystal Tests | Status |
 |-----------|----------|---------------|--------|
 | textarea | 30 | 109 | ✅ All ported + strengthened |
-| viewport | ~30 | 26 | ✅ All ported |
+| viewport | ~30 | 28 | ✅ All ported |
 | textinput | 4 | 32 | ✅ All ported + extra coverage |
 | table | 33 | 34 | ✅ All ported (golden files shared) |
 | list | 5 | 9 | ✅ All ported |
@@ -60,7 +60,7 @@ keep their v2.1.1 note; everything else is aligned to the current pin.
 | spinner | — | — | ⚠️ No spec yet |
 | tree | 8 | 10 | ✅ Ported (new in v2.2.2) |
 
-**Total: 333 examples, 0 failures, 4 pending** (pending = skipped in upstream
+**Total: 335 examples, 0 failures, 4 pending** (pending = skipped in upstream
 Go)
 
 ## Known Deviations

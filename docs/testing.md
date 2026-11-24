@@ -52,7 +52,7 @@ end
 - Check test parity with Go using the golden files in
   `vendor/bubbles/<component>/testdata/`
 - Ensure all ported components have corresponding spec files
-- Current test count: **333 examples, 0 failures, 4 pending**
+- Current test count: **335 examples, 0 failures, 4 pending**
 
 ## v2.2.2 Coverage
 

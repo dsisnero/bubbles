@@ -40,7 +40,7 @@ Release aligned with upstream `charmbracelet/bubbles` **v2.2.2** (`0c1a491`).
 - `golden` is declared as a development dependency.
 
 ### Notes
-- 333 examples, 0 failures, 4 pending (skipped in upstream Go).
+- 335 examples, 0 failures, 4 pending (skipped in upstream Go).
 - Port inventory: 735 ported, 3 skipped (intentional upstream skips), 0
   missing.
 
