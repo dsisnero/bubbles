@@ -545,19 +545,8 @@ module Bubbles
       end
 
       private def humanize_bytes(bytes : UInt64) : String
-        # Simple humanize implementation matching Go's humanize.Bytes
-        units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"]
-        return "0 B" if bytes == 0
-
-        i = 0
-        size = bytes.to_f
-        while size >= 1024 && i < units.size - 1
-          size /= 1024
-          i += 1
-        end
-
-        format = i == 0 ? "%.0f %s" : "%.1f %s"
-        sprintf(format, size, units[i]).gsub(" ", "")
+        # Match filepicker.go: humanize.Bytes then drop the first space.
+        Bubbles::Filepicker.humanize_bytes(bytes).sub(" ", "")
       end
 
       private def file_mode_to_string(entry : Entry) : String
@@ -589,6 +578,28 @@ module Bubbles
     def self.hidden?(file : String) : {Bool, Exception?}
       # Unix implementation (matching hidden_unix.go)
       {file.starts_with?("."), nil}
+    end
+
+    # HumanizeBytes ports github.com/dustin/go-humanize's Bytes, which the Go
+    # filepicker formats sizes with: SI prefixes on a 1000 base, lowercase
+    # "kB", one decimal below ten and whole numbers from ten up.
+    #
+    #   humanize_bytes(131_072) # => "131 kB"
+    #
+    # The caller strips the space, matching filepicker.go's
+    # `strings.Replace(humanize.Bytes(...), " ", "", 1)`.
+    def self.humanize_bytes(bytes : UInt64) : String
+      sizes = ["B", "kB", "MB", "GB", "TB", "PB", "EB"]
+      return "0 B" if bytes == 0
+      return "#{bytes} B" if bytes < 10
+
+      base = 1000.0
+      e = (Math.log(bytes.to_f) / Math.log(base)).floor.to_i
+      e = sizes.size - 1 if e >= sizes.size
+
+      val = (bytes.to_f / (base ** e) * 10 + 0.5).floor / 10
+      format = val < 10 ? "%.1f %s" : "%.0f %s"
+      sprintf(format, val, sizes[e])
     end
 
     # New returns a new filepicker model with default styling and key bindings.

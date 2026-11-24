@@ -75,4 +75,19 @@ describe Bubbles::Filepicker do
     m.allowed_types = [".txt", ".md"]
     m.allowed_types.should eq([".txt", ".md"])
   end
+
+  describe "humanize_bytes" do
+    # Expected values come from github.com/dustin/go-humanize Bytes, which the
+    # Go filepicker formats sizes with.
+    it "uses SI units like Go's humanize.Bytes" do
+      Bubbles::Filepicker.humanize_bytes(0_u64).should eq "0 B"
+      Bubbles::Filepicker.humanize_bytes(9_u64).should eq "9 B"
+      Bubbles::Filepicker.humanize_bytes(999_u64).should eq "999 B"
+      Bubbles::Filepicker.humanize_bytes(1_000_u64).should eq "1.0 kB"
+      Bubbles::Filepicker.humanize_bytes(1_500_u64).should eq "1.5 kB"
+      Bubbles::Filepicker.humanize_bytes(131_072_u64).should eq "131 kB"
+      Bubbles::Filepicker.humanize_bytes(999_999_u64).should eq "1000 kB"
+      Bubbles::Filepicker.humanize_bytes(1_000_000_u64).should eq "1.0 MB"
+    end
+  end
 end
