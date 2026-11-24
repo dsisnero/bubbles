@@ -16,6 +16,10 @@ Release aligned with upstream `charmbracelet/bubbles` **v2.2.2** (`0c1a491`).
   the v2.2.2 key bindings.
 
 ### Fixed
+- **Viewport highlight offsets** — `parse_matches` advanced the remaining
+  content by byte count using character indices, so highlights after any
+  multi-byte text landed on the wrong cells. Slicing is now byte-based, with
+  regression tests for multi-byte and ANSI+multi-byte prefixes.
 - **v2.2.2 component deltas** — timer/stopwatch wall-clock timing and debounce,
   filepicker and table viewport guards, help column padding, list filter/index
   fixes, viewport frame-aware scrolling and ANSI highlights, paginator guards,

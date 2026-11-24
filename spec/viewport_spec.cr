@@ -339,4 +339,24 @@ describe Bubbles::Viewport do
     vp.goto_top
     vp.scroll_percent.should eq(0.0)
   end
+
+  it "keeps highlight positions after multi-byte text" do
+    content = "你好世界!\nThe artichoke here\n"
+    start = content[0...content.index("artichoke")].bytesize
+    highlights = Bubbles::Viewport.parse_matches(content, [[start, start + "artichoke".bytesize]])
+
+    highlights.size.should eq(1)
+    highlights[0].line_start.should eq(1)
+    highlights[0].line_end.should eq(1)
+    highlights[0].lines[1].should eq({4, 13})
+  end
+
+  it "keeps highlight positions after ANSI and multi-byte text" do
+    content = "\e[31m你好\e[0m!\nThe artichoke here\n"
+    start = content[0...content.index("artichoke")].bytesize
+    highlights = Bubbles::Viewport.parse_matches(content, [[start, start + "artichoke".bytesize]])
+
+    highlights.size.should eq(1)
+    highlights[0].lines[1].should eq({4, 13})
+  end
 end

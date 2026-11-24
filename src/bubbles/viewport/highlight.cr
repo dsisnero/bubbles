@@ -55,7 +55,9 @@ module Bubbles
         else
           seq, width, n, new_state = Ansi.decode_sequence(remaining, state, nil)
           state = new_state
-          remaining = remaining[n..]? || ""
+          # Ansi.decode_sequence reports byte counts; slice by bytes so
+          # multi-byte text before a match cannot shift later offsets.
+          remaining = remaining.byte_slice(n, remaining.bytesize - n)
           {seq, width, n}
         end
       end
