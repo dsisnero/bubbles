@@ -37,7 +37,9 @@ Format: `<type>/<issue-number>-<short-kebab-description>`
 ## Review Process
 
 1. **Self-review** using `/forge-reflect-pr` before requesting review
+
 2. **Address feedback** using `/forge-address-pr-feedback` for reviewer comments
+
 3. **Verify quality gates**:
 
    ```bash

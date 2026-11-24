@@ -4,6 +4,16 @@ All notable user-facing changes to this project will be documented in this file.
 
 Changes are grouped by release date and category. Only user-facing changes are included — internal refactors, test updates, and CI changes are omitted.
 
+## [Unreleased]
+
+### Fixed
+- **Textarea prompt styling** — `prompt_view` now applies the prompt style
+  internally for every line, including placeholder filler lines, even when no
+  prompt function is set. Completes the upstream v2.1.1 fix
+  (`charmbracelet/bubbles` commit `d2b2217`); the earlier port removed the
+  call-site renders without moving the render into `prompt_view`, so prompts
+  stayed unstyled whenever `prompt_func` was nil.
+
 ## [2.1.2] - 2026-07-27
 
 ### Fixed
@@ -61,8 +71,8 @@ Changes are grouped by release date and category. Only user-facing changes are i
 
 ### Changed
 - **Textarea prompt rendering fix** — `prompt_view` now applies prompt style
-  internally, matching upstream Go v2.1.1 fix (`charmbracelet/bubbles#921`).
-  Fixes placeholder prompts not being styled.
+  internally, matching upstream Go v2.1.1 fix (`charmbracelet/bubbles` commit
+  `d2b2217`). Fixes placeholder prompts not being styled.
 - Vendor submodule updated to `charmbracelet/bubbles` v2.1.1.
 
 ### Notes

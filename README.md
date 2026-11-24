@@ -16,7 +16,8 @@
 ---
 
 Self-contained, reusable UI components that compose together to create rich
-terminal interfaces. A Crystal port of <a href="https://github.com/charmbracelet/bubbles">Charmbracelet Bubbles</a>.
+terminal interfaces. A Crystal port of
+<a href="https://github.com/charmbracelet/bubbles">Charmbracelet Bubbles</a>.
 
 ---
 

@@ -391,6 +391,7 @@ puts vp.width, vp.height, vp.y_offset
 #### New Features (Crystal implementation)
 
 - **Soft wrapping:** `vp.soft_wrap = true`
+
 - **Left gutter** for line numbers (Crystal lambda syntax):
 
   ```crystal

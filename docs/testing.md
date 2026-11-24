@@ -49,9 +49,10 @@ end
 ## Coverage
 
 - Use `crystal spec --verbose` for detailed output
-- Check test parity with Go using the golden files in `vendor/bubbles/<component>/testdata/`
+- Check test parity with Go using the golden files in
+  `vendor/bubbles/<component>/testdata/`
 - Ensure all ported components have corresponding spec files
-- Current test count: **195 examples, 0 failures, 4 pending**
+- Current test count: **198 examples, 0 failures, 4 pending**
 
 ## Golden Files
 
