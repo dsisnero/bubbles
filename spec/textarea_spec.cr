@@ -291,30 +291,6 @@ describe Bubbles::Textarea do
       view.should contain("└")
     end
 
-    it "styles the prompt when no prompt func is set" do
-      # Go: promptView always returns m.activeStyle().computedPrompt().Render(prompt),
-      # with or without a prompt func (vendor/bubbles textarea.go:1462-1475), so
-      # the prompt style applies to the default prompt too.
-      ta = Bubbles::Textarea.new
-      ta.prompt = "> "
-      styles = ta.styles
-      styles.focused.prompt = Lipgloss::Style.new.reverse(true)
-      ta.set_styles(styles)
-      ta.focus
-      ta.view.should contain("\e[7m")
-    end
-
-    it "styles the prompt a prompt func returns" do
-      ta = Bubbles::Textarea.new
-      ta.prompt = "> "
-      ta.set_prompt_func(2, ->(info : Bubbles::Textarea::PromptInfo) { "> " })
-      styles = ta.styles
-      styles.focused.prompt = Lipgloss::Style.new.reverse(true)
-      ta.set_styles(styles)
-      ta.focus
-      ta.view.should contain("\e[7m")
-    end
-
     it "single line and custom end of buffer character" do
       ta = new_textarea
       ta.set_value("the first line")
@@ -387,6 +363,47 @@ describe Bubbles::Textarea do
       view.should contain("placeholder the first line")
       view.should contain("placeholder the second line")
       view.should contain("placeholder the third line")
+    end
+
+    # Regression: vendor v2.1.1 (upstream commit d2b2217). prompt_view must
+    # apply the prompt style itself so every line (including placeholder
+    # fillers) gets it, even when no prompt function is set.
+    it "styles the prompt on all visible lines without a prompt function" do
+      ta = Bubbles::Textarea.new
+      styles = ta.styles
+      reverse_prompt = Lipgloss::Style.new.reverse(true)
+      styles.focused.prompt = reverse_prompt
+      styles.blurred.prompt = reverse_prompt
+      ta.set_styles(styles)
+      ta.prompt = "> "
+      ta.placeholder = "first placeholder line\nsecond placeholder line"
+      ta.show_line_numbers = false
+      ta.set_height(4)
+      ta.set_width(20)
+      ta.focus
+
+      lines = ta.view.lines
+      lines.size.should eq(4)
+      lines.each do |line|
+        line.should contain("\e[7m> ")
+      end
+    end
+
+    it "styles and pads prompt function output to the prompt width" do
+      ta = Bubbles::Textarea.new
+      styles = ta.styles
+      reverse_prompt = Lipgloss::Style.new.reverse(true)
+      styles.focused.prompt = reverse_prompt
+      styles.blurred.prompt = reverse_prompt
+      ta.set_styles(styles)
+      ta.show_line_numbers = false
+      ta.set_height(1)
+      ta.set_width(20)
+      ta.set_prompt_func(4, ->(info : Bubbles::Textarea::PromptInfo) { "#{info.line_number}:" })
+      ta.focus
+
+      # "0:" is two cells wide, so it is padded to the four-cell prompt width.
+      ta.view.should contain("\e[7m  0:")
     end
   end
 
