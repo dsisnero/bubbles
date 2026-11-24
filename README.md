@@ -19,6 +19,9 @@ Self-contained, reusable UI components that compose together to create rich
 terminal interfaces. A Crystal port of
 <a href="https://github.com/charmbracelet/bubbles">Charmbracelet Bubbles</a>.
 
+Ports **Bubbles v2.2.2** (`charmbracelet/bubbles` @ `0c1a491`), including the
+new `tree` bubble, textarea selection/copy, and grapheme-aware editing.
+
 ---
 
 ## Quick Start
@@ -39,7 +42,7 @@ terminal interfaces. A Crystal port of
     require "bubbles"
 
     text_input = Bubbles::TextInput.new
-    text_area = Bubbles::TextArea.new
+    text_area = Bubbles::Textarea.new
     spinner = Bubbles::Spinner.new
     ```
 
@@ -80,13 +83,28 @@ ti.prompt = "> "
 <img src="https://stuff.charm.sh/bubbles-examples/textarea.gif" width="400" alt="Text Area">
 
 A multi-line text input area, akin to `<textarea />` in HTML. Supports unicode,
-pasting, vertical scrolling, dynamic height, and full customization.
+pasting, vertical scrolling, dynamic height, selection with clipboard copy, and
+grapheme-aware navigation.
 
 ```crystal
-ta = Bubbles::TextArea.new
+ta = Bubbles::Textarea.new
 ta.set_width(60)
 ta.set_height(10)
 ta.prompt = "> "
+```
+
+### Tree
+
+A hierarchical tree view with keyboard navigation, expand/collapse, and a
+scrollable viewport. Ported from the new `tree` bubble in Bubbles v2.2.2.
+
+```crystal
+root = Bubbles::Tree::Node.root("~/charm").child(
+  "ayman",
+  Bubbles::Tree::Node.root("bash").child("zsh", "doom-emacs"),
+)
+tree = Bubbles::Tree.new(root, 70, 13)
+tree.view
 ```
 
 ### Table
@@ -119,7 +137,10 @@ A simple, customizable progress meter with optional spring animation via
 [Harmonica][harmonica]. Supports solid and gradient fills.
 
 ```crystal
-p = Bubbles::Progress.new(width: 40, full_color: Lipgloss.color("#5A56E0"))
+p = Bubbles::Progress.new(
+  Bubbles::Progress.with_colors(Lipgloss.color("#5A56E0")),
+  Bubbles::Progress.with_width(40)
+)
 p.view_as(0.75)
 ```
 
@@ -147,8 +168,8 @@ pagination, fuzzy filtering, auto-generated help, an activity spinner, and
 status messages. Extrapolated from [Glow][glow].
 
 ```crystal
-items = [TestListItem.new("foo"), TestListItem.new("bar")] of Bubbles::List::Item
-delegate = TestListDelegate.new
+# `items` is an Array(Bubbles::List::Item); `delegate` implements
+# Bubbles::List::ItemDelegate.
 l = Bubbles::List.new(items, delegate, 40, 20)
 ```
 
@@ -162,8 +183,8 @@ Navigate the file system to pick files or directories. Supports filtering by
 file extension, showing hidden files, and displaying permissions.
 
 ```crystal
-fp = Bubbles::FilePicker.new
-fp.set_height(20)
+fp = Bubbles::Filepicker.new
+fp.height = 20
 fp.show_hidden = true
 fp.allowed_types = [".cr", ".md"]
 ```
@@ -204,7 +225,7 @@ A simple, flexible component for counting down. The update frequency and output
 can be customized as you like.
 
 ```crystal
-t = Bubbles::Timer.new(30.seconds, interval: 100.milliseconds)
+t = Bubbles::Timer.new(30.seconds, Bubbles::Timer.with_interval(100.milliseconds))
 ```
 
 ### Stopwatch
@@ -215,7 +236,7 @@ A simple, flexible component for counting up. The update frequency and output
 can be customized as you like.
 
 ```crystal
-sw = Bubbles::Stopwatch.new(interval: 100.milliseconds)
+sw = Bubbles::Stopwatch.new(Bubbles::Stopwatch.with_interval(100.milliseconds))
 ```
 
 ### Cursor
@@ -224,7 +245,7 @@ Terminal cursor manipulation. Controls cursor style, blink behavior, and
 position.
 
 ```crystal
-c = Bubbles::Cursor.new
+c = Bubbles::Cursor::Model.new
 c.set_mode(Bubbles::Cursor::Mode::Blink)
 ```
 
@@ -251,6 +272,7 @@ Bubbles::Key.new_binding(
 | [PR Workflow](docs/pr-workflow.md) | Commits, PRs, branch naming, review process |
 | [Porting Parity](docs/porting-parity.md) | Upstream source tracking and parity verification |
 | [Upgrade Guide v2](docs/upgrade_guide_v2.md) | Migration from Go Bubbles v1 to Crystal v2 |
+| [Changelog](CHANGELOG.md) | Release history and notes |
 
 ## Contributing
 

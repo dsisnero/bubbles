@@ -1,5 +1,5 @@
 name: bubbles
-version: 2.1.0
+version: 2.2.2
 
 authors:
   - Dom <dom@example.com>
@@ -22,3 +22,7 @@ development_dependencies:
   ameba:
     github: crystal-ameba/ameba
     version: ~> 1.0
+  golden:
+    github: dsisnero/golden
+  teatest:
+    github: dsisnero/teatest

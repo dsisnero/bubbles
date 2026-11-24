@@ -4,26 +4,41 @@ All notable user-facing changes to this project will be documented in this file.
 
 Changes are grouped by release date and category. Only user-facing changes are included — internal refactors, test updates, and CI changes are omitted.
 
-## [Unreleased]
+## [2.2.2] - 2026-11-24
+
+Release aligned with upstream `charmbracelet/bubbles` **v2.2.2** (`0c1a491`).
 
 ### Added
+- **Tree bubble** — ports the new `v2.2.2` `tree` component (`Node`, `Model`,
+  key map, styles, help/viewport integration) with both upstream goldens.
+- **Textarea selection, copy, and grapheme cursor** — drag and keyboard
+  selection, clipboard copy, grapheme-aware navigation/deletion/wrapping, and
+  the v2.2.2 key bindings.
+
+### Fixed
 - **v2.2.2 component deltas** — timer/stopwatch wall-clock timing and debounce,
   filepicker and table viewport guards, help column padding, list filter/index
   fixes, viewport frame-aware scrolling and ANSI highlights, paginator guards,
   progress NaN clamping, and textinput suggestion/paste fixes.
-- **Textarea selection, copy, and grapheme cursor** — drag and keyboard
-  selection, clipboard copy, grapheme-aware navigation/deletion/wrapping, and
-  the v2.2.2 key bindings.
-- **Tree bubble** — ports the new `v2.2.2` `tree` component (`Node`, `Model`,
-  key map, styles, help/viewport integration) with both upstream goldens.
-
-### Fixed
 - **Textarea prompt styling** — `prompt_view` now applies the prompt style
   internally for every line, including placeholder filler lines, even when no
   prompt function is set. Completes the upstream v2.1.1 fix
   (`charmbracelet/bubbles` commit `d2b2217`); the earlier port removed the
   call-site renders without moving the render into `prompt_view`, so prompts
   stayed unstyled whenever `prompt_func` was nil.
+
+### Changed
+- Vendor submodule updated from v2.1.1 (`d2b2217`) to v2.2.2 (`0c1a491`);
+  parity manifests and the ledger were refreshed with the
+  `cross-language-crystal-parity` skill.
+- `shard.yml` version and `Bubbles::VERSION` now follow the upstream tag
+  (2.2.2), and release tags match `charmbracelet/bubbles`.
+- `golden` is declared as a development dependency.
+
+### Notes
+- 333 examples, 0 failures, 4 pending (skipped in upstream Go).
+- Port inventory: 735 ported, 3 skipped (intentional upstream skips), 0
+  missing.
 
 ## [2.1.2] - 2026-07-27
 

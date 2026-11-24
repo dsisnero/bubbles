@@ -365,7 +365,8 @@ describe Bubbles::Textarea do
       view.should contain("placeholder the third line")
     end
 
-    # Regression: vendor v2.1.1 (upstream commit d2b2217). prompt_view must
+    # Regression: upstream d2b2217 (v2.1.1, still current in v2.2.2).
+    # prompt_view must
     # apply the prompt style itself so every line (including placeholder
     # fillers) gets it, even when no prompt function is set.
     it "styles the prompt on all visible lines without a prompt function" do

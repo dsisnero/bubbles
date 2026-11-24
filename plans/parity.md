@@ -3,7 +3,7 @@
 - Upstream: [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles) at
   `v2.2.2`
 - Pinned: `vendor/bubbles/` at `0c1a491` (v2.2.2)
-- Status: `333 examples, 0 failures, 0 errors, 4 pending`
+- Status: `333 examples, 0 failures, 0 errors, 4 pending` — released as v2.2.2
 
 **Vendor delta:** `v2.1.1 -> v2.2.2` is planned in
 [vendor-v2.2.2.md](vendor-v2.2.2.md) — the new `tree` bubble, textarea
@@ -17,7 +17,7 @@ selection/copy, and the remaining component deltas.
   the v2.2.2 shard commit.
 - **Upstream:** `charmbracelet/bubbles` v2.2.2 at `0c1a491` (`vendor/bubbles`).
 - **Port baseline:** everything through v2.2.2 is ported and green.
-- **Last commit:** `port: v2.2.2 component deltas`.
+- **Last commit:** release hygiene for `v2.2.2`.
 - **Gates:** `crystal spec` 333 / 0 failures / 4 pending; `ameba` 0 findings;
   `crystal tool format --check` clean; source parity 532; test parity 206;
   port inventory 532 source / 804 total rows (v2.2.2 fully ported).

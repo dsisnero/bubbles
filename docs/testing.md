@@ -52,7 +52,21 @@ end
 - Check test parity with Go using the golden files in
   `vendor/bubbles/<component>/testdata/`
 - Ensure all ported components have corresponding spec files
-- Current test count: **198 examples, 0 failures, 4 pending**
+- Current test count: **333 examples, 0 failures, 4 pending**
+
+## v2.2.2 Coverage
+
+The v2.2.2 delta is covered by dedicated specs:
+
+- `spec/tree_spec.cr` — tree bubble, including both upstream goldens.
+- `spec/textarea_v222_spec.cr` — selection, clipboard, grapheme navigation,
+  wrapping, and the v2.2.2 key bindings.
+- Component delta tests live in the corresponding component spec (timer,
+  stopwatch, table, viewport, list, help, filepicker, paginator, progress,
+  textinput).
+
+`spec/progress_golden_spec.cr` requires the `golden` development dependency
+declared in `shard.yml`.
 
 ## Golden Files
 

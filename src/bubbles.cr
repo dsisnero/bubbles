@@ -1,7 +1,7 @@
 # Bubbles provides components for Bubble Tea applications.
-# This is a Crystal port of charmbracelet/bubbles (v2-exp branch).
+# This is a Crystal port of charmbracelet/bubbles v2.2.2 (vendor/bubbles).
 module Bubbles
-  VERSION = "2.0.0"
+  VERSION = "2.2.2"
 end
 
 # Require all component modules

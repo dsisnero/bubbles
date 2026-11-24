@@ -11,16 +11,16 @@ upstream_submodule_path: "vendor/bubbles/"
 
 - Repository: `https://github.com/charmbracelet/bubbles`
 - Pinned revision: `0c1a491` (v2.2.2)
-- Port baseline: v2.1.1; the v2.2.2 delta is tracked in
-  [plans/vendor-v2.2.2.md](../plans/vendor-v2.2.2.md)
+- Port baseline: v2.2.2 (fully ported)
+- Release plan: [plans/vendor-v2.2.2.md](../plans/vendor-v2.2.2.md)
 - Import mode: `submodule`
 - Upstream path: `vendor/bubbles/`
 
 ## Parity Scope
 
-All 14 modules from the v2.1.1 port baseline are ported, plus the `tree/`
-bubble introduced in v2.2.2. `v2.1.1` in the Notes column means the module's
-port baseline, not the current pin.
+All 14 modules from the v2.1.1 baseline are ported, plus the `tree/` bubble
+introduced in v2.2.2. Modules whose upstream behavior did not change in v2.2.2
+keep their v2.1.1 note; everything else is aligned to the current pin.
 
 | Upstream Module | Crystal Target | Status | Tests | Notes |
 |-----------------|----------------|--------|-------|-------|

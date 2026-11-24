@@ -5,7 +5,7 @@ Crystal port of Bubbles v2. Since this is a Crystal port, the changes are both
 about the v2 API changes and the language transition from Go to Crystal.
 
 > **Note:** This Crystal port targets the Bubbles v2 API from
-> `charm.land/bubbles/v2`. The upstream Go source is pinned in
+> `charm.land/bubbles/v2`, pinned at **v2.2.2** (`0c1a491`) in
 > `vendor/bubbles/`.
 
 ---
@@ -27,6 +27,7 @@ about the v2 API changes and the language transition from Go to Crystal.
    - [Textarea](#textarea)
    - [Textinput](#textinput)
    - [Timer](#timer)
+   - [Tree](#tree)
    - [Viewport](#viewport)
 4. [Light and Dark Styles](#4-light-and-dark-styles)
 5. [Crystal-Specific Changes](#5-crystal-specific-changes)
@@ -55,7 +56,7 @@ All components are available under the `Bubbles` module namespace:
 
 ```crystal
 # Access components
-cursor = Bubbles::Cursor.new
+cursor = Bubbles::Cursor::Model.new
 help = Bubbles::Help.new
 key = Bubbles::Key.new
 ```
@@ -148,7 +149,7 @@ All `NewModel` aliases have been removed. Use `new` directly.
 
 ```crystal
 # Crystal example
-cursor = Bubbles::Cursor.new
+cursor = Bubbles::Cursor::Model.new
 if cursor.blinked?
   # cursor is blinking
 end
@@ -168,7 +169,7 @@ model, cmd = cursor.blink
 Boolean properties use `property?` syntax in Crystal:
 
 ```crystal
-fp = Bubbles::FilePicker.new
+fp = Bubbles::Filepicker.new
 fp.show_permissions? = true  # Setter
 if fp.show_permissions?      # Getter
   # show permissions
@@ -242,12 +243,9 @@ puts p.width
 Color handling differs in Crystal:
 
 ```crystal
-# Crystal uses Colorful shard for colors
-require "colorful"
-
-# Set colors
-p.full_color = Colorful::Color.new("#FF0000")
-p.empty_color = Colorful::Color.new("#333333")
+# Colors are Lipgloss colors
+p.full_color = Lipgloss.color("#FF0000")
+p.empty_color = Lipgloss.color("#333333")
 ```
 
 #### Options Pattern
@@ -255,15 +253,10 @@ p.empty_color = Colorful::Color.new("#333333")
 ```crystal
 # Crystal uses initializer parameters or builder pattern
 p = Bubbles::Progress.new(
-  width: 40,
-  full_color: Colorful::Color.new("#5A56E0"),
-  empty_color: Colorful::Color.new("#EE6FF8")
+  Bubbles::Progress.with_width(40),
+  Bubbles::Progress.with_colors(Lipgloss.color("#5A56E0"), Lipgloss.color("#EE6FF8")),
+  Bubbles::Progress.with_scaled(true)
 )
-
-# Or use with methods if available
-p = Bubbles::Progress.new
-  .with_colors(Colorful::Color.new("#5A56E0"), Colorful::Color.new("#EE6FF8"))
-  .with_scaled(true)
 ```
 
 ### Spinner
@@ -285,7 +278,7 @@ model, cmd = spinner.tick
 sw = Bubbles::Stopwatch.new_with_interval(500.milliseconds)
 
 # After (Crystal)
-sw = Bubbles::Stopwatch.new(interval: 500.milliseconds)
+sw = Bubbles::Stopwatch.new(Bubbles::Stopwatch.with_interval(500.milliseconds))
 ```
 
 ### Table
@@ -303,7 +296,7 @@ The table already had `set_width`/`set_height`/`width`/`height` methods.
 
 ```crystal
 # Crystal uses class methods
-km = Bubbles::TextArea.default_key_map
+km = Bubbles::Textarea.default_key_map
 ```
 
 #### Styles
@@ -311,7 +304,7 @@ km = Bubbles::TextArea.default_key_map
 The styling system follows Crystal patterns:
 
 ```crystal
-ta = Bubbles::TextArea.new
+ta = Bubbles::Textarea.new
 # Styles are nested under a styles struct
 ta.styles.focused.base = Lipgloss::Style.new.border(Lipgloss::Border::Rounded)
 ta.styles.blurred.base = Lipgloss::Style.new.border(Lipgloss::Border::Hidden)
@@ -323,8 +316,25 @@ ta.styles.blurred.base = Lipgloss::Style.new.border(Lipgloss::Border::Hidden)
 # Crystal uses Tea::Cursor directly
 ta.cursor                    # Returns Tea::Cursor
 ta.set_cursor_column(col)    # Set cursor column
-ta.virtual_cursor = true     # Use virtual cursor mode
+ta.set_virtual_cursor(true)  # Use virtual cursor mode
 ```
+
+#### Selection and clipboard (v2.2.2)
+
+```crystal
+# Coordinates are textarea-relative (including the prompt gutter).
+ta.begin_selection(x, y)
+ta.extend_selection(x, y)
+ta.end_selection
+
+ta.select_all
+ta.selected_text        # => String
+ta.copy_selection       # => Tea::Cmd? (nil without a selection)
+ta.delete_selection
+```
+
+Selection and editing are grapheme-aware: cursor movement, deletion, and
+wrapping never split an emoji, Thai, or Indic cluster.
 
 ### Textinput
 
@@ -346,10 +356,10 @@ Individual style fields are in a `Styles` struct:
 
 ```crystal
 s = Bubbles::TextInput.default_styles(is_dark)
-s.focused.prompt = Lipgloss::Style.new.foreground(Lipgloss::Color.new("63"))
+s.focused.prompt = Lipgloss::Style.new.foreground(Lipgloss.color("63"))
 s.focused.text = Lipgloss::Style.new
-s.focused.placeholder = Lipgloss::Style.new.foreground(Lipgloss::Color.new("240"))
-s.focused.suggestion = Lipgloss::Style.new.foreground(Lipgloss::Color.new("240"))
+s.focused.placeholder = Lipgloss::Style.new.foreground(Lipgloss.color("240"))
+s.focused.suggestion = Lipgloss::Style.new.foreground(Lipgloss.color("240"))
 ti.styles = s
 ```
 
@@ -360,8 +370,33 @@ ti.styles = s
 t = Bubbles::Timer.new_with_interval(30.seconds, 100.milliseconds)
 
 # After (Crystal)
-t = Bubbles::Timer.new(30.seconds, interval: 100.milliseconds)
+t = Bubbles::Timer.new(30.seconds, Bubbles::Timer.with_interval(100.milliseconds))
 ```
+
+### Tree
+
+New in the v2.2.2 port. Build a tree from `Node` roots and let the model handle
+navigation, expansion, scrolling, and help:
+
+```crystal
+root = Bubbles::Tree::Node.root("~/charm").child(
+  "ayman",
+  Bubbles::Tree::Node.root("bash").child("zsh", "doom-emacs"),
+  "maas"
+)
+
+tree = Bubbles::Tree.new(root, 70, 13)
+tree.view
+
+# Model API
+tree.down
+tree.toggle_current_node
+tree.node_at_current_offset
+```
+
+Styles use `Bubbles::Tree::Styles` (`default_dark_styles` /
+`default_light_styles`), and the model exposes short/full help through the
+standard `Bubbles::Help::KeyMap` interface.
 
 ### Viewport
 
@@ -372,7 +407,10 @@ t = Bubbles::Timer.new(30.seconds, interval: 100.milliseconds)
 vp = Bubbles::Viewport.new(80, 24)
 
 # After (Crystal)
-vp = Bubbles::Viewport.new(width: 80, height: 24)
+vp = Bubbles::Viewport.new(
+  Bubbles::Viewport.with_width(80),
+  Bubbles::Viewport.with_height(24)
+)
 # or
 vp = Bubbles::Viewport.new
 vp.set_width(80)

@@ -23,6 +23,16 @@
 - **Constants**: `SCREAMING_SNAKE_CASE` (e.g., `DEFAULT_WIDTH`)
 - **Files**: `snake_case.cr` (e.g., `textinput.cr`)
 
+## Unicode and Graphemes
+
+- Treat user-perceived characters, not code points, as the unit of cursor
+  movement, deletion, wrapping, and selection.
+- Use `TextSegment` for segmentation and the shared `grapheme_at` /
+  `display_width` helpers; never splice a cluster in half.
+- Width calculations must match Go's `uniseg`/`x/ansi` behavior, including
+  wide and emoji sequences.
+- Preserve and escape ANSI sequences when computing highlight or match offsets.
+
 ## Documentation
 
 - Add doc comments for public API methods

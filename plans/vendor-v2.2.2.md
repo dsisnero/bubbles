@@ -158,7 +158,11 @@ Artifacts updated:
 
 ## Status
 
+Released as **v2.2.2** (tag matches upstream `charmbracelet/bubbles` v2.2.2).
 Vendor bumped and manifests refreshed. All three phases are complete: `tree`,
 textarea selection/copy/graphemes, and the remaining component deltas. The
-ledger records every v2.2.2 addition as ported (1 source id + 65 tests for
-Phase 3), and the suite is at 333 specs.
+ledger records every v2.2.2 addition as ported, and the suite is at 333 specs.
+
+Remaining consumer work (not part of this release): bump
+`bubbletea.cr/bubbletea-examples` to the v2.2.2 shard commit after refreshing
+its goldens.

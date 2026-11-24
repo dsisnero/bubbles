@@ -56,7 +56,7 @@ rumdl fmt docs/ *.md
 
 ## External Dependencies
 
-- **Go source**: `vendor/bubbles/` (pinned at upstream commit)
+- **Go source**: `vendor/bubbles/` (pinned at v2.2.2, commit `0c1a491`)
 - **Bubble Tea**: Crystal port of terminal UI framework
 - **Golden/Teatest**: Testing utilities for terminal output verification
 

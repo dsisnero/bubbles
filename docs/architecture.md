@@ -3,6 +3,8 @@
 Bubbles is a Crystal port of the Go Bubbles library, providing terminal UI
 components for building interactive command-line applications.
 
+The port tracks upstream **v2.2.2** (`vendor/bubbles` @ `0c1a491`).
+
 ## Project Structure
 
 ```text
@@ -11,6 +13,7 @@ components for building interactive command-line applications.
 │   ├── textinput.cr      # Text input component
 │   ├── textarea.cr       # Text area component
 │   ├── list.cr           # List component
+│   ├── tree.cr           # Tree component (new in v2.2.2)
 │   └── ...              # Other UI components
 ├── spec/                 # Crystal specs (ported from Go tests)
 ├── vendor/bubbles/       # Upstream Go source (submodule)
@@ -31,12 +34,12 @@ Components follow the Bubble Tea model pattern:
 | Module | Responsibility |
 |--------|----------------|
 | `Bubbles::TextInput` | Single-line text input field |
-| `Bubbles::TextArea` | Multi-line text input area |
+| `Bubbles::Textarea` | Multi-line text input area with selection/copy |
 | `Bubbles::List` | Interactive list with selection |
 | `Bubbles::Spinner` | Animated progress indicator |
 | `Bubbles::Progress` | Progress bar display |
 | `Bubbles::Viewport` | Scrollable content viewport |
-| `Bubbles::FilePicker` | File system navigation dialog |
+| `Bubbles::Filepicker` | File system navigation dialog |
 | `Bubbles::Table` | Data table with columns, rows, and alignment |
 | `Bubbles::Help` | Context-sensitive help display |
 | `Bubbles::Cursor` | Terminal cursor manipulation |
@@ -44,5 +47,6 @@ Components follow the Bubble Tea model pattern:
 | `Bubbles::Paginator` | Content pagination controls |
 | `Bubbles::Timer` | Countdown timer with configurable interval |
 | `Bubbles::Stopwatch` | Count-up timer for elapsed time measurement |
+| `Bubbles::Tree` | Hierarchical tree with navigation and expansion |
 
 <!-- TODO: Add diagrams if helpful -->

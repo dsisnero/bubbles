@@ -4,6 +4,7 @@
 
 - **Crystal** >= 1.19.1
 - **Git** with submodule support
+- Upstream Go source pinned at Bubbles v2.2.2 (`vendor/bubbles` @ `0c1a491`)
 
 ## Setup
 
@@ -69,9 +70,16 @@
 Before committing, run all checks:
 
 ```bash
-make lint
-make test
+crystal tool format --check
+ameba
+crystal spec
+rumdl fmt docs/ *.md
 ```
+
+Parity artifacts are refreshed only on an intentional upstream bump. Use the
+installed `cross-language-crystal-parity` skill scripts; the copies under
+`scripts/` are historical. See
+[plans/vendor-v2.2.2.md](../plans/vendor-v2.2.2.md) for the last refresh.
 
 ## Porting Guidance
 

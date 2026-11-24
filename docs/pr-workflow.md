@@ -51,3 +51,15 @@ Format: `<type>/<issue-number>-<short-kebab-description>`
    ```
 
 4. **Update changelog** for user-facing changes using `/forge-update-changelog`
+
+## Release Process
+
+1. Confirm the vendor pin matches the upstream tag you intend to release
+   (`git -C vendor/bubbles describe --tags`).
+2. Refresh parity artifacts and run every gate in the checklist above, plus
+   `shards check`.
+3. Set `version` in `shard.yml` and `Bubbles::VERSION` to the upstream tag
+   (this project aligns release tags with `charmbracelet/bubbles`).
+4. Move the `[Unreleased]` changelog entries under the new version heading.
+5. Commit the release prep, create an annotated tag with the same name as the
+   upstream tag, and push both the commit and the tag.
