@@ -25,7 +25,7 @@ port baseline, not the current pin.
 | Upstream Module | Crystal Target | Status | Tests | Notes |
 |-----------------|----------------|--------|-------|-------|
 | `textinput/` | `src/bubbles/textinput.cr` | ✅ Ported | 19 | v2.1.1 |
-| `textarea/` | `src/bubbles/textarea.cr` | ✅ Ported | 50 | v2.1.1 + 6 bug fixes |
+| `textarea/` | `src/bubbles/textarea.cr` | ✅ Ported | 109 | v2.2.2 selection/copy + 6 bug fixes |
 | `list/` | `src/bubbles/list.cr` | ✅ Ported | 5 | v2.1.1 |
 | `spinner/` | `src/bubbles/spinner.cr` | ✅ Ported | — | v2.1.1 |
 | `progress/` | `src/bubbles/progress.cr` | ✅ Ported | — | v2.1.1 |
@@ -44,7 +44,7 @@ port baseline, not the current pin.
 
 | Component | Go Tests | Crystal Tests | Status |
 |-----------|----------|---------------|--------|
-| textarea | 30 | 50 | ✅ All ported + strengthened |
+| textarea | 30 | 109 | ✅ All ported + strengthened |
 | viewport | ~30 | 23 | ✅ All ported |
 | textinput | 4 | 19 | ✅ All ported + extra coverage |
 | table | 33 | 22 | ✅ All ported (golden files shared) |
@@ -60,7 +60,7 @@ port baseline, not the current pin.
 | spinner | — | — | ⚠️ No spec yet |
 | tree | 8 | 10 | ✅ Ported (new in v2.2.2) |
 
-**Total: 208 examples, 0 failures, 4 pending** (pending = skipped in upstream
+**Total: 268 examples, 0 failures, 4 pending** (pending = skipped in upstream
 Go)
 
 ## Known Deviations

@@ -43,10 +43,18 @@ module Bubbles
             when '\t'
               out.concat(@cfg.replace_tab)
             else
-              out << rune unless rune.control?
+              # Go's unicode.IsControl only matches the Cc category; Crystal's
+              # Char#control? also matches Cf, which would strip ZWJ and break
+              # emoji/Indic grapheme clusters.
+              out << rune unless control_character?(rune)
             end
           end
           out
+        end
+
+        private def control_character?(rune : Char) : Bool
+          cp = rune.ord
+          (cp >= 0x00 && cp <= 0x1F) || (cp >= 0x7F && cp <= 0x9F)
         end
       end
 

@@ -7,6 +7,9 @@ Changes are grouped by release date and category. Only user-facing changes are i
 ## [Unreleased]
 
 ### Added
+- **Textarea selection, copy, and grapheme cursor** — drag and keyboard
+  selection, clipboard copy, grapheme-aware navigation/deletion/wrapping, and
+  the v2.2.2 key bindings.
 - **Tree bubble** — ports the new `v2.2.2` `tree` component (`Node`, `Model`,
   key map, styles, help/viewport integration) with both upstream goldens.
 

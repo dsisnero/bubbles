@@ -66,7 +66,7 @@ Gotcha: `tree` landed in v2.2.0 (`e97af08`) and was fixed in v2.2.2
 (`65f99f0`, `SetValue` refreshes rendered node values). Port against v2.2.2, not
 the initial commit.
 
-## Phase 2 — Textarea selection, copy, grapheme cursor
+## Phase 2 — Textarea selection, copy, grapheme cursor — done
 
 The largest behavioral change. Files:
 
@@ -158,7 +158,7 @@ Artifacts updated:
 
 ## Status
 
-Vendor bumped and manifests refreshed. Phase 1 (`tree`) is complete: 82 source
-ids and 8 tests are ported in `src/bubbles/tree.cr` + `spec/tree_spec.cr`, both
-upstream goldens match, and the suite is at 208 specs. Phase 2 (textarea
-selection/copy) is next; Phase 3 (component deltas) remains open.
+Vendor bumped and manifests refreshed. Phase 1 (`tree`) is complete, and Phase
+2 (textarea selection/copy/graphemes) is complete: 14 source ids and 59 tests
+are ported in `src/bubbles/textarea.cr` + `spec/textarea_v222_spec.cr`, and the
+suite is at 268 specs. Phase 3 (component deltas) remains open.

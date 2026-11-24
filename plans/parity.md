@@ -3,7 +3,7 @@
 - Upstream: [charmbracelet/bubbles](https://github.com/charmbracelet/bubbles) at
   `v2.2.2`
 - Pinned: `vendor/bubbles/` at `0c1a491` (v2.2.2)
-- Status: `208 examples, 0 failures, 0 errors, 4 pending`
+- Status: `268 examples, 0 failures, 0 errors, 4 pending`
 
 **Vendor delta:** `v2.1.1 -> v2.2.2` is planned in
 [vendor-v2.2.2.md](vendor-v2.2.2.md) — the new `tree` bubble, textarea
@@ -11,14 +11,13 @@ selection/copy, and the remaining component deltas.
 
 ## Where we are
 
-- **Current focus:** Phase 2 — textarea selection/copy/grapheme (14 ids, 59
-  tests).
-- **Next up:** Phase 3 — remaining component deltas (1 id, 65 tests).
+- **Current focus:** Phase 3 — remaining component deltas (1 id, 65 tests).
+- **Next up:** textinput, timer, table, viewport, and the smaller components.
 - **Upstream:** `charmbracelet/bubbles` v2.2.2 at `0c1a491` (`vendor/bubbles`).
 - **Port baseline:** everything from v2.1.1 is ported and green; the v2.2.2
   `tree` bubble is now ported.
-- **Last commit:** `port: tree bubble`.
-- **Gates:** `crystal spec` 208 / 0 failures / 4 pending; `ameba` 0 findings;
+- **Last commit:** `port: textarea selection, copy, and grapheme cursor`.
+- **Gates:** `crystal spec` 268 / 0 failures / 4 pending; `ameba` 0 findings;
   `crystal tool format --check` clean; source parity 532; test parity 206;
   port inventory 532 source / 738 total rows (90 tree rows ported).
 
@@ -26,12 +25,14 @@ selection/copy, and the remaining component deltas.
 
 ### Open (v2.2.2)
 
-- [ ] **Textarea selection/copy** — selection, grapheme cursor, clipboard.
 - [ ] **v2.2.2 component deltas** — textinput, timer, table, viewport, and the
   smaller components.
 
 ### Completed (v2.2.2)
 
+- [x] **Textarea selection/copy/graphemes** — drag + keyboard selection,
+      clipboard copy, grapheme-aware navigation/wrapping,
+      `spec/textarea_v222_spec.cr` (59 tests, 14 source ids).
 - [x] **Tree bubble** — `src/bubbles/tree.cr`, `spec/tree_spec.cr`; 82 source
   ids and 8 tests ported against the upstream goldens. See
   [vendor-v2.2.2.md](vendor-v2.2.2.md).

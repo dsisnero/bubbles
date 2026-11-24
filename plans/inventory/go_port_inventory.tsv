@@ -396,20 +396,20 @@ textarea/textarea.go::struct::Model	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::PromptInfo	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::StyleState	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::Styles	struct	ported	-	ported; all specs green
-textarea/selection.go::method::Model.BeginSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.ClearSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.EndSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.ExtendSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.HasSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.PositionAt	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.SelectAll	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.SelectedText	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::method::Model.Selection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/selection.go::struct::Position	struct	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/textarea.go::method::Model.CopySelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/textarea.go::method::Model.DeleteSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/textarea.go::method::copyErrMsg.Unwrap	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
-textarea/textarea.go::method::pasteErrMsg.Unwrap	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.BeginSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.ClearSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.EndSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.ExtendSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.HasSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.PositionAt	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.SelectAll	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.SelectedText	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::method::Model.Selection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection.go::struct::Position	struct	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea.go::method::Model.CopySelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea.go::method::Model.DeleteSelection	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea.go::method::copyErrMsg.Unwrap	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea.go::method::pasteErrMsg.Unwrap	method	ported	src/bubbles/textarea.cr	ported; textarea selection/copy/graphemes (v2.2.2)
 textarea/textarea_test.go::test::TestCanHandleEmoji	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterGrow	test	ported	spec/textarea_spec.cr:204-220	v2.1.0
 textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterPaste	test	ported	spec/textarea_spec.cr:244-256	v2.1.0
@@ -440,65 +440,65 @@ textarea/textarea_test.go::test::TestVerticalScrolling	test	ported	-	ported; all
 textarea/textarea_test.go::test::TestView	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestWord	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestWordWrapOverflowing	test	ported	-	ported; all specs green
-textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesEmojiSequenceWhole	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesMarkWithoutConsonant	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestClickMapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestDeleteWordLeftKeepsSpaceGrapheme	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestIndicConjunctIsOneGrapheme	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestSetCursorColumnSnapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestTransposeSwapsGraphemes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestTypingComposesBeforeExistingText	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestVerticalCursorSnapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestVerticalCursorUsesGraphemeWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestWordOperationsAdvanceOverGraphemes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_cursor_test.go::test::TestWrapKeepsGraphemesWhole	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_test.go::test::TestGraphemeNavigationKeepsASCIIStepsAndSkipsEmojiCluster	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/grapheme_test.go::test::TestThaiGraphemeNavigationAndDeletion	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestClearSelectionAPI	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestClickWithoutDragMakesNoSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestExtendSelectionRequiresBegin	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestKeyPressClearsSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestPositionAt	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestPositionAtAccountsForGutter	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectAllAPI	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectedTextAcrossLines	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectedTextBackwardDrag	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectedTextSingleLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectionEmptyBuffer	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectionRange	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectionRendersWithSelectionStyle	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/selection_test.go::test::TestSelectionSurvivesSoftWrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestAutoResizeKeepsFirstSoftWrappedRowVisible	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestBackspaceDeletesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestCharLimitWideRunes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestClearSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestCopyErrMsgUnwrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestDeleteForwardDeletesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestDeleteSelectionMultiLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestMaxContentHeight_Insertion	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestMaxContentHeight_SingleRuneAtLimit	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestNewlineReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestPasteErrMsgUnwrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestPasteReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectAll	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionCharacterBackward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionCharacterForward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionClearedOnMovement	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionClearedOnType	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionMultiLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionRangeOrdering	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionRendering	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSelectionWordForward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSetValueViewportReposition	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSetWidthDoesNotExpandToMaximum	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSetWidthHonorsUsableMaximum	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestSetWidth_MaxWidthBelowReservedWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestTypingLastWordFillsWidthDoesNotReflow	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestTypingReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestVerticalNavigationThroughSoftWraps	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestWordLeftStopsAtStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
-textarea/textarea_test.go::test::TestWrapLastWordFillsWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesEmojiSequenceWhole	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesMarkWithoutConsonant	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestClickMapsToGraphemeStart	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestDeleteWordLeftKeepsSpaceGrapheme	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestIndicConjunctIsOneGrapheme	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestSetCursorColumnSnapsToGraphemeStart	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestTransposeSwapsGraphemes	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestTypingComposesBeforeExistingText	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestVerticalCursorSnapsToGraphemeStart	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestVerticalCursorUsesGraphemeWidth	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestWordOperationsAdvanceOverGraphemes	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_cursor_test.go::test::TestWrapKeepsGraphemesWhole	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_test.go::test::TestGraphemeNavigationKeepsASCIIStepsAndSkipsEmojiCluster	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/grapheme_test.go::test::TestThaiGraphemeNavigationAndDeletion	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestClearSelectionAPI	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestClickWithoutDragMakesNoSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestExtendSelectionRequiresBegin	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestKeyPressClearsSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestPositionAt	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestPositionAtAccountsForGutter	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectAllAPI	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectedTextAcrossLines	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectedTextBackwardDrag	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectedTextSingleLine	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectionEmptyBuffer	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectionRange	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectionRendersWithSelectionStyle	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/selection_test.go::test::TestSelectionSurvivesSoftWrap	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestAutoResizeKeepsFirstSoftWrappedRowVisible	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestBackspaceDeletesSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestCharLimitWideRunes	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestClearSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestCopyErrMsgUnwrap	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestDeleteForwardDeletesSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestDeleteSelectionMultiLine	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestMaxContentHeight_Insertion	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestMaxContentHeight_SingleRuneAtLimit	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestNewlineReplacesSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestPasteErrMsgUnwrap	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestPasteReplacesSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectAll	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionCharacterBackward	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionCharacterForward	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionClearedOnMovement	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionClearedOnType	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionMultiLine	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionRangeOrdering	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionRendering	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSelectionWordForward	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSetValueViewportReposition	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSetWidthDoesNotExpandToMaximum	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSetWidthHonorsUsableMaximum	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestSetWidth_MaxWidthBelowReservedWidth	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestTypingLastWordFillsWidthDoesNotReflow	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestTypingReplacesSelection	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestVerticalNavigationThroughSoftWraps	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestWordLeftStopsAtStart	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
+textarea/textarea_test.go::test::TestWrapLastWordFillsWidth	test	ported	spec/textarea_v222_spec.cr	ported; textarea selection/copy/graphemes (v2.2.2)
 textinput/styles.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 textinput/styles.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
 textinput/styles.go::func::DefaultStyles	func	ported	-	ported; all specs green

@@ -1,4 +1,6 @@
 require "digest/sha256"
+require "textseg"
+require "easyclip"
 require "./cursor"
 require "./key"
 require "./viewport"
@@ -27,11 +29,33 @@ module Bubbles
 
     # pasteErrMsg is a message containing a paste error.
     # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:43
-    class PasteErrMsg
+    class PasteErrMsg < Exception
       include Tea::Msg
-      property error : Exception
+      getter error : Exception
 
-      def initialize(@error : Exception); end
+      def initialize(@error : Exception)
+        super(@error.message, @error)
+      end
+    end
+
+    # copyMsg is a message containing copied clipboard content.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:44
+    class CopyMsg
+      include Tea::Msg
+      getter text : String
+
+      def initialize(@text : String); end
+    end
+
+    # copyErrMsg is a message containing a copy error.
+    # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:45
+    class CopyErrMsg < Exception
+      include Tea::Msg
+      getter error : Exception
+
+      def initialize(@error : Exception)
+        super(@error.message, @error)
+      end
     end
 
     # maxHeightHitMsg is an internal message indicating MaxHeight constraint was hit.
@@ -67,6 +91,14 @@ module Bubbles
       property lowercase_word_forward : Key::Binding
       property capitalize_word_forward : Key::Binding
       property transpose_character_backward : Key::Binding
+      property select_character_forward : Key::Binding
+      property select_character_backward : Key::Binding
+      property select_word_forward : Key::Binding
+      property select_word_backward : Key::Binding
+      property select_line_up : Key::Binding
+      property select_line_down : Key::Binding
+      property select_all : Key::Binding
+      property copy_selection : Key::Binding
 
       def initialize(
         @character_backward : Key::Binding,
@@ -93,6 +125,14 @@ module Bubbles
         @lowercase_word_forward : Key::Binding,
         @capitalize_word_forward : Key::Binding,
         @transpose_character_backward : Key::Binding,
+        @select_character_forward : Key::Binding,
+        @select_character_backward : Key::Binding,
+        @select_word_forward : Key::Binding,
+        @select_word_backward : Key::Binding,
+        @select_line_up : Key::Binding,
+        @select_line_down : Key::Binding,
+        @select_all : Key::Binding,
+        @copy_selection : Key::Binding,
       )
       end
     end
@@ -104,16 +144,16 @@ module Bubbles
       KeyMap.new(
         character_forward: Key.new_binding(Key.with_keys("right", "ctrl+f"), Key.with_help("right", "character forward")),
         character_backward: Key.new_binding(Key.with_keys("left", "ctrl+b"), Key.with_help("left", "character backward")),
-        word_forward: Key.new_binding(Key.with_keys("alt+right", "alt+f"), Key.with_help("alt+right", "word forward")),
-        word_backward: Key.new_binding(Key.with_keys("alt+left", "alt+b"), Key.with_help("alt+left", "word backward")),
+        word_forward: Key.new_binding(Key.with_keys("alt+right", "ctrl+right", "alt+f"), Key.with_help("alt+right", "word forward")),
+        word_backward: Key.new_binding(Key.with_keys("alt+left", "ctrl+left", "alt+b"), Key.with_help("alt+left", "word backward")),
         line_next: Key.new_binding(Key.with_keys("down", "ctrl+n"), Key.with_help("down", "next line")),
         line_previous: Key.new_binding(Key.with_keys("up", "ctrl+p"), Key.with_help("up", "previous line")),
-        delete_word_backward: Key.new_binding(Key.with_keys("alt+backspace", "ctrl+w"), Key.with_help("alt+backspace", "delete word backward")),
-        delete_word_forward: Key.new_binding(Key.with_keys("alt+delete", "alt+d"), Key.with_help("alt+delete", "delete word forward")),
+        delete_word_backward: Key.new_binding(Key.with_keys("alt+backspace", "ctrl+w", "ctrl+backspace"), Key.with_help("alt+backspace", "delete word backward")),
+        delete_word_forward: Key.new_binding(Key.with_keys("alt+delete", "alt+d", "ctrl+delete"), Key.with_help("alt+delete", "delete word forward")),
         delete_after_cursor: Key.new_binding(Key.with_keys("ctrl+k"), Key.with_help("ctrl+k", "delete after cursor")),
         delete_before_cursor: Key.new_binding(Key.with_keys("ctrl+u"), Key.with_help("ctrl+u", "delete before cursor")),
         insert_newline: Key.new_binding(Key.with_keys("enter", "ctrl+m"), Key.with_help("enter", "insert newline")),
-        delete_character_backward: Key.new_binding(Key.with_keys("backspace", "ctrl+h"), Key.with_help("backspace", "delete character backward")),
+        delete_character_backward: Key.new_binding(Key.with_keys("backspace", "shift+backspace", "ctrl+h"), Key.with_help("backspace", "delete character backward")),
         delete_character_forward: Key.new_binding(Key.with_keys("delete", "ctrl+d"), Key.with_help("delete", "delete character forward")),
         line_start: Key.new_binding(Key.with_keys("home", "ctrl+a"), Key.with_help("home", "line start")),
         line_end: Key.new_binding(Key.with_keys("end", "ctrl+e"), Key.with_help("end", "line end")),
@@ -125,7 +165,15 @@ module Bubbles
         capitalize_word_forward: Key.new_binding(Key.with_keys("alt+c"), Key.with_help("alt+c", "capitalize word forward")),
         lowercase_word_forward: Key.new_binding(Key.with_keys("alt+l"), Key.with_help("alt+l", "lowercase word forward")),
         uppercase_word_forward: Key.new_binding(Key.with_keys("alt+u"), Key.with_help("alt+u", "uppercase word forward")),
-        transpose_character_backward: Key.new_binding(Key.with_keys("ctrl+t"), Key.with_help("ctrl+t", "transpose character backward"))
+        transpose_character_backward: Key.new_binding(Key.with_keys("ctrl+t"), Key.with_help("ctrl+t", "transpose character backward")),
+        select_character_forward: Key.new_binding(Key.with_keys("shift+right"), Key.with_help("shift+right", "select character forward")),
+        select_character_backward: Key.new_binding(Key.with_keys("shift+left"), Key.with_help("shift+left", "select character backward")),
+        select_word_forward: Key.new_binding(Key.with_keys("ctrl+shift+right", "alt+shift+right", "alt+shift+f"), Key.with_help("alt+shift+right", "select word forward")),
+        select_word_backward: Key.new_binding(Key.with_keys("ctrl+shift+left", "alt+shift+left", "alt+shift+b"), Key.with_help("alt+shift+left", "select word backward")),
+        select_line_up: Key.new_binding(Key.with_keys("shift+up"), Key.with_help("shift+up", "select line up")),
+        select_line_down: Key.new_binding(Key.with_keys("shift+down"), Key.with_help("shift+down", "select line down")),
+        select_all: Key.new_binding(Key.with_keys("ctrl+g"), Key.with_help("ctrl+g", "select all")),
+        copy_selection: Key.new_binding(Key.with_keys("ctrl+shift+c"), Key.with_help("ctrl+shift+c", "copy selection"))
       )
     end
 
@@ -218,6 +266,7 @@ module Bubbles
       property end_of_buffer : Lipgloss::Style
       property placeholder : Lipgloss::Style
       property prompt : Lipgloss::Style
+      property selection : Lipgloss::Style
 
       def initialize(
         @base : Lipgloss::Style = Lipgloss::Style.new,
@@ -228,6 +277,7 @@ module Bubbles
         @end_of_buffer : Lipgloss::Style = Lipgloss::Style.new,
         @placeholder : Lipgloss::Style = Lipgloss::Style.new,
         @prompt : Lipgloss::Style = Lipgloss::Style.new,
+        @selection : Lipgloss::Style = Lipgloss::Style.new,
       )
       end
 
@@ -275,6 +325,12 @@ module Bubbles
       def computed_text : Lipgloss::Style
         @text.inherit(@base).inline(true)
       end
+
+      # computedSelection returns the computed style for selected text.
+      # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:259
+      def computed_selection : Lipgloss::Style
+        @selection.inherit(@text).inherit(@base).inline(true)
+      end
     end
 
     # DefaultStyles returns the default styles for focused and blurred states for
@@ -291,6 +347,7 @@ module Bubbles
         line_number: Lipgloss::Style.new.foreground(ld.call("249", "7")),
         placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
         prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        selection: Lipgloss::Style.new.background(ld.call("253", "8")),
         text: Lipgloss::Style.new
       )
 
@@ -302,6 +359,7 @@ module Bubbles
         line_number: Lipgloss::Style.new.foreground(ld.call("249", "7")),
         placeholder: Lipgloss::Style.new.foreground(Lipgloss.color("240")),
         prompt: Lipgloss::Style.new.foreground(Lipgloss.color("7")),
+        selection: Lipgloss::Style.new.background(ld.call("253", "8")),
         text: Lipgloss::Style.new.foreground(ld.call("245", "7"))
       )
 
@@ -323,6 +381,127 @@ module Bubbles
     # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:415
     def self.default_dark_styles : Styles
       default_styles(true)
+    end
+
+    # Position is a location in the textarea's logical buffer: row indexes a
+    # logical (unwrapped) line, col indexes a rune within that line.
+    # Ported from Go: vendor/bubbles/textarea/selection.go:12
+    struct Position
+      property row : Int32
+      property col : Int32
+
+      def initialize(@row : Int32 = 0, @col : Int32 = 0); end
+
+      def before?(other : Position) : Bool
+        return @row < other.row if @row != other.row
+        @col < other.col
+      end
+
+      def ==(other : Position) : Bool
+        @row == other.row && @col == other.col
+      end
+    end
+
+    # graphemeAt returns the rune range of the grapheme containing col.
+    # Ported from Go: vendor/bubbles/textarea/grapheme.go:11
+    def self.grapheme_at(runes : Array(Char), col : Int32) : {Int32, Int32}
+      return {col, col} if col < 0 || col >= runes.size
+
+      offset = 0
+      grapheme_clusters(runes.join).each do |cluster|
+        length = cluster.size
+        return {offset, offset + length} if col < offset + length
+        offset += length
+      end
+
+      {col, col + 1}
+    end
+
+    # Indic linkers (viramas) that bind the following consonant into one
+    # grapheme cluster (Unicode GB9c). TextSegment predates that rule.
+    VIRAMAS = [
+      0x094D, 0x09CD, 0x0A4D, 0x0ACD, 0x0B4D, 0x0BCD, 0x0C4D, 0x0CCD,
+      0x0D3B, 0x0D3C, 0x0D4D, 0x0DCA, 0x0E3A, 0x0EBA, 0x0F84, 0x1039,
+      0x103A, 0x1714, 0x1734, 0x17D2, 0x1A60, 0x1B44, 0x1BAA, 0x1BAB,
+      0x1BF2, 0x1BF3, 0x2D7F, 0xA806, 0xA82C, 0xA8C4, 0xA953, 0xA9C0,
+      0xAAF6, 0xABED, 0x10A3F, 0x11046, 0x1107F, 0x110B9, 0x11133,
+      0x11134, 0x111C0, 0x11235, 0x112EA, 0x1134D, 0x11442, 0x11446,
+      0x114C2, 0x115BF, 0x1163F, 0x116B6, 0x1172B, 0x11839, 0x1193D,
+      0x1193E, 0x119E0, 0x11A34, 0x11A47, 0x11A99, 0x11C3F, 0x11D44,
+      0x11D45, 0x11D97,
+    ]
+
+    # graphemeClusters splits text into grapheme clusters, merging Indic
+    # conjuncts that TextSegment splits.
+    def self.grapheme_clusters(text : String) : Array(Array(Char))
+      clusters = [] of Array(Char)
+      TextSegment.each_grapheme(text) do |cluster|
+        chars = cluster.str.chars
+        if !clusters.empty? && linker_cluster?(clusters.last)
+          clusters.last.concat(chars)
+        else
+          clusters << chars
+        end
+      end
+      clusters
+    end
+
+    # linkerCluster reports whether the next cluster should join this one.
+    def self.linker_cluster?(cluster : Array(Char)) : Bool
+      last = cluster.last?
+      return false unless last
+
+      if last == '\u200D'
+        return cluster[0...-1].any? { |char| VIRAMAS.includes?(char.ord) }
+      end
+
+      VIRAMAS.includes?(last.ord)
+    end
+
+    # deletesWhole reports whether Backspace should remove the grapheme as a
+    # unit. Emoji and variation sequences are; anything else loses one code
+    # point at a time so Thai and Indic marks can be fixed without erasing
+    # their consonant.
+    # Ported from Go: vendor/bubbles/textarea/grapheme.go:39
+    def self.deletes_whole?(cluster : Array(Char)) : Bool
+      cluster.each_with_index do |char, i|
+        cp = char.ord
+        return true if char == '\u200D' && i < cluster.size - 1 && !cluster[i + 1].letter?
+        return true if cp >= 0xFE00 && cp <= 0xFE0F
+        return true if cp >= 0xE0100 && cp <= 0xE01EF
+        return true if cp >= 0x1F1E6 && cp <= 0x1F1FF
+        return true if cp >= 0x1F3FB && cp <= 0x1F3FF
+        return true if cp >= 0xE0020 && cp <= 0xE007F
+      end
+      false
+    end
+
+    # charWidth returns the terminal cells used by a single code point,
+    # treating combining marks as zero-width the way uniseg does.
+    def self.char_width(char : Char) : Int32
+      return 0 if char.control?
+      return 0 if char.mark?
+      UnicodeCharWidth.width(char)
+    end
+
+    # displayWidth returns the terminal width of text, summing grapheme
+    # cluster widths like uniseg.StringWidth: emoji sequences are two cells,
+    # other clusters sum their code points.
+    def self.display_width(text : String) : Int32
+      total = 0
+      grapheme_clusters(text).each do |cluster|
+        if cluster.any? { |char| emoji_like?(char) }
+          total += 2
+        else
+          cluster.each { |char| total += char_width(char) }
+        end
+      end
+      total
+    end
+
+    def self.emoji_like?(char : Char) : Bool
+      cp = char.ord
+      cp >= 0x1F000 || cp == 0x200D || (cp >= 0xFE00 && cp <= 0xFE0F)
     end
 
     class Model
@@ -360,6 +539,10 @@ module Bubbles
       @virtual_cursor : Cursor::Model
       @last_char_offset : Int32
       @viewport : Bubbles::Viewport::Model
+      @sel_anchor : Position
+      @sel_head : Position
+      @has_selection : Bool
+      @selecting : Bool
 
       def initialize
         @err = nil
@@ -390,6 +573,10 @@ module Bubbles
         @virtual_cursor = Cursor::Model.new
         @last_char_offset = 0
         @viewport = Bubbles::Viewport::Model.new
+        @sel_anchor = Position.new
+        @sel_head = Position.new
+        @has_selection = false
+        @selecting = false
 
         set_height(DEFAULT_HEIGHT)
         set_width(DEFAULT_WIDTH)
@@ -536,6 +723,7 @@ module Bubbles
         @viewport.goto_top
         set_cursor_column(0)
         recalculate_height
+        clear_selection
       end
 
       # san returns the rune sanitizer for the model.
@@ -553,6 +741,7 @@ module Bubbles
         reset
         insert_string(s)
         recalculate_height
+        reposition_view
       end
 
       def value=(s : String)
@@ -663,14 +852,248 @@ module Bubbles
 
         # Append the tail to the last line.
         @value[@row] = @value[@row] + tail
+
+        # Leave the cursor right after the typed text even when that text
+        # joined the next grapheme.
+        @last_char_offset = 0
       end
 
       def length : Int32
         total = 0
         @value.each do |row|
-          total += UnicodeCharWidth.width(row.join)
+          total += row.size
         end
         total + @value.size - 1
+      end
+
+      # gutterWidth returns the columns rendered left of the text content.
+      # Ported from Go: vendor/bubbles/textarea/selection.go:20
+      def gutter_width : Int32
+        w = @prompt_width
+        if @show_line_numbers
+          w += num_digits(@max_height) + 2
+        end
+        w
+      end
+
+      # runeIndexForColumn maps a display column to a rune index, skipping
+      # whole graphemes. Ported from Go: vendor/bubbles/textarea/selection.go:29
+      private def rune_index_for_column(runes : Array(Char), col : Int32) : Int32
+        return 0 if col <= 0
+
+        width = 0
+        offset = 0
+        Textarea.grapheme_clusters(runes.join).each do |cluster|
+          gw = Textarea.display_width(cluster.join)
+          return offset if width + gw > col
+          width += gw
+          offset += cluster.size
+        end
+        runes.size
+      end
+
+      # PositionAt maps textarea-relative coordinates to a buffer position.
+      # Ported from Go: vendor/bubbles/textarea/selection.go:47
+      def position_at(x : Int32, y : Int32) : Position
+        return Position.new if @value.empty?
+
+        target_line = y + @viewport.y_offset
+        return Position.new if target_line < 0
+
+        content_x = x - gutter_width
+        content_x = 0 if content_x < 0
+
+        display = 0
+        @value.each_with_index do |line, row|
+          wrapped = memoized_wrap(line, @width)
+          wrapped = [[] of Char] if wrapped.empty?
+          base = 0
+          wrapped.each do |wrapped_line|
+            if display == target_line
+              col = base + rune_index_for_column(wrapped_line, content_x)
+              return Position.new(row, clamp(col, 0, line.size))
+            end
+            base += wrapped_line.size
+            display += 1
+          end
+        end
+
+        last_row = @value.size - 1
+        Position.new(last_row, @value[last_row].size)
+      end
+
+      # BeginSelection starts a drag selection at textarea-relative coordinates.
+      # Ported from Go: vendor/bubbles/textarea/selection.go:83
+      def begin_selection(x : Int32, y : Int32) : Nil
+        pos = position_at(x, y)
+        select_from(pos, pos)
+        @selecting = true
+        move_cursor_to(pos)
+      end
+
+      # ExtendSelection extends an in-progress drag to the given coordinates.
+      def extend_selection(x : Int32, y : Int32) : Nil
+        return unless @selecting
+
+        pos = position_at(x, y)
+        @sel_head = pos
+        @has_selection = true
+        move_cursor_to(pos)
+      end
+
+      # EndSelection completes a drag, discarding a zero-width selection.
+      def end_selection : Nil
+        @selecting = false
+        clear_selection if @sel_anchor == @sel_head
+      end
+
+      # SelectAll selects the entire buffer.
+      def select_all : Nil
+        return if @value.empty?
+
+        last_row = @value.size - 1
+        select_from(
+          Position.new(0, 0),
+          Position.new(last_row, @value[last_row].size)
+        )
+        @selecting = false
+      end
+
+      # ClearSelection removes the current selection.
+      def clear_selection : Nil
+        @has_selection = false
+        @selecting = false
+        @sel_anchor = Position.new
+        @sel_head = Position.new
+      end
+
+      def has_selection? : Bool
+        @has_selection && @sel_anchor != @sel_head
+      end
+
+      # Selection returns the normalized range and whether it is non-empty.
+      def selection : {Position, Position, Bool}
+        return {Position.new, Position.new, false} unless has_selection?
+
+        first = @sel_anchor
+        last = @sel_head
+        first, last = last, first if last.before?(first)
+        {first, last, true}
+      end
+
+      # SelectedText returns the selected text with logical lines joined by "\n".
+      def selected_text : String
+        first, last, ok = selection
+        return "" unless ok
+
+        if first.row == last.row
+          line = @value[first.row]
+          return line[clamp(first.col, 0, line.size)...clamp(last.col, 0, line.size)].join
+        end
+
+        text = String::Builder.new
+        (first.row..last.row).each do |row|
+          line = @value[row]
+          case row
+          when first.row
+            text << line[clamp(first.col, 0, line.size)..].join
+          when last.row
+            text << line[0...clamp(last.col, 0, line.size)].join
+          else
+            text << line.join
+          end
+          text << '\n' if row < last.row
+        end
+        text.to_s
+      end
+
+      private def select_from(anchor : Position, head : Position) : Nil
+        @sel_anchor = anchor
+        @sel_head = head
+        @has_selection = true
+      end
+
+      private def move_cursor_to(pos : Position) : Nil
+        return if @value.empty?
+
+        row = clamp(pos.row, 0, @value.size - 1)
+        @row = row
+        @col = clamp(pos.col, 0, @value[row].size)
+      end
+
+      # selectionSpanFor returns the half-open rune range of a wrapped segment.
+      private def selection_span_for(row : Int32, base : Int32, length : Int32) : {Int32, Int32, Bool}
+        first, last, active = selection
+        return {0, 0, false} unless active
+        return {0, 0, false} if row < first.row || row > last.row
+
+        line_len = @value[row].size
+        row_from = 0
+        row_to = line_len
+        row_from = clamp(first.col, 0, line_len) if row == first.row
+        row_to = clamp(last.col, 0, line_len) if row == last.row
+
+        from = Math.max(row_from, base)
+        to = Math.min(row_to, base + length)
+        return {0, 0, false} if from >= to
+
+        {from - base, to - base, true}
+      end
+
+      # startKeyboardSelection begins a keyboard-driven selection at the cursor.
+      private def start_keyboard_selection : Nil
+        @sel_anchor = Position.new(@row, @col) unless @has_selection
+        @has_selection = true
+        @sel_head = Position.new(@row, @col)
+      end
+
+      private def update_keyboard_selection : Nil
+        @sel_head = Position.new(@row, @col)
+      end
+
+      # deleteSelection deletes the selected text and clears the selection.
+      def delete_selection : Nil
+        return unless has_selection?
+
+        first, last, _ = selection
+
+        if first.row == last.row
+          line = @value[first.row]
+          end_col = Math.min(last.col, line.size)
+          start_col = Math.min(first.col, end_col)
+          @value[first.row] = line[0...start_col] + line[end_col..]
+          @row = first.row
+          set_cursor_column(start_col)
+        else
+          head_line = @value[first.row]
+          tail_line = @value[last.row]
+          end_col = Math.min(last.col, tail_line.size)
+          start_col = Math.min(first.col, head_line.size)
+
+          merged = head_line[0...start_col] + tail_line[end_col..]
+          new_value = @value[0...first.row] + [merged] + @value[(last.row + 1)..]
+          @value = new_value
+
+          @row = first.row
+          set_cursor_column(start_col)
+        end
+
+        clear_selection
+      end
+
+      # CopySelection copies the selected text and returns the clipboard command.
+      def copy_selection : Tea::Cmd?
+        return nil unless has_selection?
+
+        text = selected_text
+        -> do
+          begin
+            EasyClip.copy(text)
+            CopyMsg.new(text).as(Tea::Msg?)
+          rescue ex
+            CopyErrMsg.new(ex).as(Tea::Msg?)
+          end
+        end
       end
 
       def line_count : Int32
@@ -686,7 +1109,7 @@ module Bubbles
       end
 
       def scroll_y_offset : Int32
-        @scroll_y_offset
+        @viewport.y_offset
       end
 
       def cursor_up
@@ -699,6 +1122,9 @@ module Bubbles
 
       def set_cursor_column(c : Int32) # ameba:disable Naming/AccessorMethodName
         @col = clamp(c, 0, @value[@row].size)
+        if @col < @value[@row].size
+          @col, _ = Textarea.grapheme_at(@value[@row], @col)
+        end
         @last_char_offset = 0
       end
 
@@ -735,7 +1161,7 @@ module Bubbles
               @row += 1
               @col = 0
             else
-              @col = Math.min(li.start_column + li.width + trailing_space, @value[@row].size - 1)
+              @col = Math.min(li.start_column + li.width + trailing_space, @value[@row].size)
             end
             li = line_info
           end
@@ -763,10 +1189,14 @@ module Bubbles
         while offset < char_offset
           break if @row >= @value.size || @col >= @value[@row].size || offset >= nli.char_width - 1
 
-          offset += UnicodeCharWidth.width(@value[@row][@col].to_s)
-          @col += 1
+          _, finish = Textarea.grapheme_at(@value[@row], @col)
+          offset += Textarea.display_width(@value[@row][@col...finish].join)
+          @col = finish
         end
 
+        if @col < @value[@row].size
+          @col, _ = Textarea.grapheme_at(@value[@row], @col)
+        end
         reposition_view
       end
 
@@ -817,16 +1247,22 @@ module Bubbles
         set_cursor_column(@value[@row].size)
       end
 
-      # transposeLeft exchanges the runes at the cursor and immediately before.
-      private def transpose_left
-        return if @col == 0 || @value[@row].size < 2
-        set_cursor_column(@col - 1) if @col >= @value[@row].size
-        @value[@row][@col - 1], @value[@row][@col] = @value[@row][@col], @value[@row][@col - 1]
-        set_cursor_column(@col + 1) if @col < @value[@row].size
+      # transposeLeft exchanges the graphemes at and before the cursor.
+      def transpose_left
+        line = @value[@row]
+        return if line.size < 2
+
+        set_cursor_column(@col - 1) if @col >= line.size
+        return if @col == 0
+
+        prev, _ = Textarea.grapheme_at(line, @col - 1)
+        _, finish = Textarea.grapheme_at(line, @col)
+        line[prev...finish] = line[@col...finish] + line[prev...@col]
+        set_cursor_column(finish)
       end
 
       # deleteWordLeft deletes the word left to the cursor.
-      private def delete_word_left
+      def delete_word_left
         return if @col == 0 || @value[@row].empty?
 
         old_col = @col
@@ -841,7 +1277,7 @@ module Bubbles
           if !@value[@row][@col].whitespace?
             set_cursor_column(@col - 1)
           else
-            set_cursor_column(@col + 1) if @col > 0
+            character_right
             break
           end
         end
@@ -854,18 +1290,18 @@ module Bubbles
       end
 
       # deleteWordRight deletes the word right to the cursor.
-      private def delete_word_right
+      def delete_word_right
         return if @col >= @value[@row].size || @value[@row].empty?
 
         old_col = @col
 
         while @col < @value[@row].size && @value[@row][@col].whitespace?
-          set_cursor_column(@col + 1)
+          character_right
         end
 
         while @col < @value[@row].size
           if !@value[@row][@col].whitespace?
-            set_cursor_column(@col + 1)
+            character_right
           else
             break
           end
@@ -900,20 +1336,20 @@ module Bubbles
               row_offset: i + 1,
               start_column: @col,
               width: grid[i + 1].size,
-              char_width: UnicodeCharWidth.width(line.join)
+              char_width: Textarea.display_width(line.join)
             )
           end
 
           if counter + line.size >= @col
             take = Math.max(0, @col - counter)
             return LineInfo.new(
-              char_offset: UnicodeCharWidth.width(line[0, take].join),
+              char_offset: Textarea.display_width(line[0, take].join),
               column_offset: @col - counter,
               height: grid.size,
               row_offset: i,
               start_column: counter,
               width: line.size,
-              char_width: UnicodeCharWidth.width(line.join)
+              char_width: Textarea.display_width(line.join)
             )
           end
 
@@ -950,9 +1386,10 @@ module Bubbles
         min_width = reserved_inner + reserved_outer + 1
         input_width = Math.max(w, min_width)
 
-        # Respect configured maximum width when set.
+        # Respect configured maximum width when set, unless that would leave
+        # less than the minimum input width.
         if @max_width > 0
-          input_width = Math.min(input_width, @max_width)
+          input_width = Math.min(input_width, Math.max(@max_width, min_width))
         end
 
         @viewport.set_width(input_width - reserved_outer)
@@ -990,14 +1427,32 @@ module Bubbles
       # scrolling behavior.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1033
       private def reposition_view
+        if total_line_count <= @viewport.height
+          @viewport.goto_top
+          return
+        end
         minimum = @viewport.y_offset
         maximum = minimum + @viewport.height - 1
         row = cursor_line_number
         if row < minimum
-          @viewport.scroll_up(minimum - row)
+          @viewport.set_y_offset(row)
         elsif row > maximum
-          @viewport.scroll_down(row - maximum)
+          @viewport.set_y_offset(row - @viewport.height + 1)
         end
+      end
+
+      # totalLineCount returns the number of display lines across all lines.
+      private def total_line_count : Int32
+        total = 0
+        @value.each do |line|
+          wrapped = memoized_wrap(line, @width)
+          if wrapped.empty?
+            total += 1
+          else
+            total += wrapped.size
+          end
+        end
+        total
       end
 
       # MoveToBegin moves the cursor to the beginning of the textarea.
@@ -1097,7 +1552,8 @@ module Bubbles
         merged = merged + @value[@row][@col..] if lines.size == 1
         delta = memoized_wrap(merged, @width).size - current_row_visual
 
-        lines.each_with_index do |content, i|
+        (1...lines.size).each do |i|
+          content = lines[i]
           content = content + @value[@row][@col..] if i == lines.size - 1
           delta += memoized_wrap(content, @width).size
         end
@@ -1197,22 +1653,22 @@ module Bubbles
 
       # wrap performs word wrapping on the given runes.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1699
-      private def wrap(runes : Array(Char), width : Int32) : Array(Array(Char))
+      def wrap(runes : Array(Char), width : Int32) : Array(Array(Char))
         lines = [[] of Char]
         word = [] of Char
         row = 0
         spaces = 0
 
-        # Word wrap the runes
-        runes.each do |char|
-          if char.whitespace?
+        # Word wrap by grapheme so a line never breaks inside a character.
+        Textarea.grapheme_clusters(runes.join).each do |chars|
+          if chars.size == 1 && chars[0].whitespace?
             spaces += 1
           else
-            word << char
+            word.concat(chars)
           end
 
           if spaces > 0
-            if UnicodeCharWidth.width(lines[row].join) + UnicodeCharWidth.width(word.join) + spaces > width
+            if Textarea.display_width(lines[row].join) + Textarea.display_width(word.join) + spaces > width
               row += 1
               lines << [] of Char
               lines[row].concat(word)
@@ -1226,12 +1682,10 @@ module Bubbles
               word.clear
             end
           else
-            # If the last character is a double-width rune, then we may not be
-            # able to add it to this line as it might cause us to exceed width.
-            last_char_len = UnicodeCharWidth.width(word[-1].to_s)
-            if UnicodeCharWidth.width(word.join) + last_char_len > width
-              # If the current line has any content, let's move to the next
-              # line because the current word fills up the entire line.
+            # If the last grapheme is double-width, adding it may exceed the
+            # width, in which case we move to the next line.
+            last_char_len = Textarea.display_width(chars.join)
+            if Textarea.display_width(word.join) + last_char_len > width
               if !lines[row].empty?
                 row += 1
                 lines << [] of Char
@@ -1242,17 +1696,22 @@ module Bubbles
           end
         end
 
-        if UnicodeCharWidth.width(lines[row].join) + UnicodeCharWidth.width(word.join) + spaces >= width
+        line_width = Textarea.display_width(lines[row].join) + Textarea.display_width(word.join) + spaces
+        if line_width > width
           lines << [] of Char
           lines[row + 1].concat(word)
-          # We add an extra space at the end of the line to account for the
-          # trailing space at the end of the previous soft-wrapped lines so that
-          # behaviour when navigating is consistent and so that we don't need to
-          # continually add edges to handle the last line of the wrapped input.
+          # Add an extra space at the end of the line to account for the
+          # trailing space at the end of the previous soft-wrapped lines.
           spaces += 1
           lines[row + 1].concat(repeat_spaces(spaces))
         else
           lines[row].concat(word)
+          if line_width == width
+            # The word fills the line exactly; keep it and move only the
+            # trailing cursor space to the next row.
+            row += 1
+            lines << [] of Char
+          end
           spaces += 1
           lines[row].concat(repeat_spaces(spaces))
         end
@@ -1310,6 +1769,7 @@ module Bubbles
             style = styles.computed_text
           end
 
+          wrapped_base = 0
           wrapped_lines.each_with_index do |wrapped_line, wrapped_idx|
             prompt = prompt_view(display_line)
             output << style.render(prompt)
@@ -1340,8 +1800,13 @@ module Bubbles
               padding -= (@width - strwidth)
             end
 
-            if @row == line_idx && current_line_info.row_offset == wrapped_idx
-              wrapped_chars = wrapped.chars
+            wrapped_chars = wrapped.chars
+            sel_from, sel_to, selected = selection_span_for(line_idx, wrapped_base, wrapped_chars.size)
+            if selected
+              output << style.render(wrapped_chars[0...sel_from].join)
+              output << styles.computed_selection.render(wrapped_chars[sel_from...sel_to].join)
+              output << style.render(wrapped_chars[sel_to..].join)
+            elsif @row == line_idx && current_line_info.row_offset == wrapped_idx
               col_offset = current_line_info.column_offset
               col_offset = clamp(col_offset, 0, wrapped_chars.size)
               output << style.render(wrapped_chars[0...col_offset].join)
@@ -1349,16 +1814,15 @@ module Bubbles
                 @virtual_cursor.set_char(" ")
                 output << @virtual_cursor.view
               else
-                ch = wrapped_chars[col_offset]? || ' '
-                @virtual_cursor.set_char(ch.to_s)
+                start, finish = Textarea.grapheme_at(wrapped_chars, col_offset)
+                @virtual_cursor.set_char(wrapped_chars[start...finish].join)
                 output << style.render(@virtual_cursor.view)
-                if col_offset + 1 < wrapped_chars.size
-                  output << style.render(wrapped_chars[(col_offset + 1)..].join)
-                end
+                output << style.render(wrapped_chars[finish..].join)
               end
             else
               output << style.render(wrapped)
             end
+            wrapped_base += wrapped_chars.size
 
             output << style.render(" " * Math.max(0, padding))
             output << '\n'
@@ -1495,7 +1959,7 @@ module Bubbles
         end
 
         @viewport.set_content(buf.to_s)
-        styles.base.render(@viewport.view)
+        @viewport.view
       end
 
       # Cursor returns a Tea cursor for real-cursor rendering.
@@ -1609,9 +2073,10 @@ module Bubbles
 
       # characterRight moves the cursor one character to the right.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:893
-      private def character_right
+      def character_right
         if @col < @value[@row].size
-          set_cursor_column(@col + 1)
+          _, finish = Textarea.grapheme_at(@value[@row], @col)
+          set_cursor_column(finish)
         else
           if @row < @value.size - 1
             @row += 1
@@ -1624,22 +2089,25 @@ module Bubbles
       # If insideLine is set, the cursor is moved to the last
       # character in the previous line, instead of one past that.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:907
-      private def character_left(inside_line : Bool)
+      def character_left(inside_line : Bool)
         if @col == 0 && @row != 0
           @row -= 1
           cursor_end
           return unless inside_line
         end
         if @col > 0
-          set_cursor_column(@col - 1)
+          start, _ = Textarea.grapheme_at(@value[@row], @col - 1)
+          set_cursor_column(start)
         end
       end
 
       # wordLeft moves the cursor one word to the left.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:923
-      private def word_left
+      def word_left
         loop do
+          old_row, old_col = @row, @col
           character_left(true) # inside_line
+          return if @row == old_row && @col == old_col
           break if @col < @value[@row].size && !@value[@row][@col].whitespace?
         end
 
@@ -1651,7 +2119,7 @@ module Bubbles
 
       # wordRight moves the cursor one word to the right.
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:942
-      private def word_right
+      def word_right
         do_word_right { |_, _| }
       end
 
@@ -1669,7 +2137,7 @@ module Bubbles
         while @col < @value[@row].size
           break if @value[@row][@col].whitespace?
           yield char_idx, @col
-          set_cursor_column(@col + 1)
+          character_right
           char_idx += 1
         end
       end
@@ -1728,6 +2196,7 @@ module Bubbles
         case msg
         when Tea::PasteMsg
           paste_msg = msg.as(Tea::PasteMsg)
+          delete_selection
           insert_runes_from_user_input(paste_msg.content.chars)
         when Tea::KeyPressMsg
           key_msg = msg.as(Tea::KeyPressMsg)
@@ -1738,10 +2207,12 @@ module Bubbles
           return {self, cmd} if cmd
         when PasteMsg
           paste_msg = msg.as(PasteMsg)
+          delete_selection
           insert_runes_from_user_input(paste_msg.chars)
         when PasteErrMsg
-          paste_err_msg = msg.as(PasteErrMsg)
-          @err = paste_err_msg.error
+          @err = msg.as(PasteErrMsg)
+        when CopyErrMsg
+          @err = msg.as(CopyErrMsg)
         end
 
         recalculate_height
@@ -1784,6 +2255,10 @@ module Bubbles
 
         # Check each key binding in exact Go order
         if Key.matches?(key_str, @key_map.delete_after_cursor)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           @col = clamp(@col, 0, @value[@row].size)
           if @col >= @value[@row].size
             merge_line_below(@row)
@@ -1791,6 +2266,10 @@ module Bubbles
           end
           delete_after_cursor
         elsif Key.matches?(key_str, @key_map.delete_before_cursor)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           @col = clamp(@col, 0, @value[@row].size)
           if @col <= 0
             merge_line_above(@row)
@@ -1798,34 +2277,52 @@ module Bubbles
           end
           delete_before_cursor
         elsif Key.matches?(key_str, @key_map.delete_character_backward)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           @col = clamp(@col, 0, @value[@row].size)
           if @col <= 0
             merge_line_above(@row)
             return nil
           end
-          unless @value[@row].empty?
-            # Delete character before cursor (Go: m.value[m.row] = append(m.value[m.row][:max(0, m.col-1)], m.value[m.row][m.col:]...))
-            if @col > 0
-              @value[@row] = @value[@row][0...@col - 1] + @value[@row][@col..]
-              set_cursor_column(@col - 1)
-            end
+          if !@value[@row].empty? && @col > 0
+            # Backspace removes one code point so combining marks can be
+            # corrected without erasing their base consonant.
+            start = @col - 1
+            s, _ = Textarea.grapheme_at(@value[@row], start)
+            start = s if Textarea.deletes_whole?(@value[@row][s...@col])
+            @value[@row] = @value[@row][0...start] + @value[@row][@col..]
+            set_cursor_column(start)
           end
         elsif Key.matches?(key_str, @key_map.delete_character_forward)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           if !@value[@row].empty? && @col < @value[@row].size
-            # Delete character at cursor (Go: slices.Delete(m.value[m.row], m.col, m.col+1))
-            @value[@row] = @value[@row][0...@col] + @value[@row][@col + 1..]
+            _, finish = Textarea.grapheme_at(@value[@row], @col)
+            @value[@row] = @value[@row][0...@col] + @value[@row][finish..]
           end
           if @col >= @value[@row].size
             merge_line_below(@row)
             return nil
           end
         elsif Key.matches?(key_str, @key_map.delete_word_backward)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           if @col <= 0
             merge_line_above(@row)
             return nil
           end
           delete_word_left
         elsif Key.matches?(key_str, @key_map.delete_word_forward)
+          if has_selection?
+            delete_selection
+            return nil
+          end
           @col = clamp(@col, 0, @value[@row].size)
           if @col >= @value[@row].size
             merge_line_below(@row)
@@ -1833,37 +2330,50 @@ module Bubbles
           end
           delete_word_right
         elsif Key.matches?(key_str, @key_map.insert_newline)
+          delete_selection
           if at_content_limit
             return MaxHeightHitMsg.new
           end
           @col = clamp(@col, 0, @value[@row].size)
           split_line(@row, @col)
         elsif Key.matches?(key_str, @key_map.line_end)
+          clear_selection
           cursor_end
         elsif Key.matches?(key_str, @key_map.line_start)
+          clear_selection
           cursor_start
         elsif Key.matches?(key_str, @key_map.character_forward)
+          clear_selection
           character_right
         elsif Key.matches?(key_str, @key_map.line_next)
+          clear_selection
           cursor_down
         elsif Key.matches?(key_str, @key_map.word_forward)
+          clear_selection
           word_right
         elsif Key.matches?(key_str, @key_map.paste)
-          # Return paste command (Go: return m, Paste)
+          delete_selection
           return self.class.paste
         elsif Key.matches?(key_str, @key_map.character_backward)
+          clear_selection
           character_left(false) # inside_line = false (Go: m.characterLeft(false /* insideLine */))
         elsif Key.matches?(key_str, @key_map.line_previous)
+          clear_selection
           cursor_up
         elsif Key.matches?(key_str, @key_map.word_backward)
+          clear_selection
           word_left
         elsif Key.matches?(key_str, @key_map.input_begin)
+          clear_selection
           move_to_begin
         elsif Key.matches?(key_str, @key_map.input_end)
+          clear_selection
           move_to_end
         elsif Key.matches?(key_str, @key_map.page_up)
+          clear_selection
           page_up
         elsif Key.matches?(key_str, @key_map.page_down)
+          clear_selection
           page_down
         elsif Key.matches?(key_str, @key_map.lowercase_word_forward)
           lowercase_right
@@ -1873,8 +2383,38 @@ module Bubbles
           capitalize_right
         elsif Key.matches?(key_str, @key_map.transpose_character_backward)
           transpose_left
+        elsif Key.matches?(key_str, @key_map.select_character_forward)
+          start_keyboard_selection
+          character_right
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_character_backward)
+          start_keyboard_selection
+          character_left(false)
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_word_forward)
+          start_keyboard_selection
+          word_right
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_word_backward)
+          start_keyboard_selection
+          word_left
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_line_up)
+          start_keyboard_selection
+          cursor_up
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_line_down)
+          start_keyboard_selection
+          cursor_down
+          update_keyboard_selection
+        elsif Key.matches?(key_str, @key_map.select_all)
+          select_all
+        elsif Key.matches?(key_str, @key_map.copy_selection)
+          return copy_selection
         else
-          # Default case (Go: m.insertRunesFromUserInput([]rune(msg.Text)))
+          # Default case (Go: if msg.Text == "" break; insertRunes...)
+          return nil if key_msg.text.empty?
+          delete_selection
           insert_runes_from_user_input(key_msg.text.chars)
         end
 
