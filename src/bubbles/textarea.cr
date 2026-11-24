@@ -1394,16 +1394,16 @@ module Bubbles
       # Ported exactly from Go: vendor/bubbles/textarea/textarea.go:1427
       private def prompt_view(display_line : Int32) : String
         prompt = @prompt
-        return prompt if @prompt_func.nil?
-
-        info = PromptInfo.new(
-          line_number: display_line,
-          focused: @focus
-        )
-        prompt = @prompt_func.as(PromptInfo -> String).call(info)
-        width = Lipgloss.width(prompt)
-        if width < @prompt_width
-          prompt = (" " * (@prompt_width - width)) + prompt
+        if prompt_func = @prompt_func
+          info = PromptInfo.new(
+            line_number: display_line,
+            focused: @focus
+          )
+          prompt = prompt_func.call(info)
+          width = Lipgloss.width(prompt)
+          if width < @prompt_width
+            prompt = (" " * (@prompt_width - width)) + prompt
+          end
         end
 
         active_style.computed_prompt.render(prompt)
