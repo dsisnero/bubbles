@@ -844,9 +844,17 @@ module Bubbles
           i += 1
         end
 
+        # Go's textinput holds its cursor by value and has a value-receiver
+        # View, so the TextStyle it sets here lives only for this view. This
+        # port's cursor is a shared object, so restore the style after the
+        # placeholder is rendered or a value rendered later keeps the
+        # placeholder's style on the trailing space cell.
+        # Upstream: vendor/bubbles/textinput/textinput.go placeholderView.
+        previous_text_style = @virtual_cursor.text_style
         @virtual_cursor.text_style = styles.placeholder
         @virtual_cursor.set_char(p[0, 1].join)
         v = @virtual_cursor.view
+        @virtual_cursor.text_style = previous_text_style
 
         if @width < 1 && p.size <= 1
           return styles.prompt.render(@prompt) + v

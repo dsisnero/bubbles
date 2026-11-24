@@ -19,6 +19,26 @@ describe Bubbles::TextInput do
     textinput.view.ends_with?("test2").should be_false
   end
 
+  # Go's textinput holds its cursor by value and its View has a value
+  # receiver, so the TextStyle placeholderView sets applies to that view only.
+  # With a shared cursor the style leaked into later views and styled the
+  # trailing space cell after a value, which a renderer correctly treats as
+  # content instead of trimming it: examples/textinputs drifted one cell wider
+  # than the Go golden on every blurred input row.
+  it "keeps the placeholder style out of a later value view" do
+    textinput = Bubbles::TextInput.new
+    textinput.placeholder = "Nickname"
+
+    # With no width set the placeholder shows one rune, its first as the
+    # cursor cell, which is styled.
+    textinput.view.should end_with("N\e[m")
+
+    textinput.set_value("hi")
+    # The value ends with the cursor's space, unstyled. Go's renderer trims a
+    # blank cell; a styled one is content and paints one cell wider.
+    textinput.view.should end_with("hi\e[m ")
+  end
+
   it "Test_SlicingOutsideCap" do
     textinput = Bubbles::TextInput.new
     textinput.placeholder = "作業ディレクトリを指定してください"
