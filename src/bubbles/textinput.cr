@@ -951,7 +951,6 @@ module Bubbles
         end
 
         cmds = [] of Tea::Cmd
-        cmd = nil
 
         if @use_virtual_cursor
           @virtual_cursor, cmd = @virtual_cursor.update(msg)

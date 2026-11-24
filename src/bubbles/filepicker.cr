@@ -512,13 +512,11 @@ module Bubbles
           begin
             entries = [] of Entry
             Dir.children(path).each do |name|
-              begin
-                info = File.info(File.join(path, name), follow_symlinks: false)
-                entries << Entry.new(name, info)
-              rescue
-                # Match Go's os.DirEntry.Info() behavior in view/update:
-                # skip unreadable/broken entries instead of failing the whole dir.
-              end
+              info = File.info(File.join(path, name), follow_symlinks: false)
+              entries << Entry.new(name, info)
+            rescue
+              # Match Go's os.DirEntry.Info() behavior in view/update:
+              # skip unreadable/broken entries instead of failing the whole dir.
             end
 
             # Sort: directories first, then alphabetical
