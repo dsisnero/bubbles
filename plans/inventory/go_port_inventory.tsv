@@ -588,96 +588,96 @@ timer/timer_test.go::test::TestTimeoutMsgSentOnLastTick	test	missing	-	v2.2.2: u
 timer/timer_test.go::test::TestToggleBehavior	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 timer/timer_test.go::test::TestUpdateHandlesStartStopMsg	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 timer/timer_test.go::test::TestViewReturnsTimeoutString	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
-tree/node.go::func::NewNode	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::func::Root	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.AllNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Child	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.ChildNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Children	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Close	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Enumerator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.EnumeratorStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.EnumeratorStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.GivenValue	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Height	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Hidden	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Indenter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.IndenterStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.IndenterStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Indicator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.IsOpen	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.IsSelected	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.ItemStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.ItemStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.LineOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Open	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.RootStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.SetHidden	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.SetValue	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Size	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.String	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.Value	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Node.YOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Nodes.At	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::method::Nodes.Length	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::struct::Node	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node.go::type::Nodes	type	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/styles.go::func::DefaultDarkStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/styles.go::func::DefaultLightStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/styles.go::func::DefaultStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/styles.go::struct::Styles	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/styles.go::type::StyleFunc	type	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::func::DefaultKeyMap	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::func::New	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.AllNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.CloseCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Down	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Enumerator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.FullHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.GoToBottom	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.GoToTop	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.HalfPageDown	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.HalfPageUp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Height	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Indenter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Node	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.NodeAtCurrentOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.OpenCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.PageDown	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.PageUp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Root	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetAdditionalFullHelpKeys	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetAdditionalShortHelpKeys	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetClosedCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetCursorCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetHeight	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetOpenCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetScrollOff	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetShowHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetSize	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetStyles	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetViewportYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetWidth	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.SetYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.ShortHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.ToggleCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Up	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Update	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.View	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.ViewportYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.Width	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::method::Model.YOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::struct::KeyMap	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/tree.go::struct::Model	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
-tree/node_value_test.go::test::TestNodeSetValue	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/node_value_test.go::test::TestTreeSetChildValue	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestSetNodesNil	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestSetNodesPreservesSuppliedNode	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestSetNodesRendersReplacement	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestTree	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestTreeAdditionalHelp	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
-tree/tree_test.go::test::TestTreeMultiLineNodes	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/node.go::func::NewNode	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::func::Root	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.AllNodes	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Child	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.ChildNodes	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Children	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Close	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Enumerator	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.EnumeratorStyle	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.EnumeratorStyleFunc	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.GivenValue	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Height	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Hidden	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Indenter	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.IndenterStyle	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.IndenterStyleFunc	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Indicator	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.IsOpen	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.IsSelected	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.ItemStyle	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.ItemStyleFunc	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.LineOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Open	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.RootStyle	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.SetHidden	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.SetValue	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Size	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.String	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.Value	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Node.YOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Nodes.At	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::method::Nodes.Length	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::struct::Node	struct	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node.go::type::Nodes	type	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/styles.go::func::DefaultDarkStyles	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/styles.go::func::DefaultLightStyles	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/styles.go::func::DefaultStyles	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/styles.go::struct::Styles	struct	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/styles.go::type::StyleFunc	type	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::func::DefaultKeyMap	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::func::New	func	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.AllNodes	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.CloseCurrentNode	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Down	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Enumerator	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.FullHelp	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.GoToBottom	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.GoToTop	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.HalfPageDown	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.HalfPageUp	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Height	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Indenter	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Node	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.NodeAtCurrentOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.OpenCurrentNode	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.PageDown	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.PageUp	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Root	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetAdditionalFullHelpKeys	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetAdditionalShortHelpKeys	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetClosedCharacter	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetCursorCharacter	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetHeight	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetNodes	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetOpenCharacter	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetScrollOff	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetShowHelp	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetSize	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetStyles	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetViewportYOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetWidth	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.SetYOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.ShortHelp	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.ToggleCurrentNode	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Up	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Update	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.View	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.ViewportYOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.Width	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::method::Model.YOffset	method	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::struct::KeyMap	struct	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/tree.go::struct::Model	struct	ported	src/bubbles/tree.cr	ported; tree bubble (v2.2.2)
+tree/node_value_test.go::test::TestNodeSetValue	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/node_value_test.go::test::TestTreeSetChildValue	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestSetNodesNil	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestSetNodesPreservesSuppliedNode	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestSetNodesRendersReplacement	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestTree	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestTreeAdditionalHelp	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
+tree/tree_test.go::test::TestTreeMultiLineNodes	test	ported	spec/tree_spec.cr	ported; tree bubble golden tests (v2.2.2)
 viewport/keymap.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
 viewport/keymap.go::struct::KeyMap	struct	ported	-	ported; all specs green
 viewport/viewport.go::func::New	func	ported	-	ported; all specs green

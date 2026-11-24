@@ -18,9 +18,9 @@ upstream_submodule_path: "vendor/bubbles/"
 
 ## Parity Scope
 
-All 14 modules from the v2.1.1 port baseline are ported. v2.2.2 adds `tree/`,
-which is not started. `v2.1.1` in the Notes column means the module's port
-baseline, not the current pin.
+All 14 modules from the v2.1.1 port baseline are ported, plus the `tree/`
+bubble introduced in v2.2.2. `v2.1.1` in the Notes column means the module's
+port baseline, not the current pin.
 
 | Upstream Module | Crystal Target | Status | Tests | Notes |
 |-----------------|----------------|--------|-------|-------|
@@ -38,7 +38,7 @@ baseline, not the current pin.
 | `timer/` | `src/bubbles/timer.cr` | ✅ Ported | — | v2.1.1 |
 | `stopwatch/` | `src/bubbles/stopwatch.cr` | ✅ Ported | 8 | v2.1.1 |
 | `table/` | `src/bubbles/table.cr` | ✅ Ported | 22 | v2.1.1 |
-| `tree/` | `src/bubbles/tree.cr` (planned) | ⬜ Not started | — | New in v2.2.2 |
+| `tree/` | `src/bubbles/tree.cr` | ✅ Ported | 10 | New in v2.2.2 — upstream goldens match |
 
 ## Test Parity
 
@@ -58,9 +58,9 @@ baseline, not the current pin.
 | timer | — | — | ⚠️ No spec yet |
 | progress | — | — | ⚠️ No spec yet |
 | spinner | — | — | ⚠️ No spec yet |
-| tree | 8 | 0 | ⬜ Not started (new in v2.2.2) |
+| tree | 8 | 10 | ✅ Ported (new in v2.2.2) |
 
-**Total: 198 examples, 0 failures, 4 pending** (pending = skipped in upstream
+**Total: 208 examples, 0 failures, 4 pending** (pending = skipped in upstream
 Go)
 
 ## Known Deviations

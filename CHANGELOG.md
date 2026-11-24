@@ -6,6 +6,10 @@ Changes are grouped by release date and category. Only user-facing changes are i
 
 ## [Unreleased]
 
+### Added
+- **Tree bubble** — ports the new `v2.2.2` `tree` component (`Node`, `Model`,
+  key map, styles, help/viewport integration) with both upstream goldens.
+
 ### Fixed
 - **Textarea prompt styling** — `prompt_view` now applies the prompt style
   internally for every line, including placeholder filler lines, even when no

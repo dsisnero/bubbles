@@ -44,7 +44,7 @@ recorded as `missing` and assigned to the phases below.
 | `paginator/` | behavior delta | 0 | 3 | 3 |
 | `progress/` | behavior delta | 0 | 2 | 3 |
 
-## Phase 1 — Tree bubble (new)
+## Phase 1 — Tree bubble (new) — done
 
 Port the three new files and their tests:
 
@@ -158,5 +158,7 @@ Artifacts updated:
 
 ## Status
 
-Vendor bumped and manifests refreshed. Phase 1 (`tree`) is next; phases 2 and 3
-are open. Existing port gates stay green at 198 specs, 0 failures, 4 pending.
+Vendor bumped and manifests refreshed. Phase 1 (`tree`) is complete: 82 source
+ids and 8 tests are ported in `src/bubbles/tree.cr` + `spec/tree_spec.cr`, both
+upstream goldens match, and the suite is at 208 specs. Phase 2 (textarea
+selection/copy) is next; Phase 3 (component deltas) remains open.
