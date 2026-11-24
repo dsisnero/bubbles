@@ -11,16 +11,44 @@ selection/copy, and the remaining component deltas.
 
 ## Where we are
 
-- **Current focus:** v2.2.2 is fully ported; next is release verification and
-  the consumer pin bump.
-- **Next up:** tag the release, then bump `bubbletea.cr/bubbletea-examples` to
-  the v2.2.2 shard commit.
+- **Released:** `v2.2.2`, tag matching upstream `charmbracelet/bubbles`
+  v2.2.2 (`0c1a491`). The tag includes the tree bubble, textarea
+  selection/copy, all v2.2.2 component deltas, the viewport highlight fix, and
+  locally recorded GIFs.
+- **Dependency stack verified:** ultraviolet 1.1.7, colorprofile 0.1.1, the
+  newer ansi commit, and `dsisnero/terminfo` 0.8.2 (the old `docelic/terminfo`
+  repository is gone). `shards install` now succeeds from scratch.
+- **Consumer:** `bubbletea-examples` pins `bubbles: tag: v2.2.2`, is green
+  (82 examples, 0 failures, 12 pending), and now records its README GIFs from
+  our Crystal examples (`make gifs`).
+- **Known flake:** `examples/send_msg` can fail when the full example suite is
+  under load because its capture uses short sleeps; it passes standalone and on
+  rerun. Stabilize the pacing before treating a single full-suite failure as a
+  regression.
+
+**Next up (in order):**
+
+1. **Close the remaining example parity work** in `bubbletea.cr`: port the five
+   approximation examples (`clickable`, `doom_fire`, `list_fancy`,
+   `split_editors`, `tui_daemon_combo`) and the documented pending specs. Start
+   with the shared Go `math/rand` v1 helper needed by `doom_fire`,
+   `list_fancy`, and `list_fancy H->a`; follow the ordered list in
+   `bubbletea.cr/plans/parity.md`.
+2. **Stabilize `send_msg`** so the full example suite is deterministic under
+   load (see above).
+3. **Track the next upstream tag.** On v2.2.3+ bump `vendor/bubbles`, create a
+   new `plans/vendor-<version>.md`, and refresh the manifests and ledger with
+   the parity skill. Keep the release tag aligned with upstream.
+4. **Keep example assets current.** After example changes run `make gifs` in
+   `bubbletea-examples`, copy `gifs/*.gif` to `docs/assets/`, and update
+   `docs/assets/README.md` if the tape mapping changes.
+
 - **Upstream:** `charmbracelet/bubbles` v2.2.2 at `0c1a491` (`vendor/bubbles`).
-- **Port baseline:** everything through v2.2.2 is ported and green.
-- **Last commit:** release hygiene for `v2.2.2`.
+- **Last commit:** `89b41c8` (release assets); tag `v2.2.2`.
 - **Gates:** `crystal spec` 335 / 0 failures / 4 pending; `ameba` 0 findings;
   `crystal tool format --check` clean; source parity 532; test parity 206;
-  port inventory 532 source / 804 total rows (v2.2.2 fully ported).
+  port inventory 532 source / 804 total rows; `shards install` and `check`
+  clean.
 
 ## Feature Roadmap
 

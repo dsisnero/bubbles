@@ -161,8 +161,14 @@ Artifacts updated:
 Released as **v2.2.2** (tag matches upstream `charmbracelet/bubbles` v2.2.2).
 Vendor bumped and manifests refreshed. All three phases are complete: `tree`,
 textarea selection/copy/graphemes, and the remaining component deltas. The
-ledger records every v2.2.2 addition as ported, and the suite is at 333 specs.
+ledger records every v2.2.2 addition as ported, and the suite is at 335 specs
+(4 skipped upstream).
 
-Remaining consumer work (not part of this release): bump
-`bubbletea.cr/bubbletea-examples` to the v2.2.2 shard commit after refreshing
-its goldens.
+The release was verified against ultraviolet 1.1.7, colorprofile 0.1.1 and the
+`dsisnero/terminfo` fork; `shards install` works from scratch. A viewport
+highlight byte-slicing bug found during that verification is fixed and covered
+by regression tests. `bubbletea-examples` pins this tag and its README GIFs are
+recorded from our examples with VHS.
+
+Remaining consumer work lives in `bubbletea.cr/plans/parity.md`: the five
+approximation examples and the documented pending specs.
