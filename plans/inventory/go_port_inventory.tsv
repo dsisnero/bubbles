@@ -33,6 +33,11 @@ filepicker/filepicker.go::struct::Model	struct	ported	-	ported; all specs green
 filepicker/filepicker.go::struct::Styles	struct	ported	-	ported; all specs green
 filepicker/hidden_unix.go::func::IsHidden	func	ported	-	ported; all specs green
 filepicker/hidden_windows.go::func::IsHidden	func	ported	-	ported; all specs green
+filepicker/filepicker_test.go::test::TestDidSelectFileRequiresPath	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+filepicker/filepicker_test.go::test::TestKeysBeforeEntriesLoad	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+filepicker/filepicker_test.go::test::TestLoadedPickerDoesNotNavigatePastLastEntry	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+filepicker/filepicker_test.go::test::TestLoadedPickerSelectsFile	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+filepicker/filepicker_test.go::test::TestNavigateWithoutWindowSize	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 help/help.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 help/help.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
 help/help.go::func::DefaultStyles	func	ported	-	ported; all specs green
@@ -47,6 +52,9 @@ help/help.go::struct::Model	struct	ported	-	ported; all specs green
 help/help.go::struct::Styles	struct	ported	-	ported; all specs green
 help/help.go::type::KeyMap	type	ported	-	ported; all specs green
 help/help_test.go::test::TestFullHelp	test	ported	-	ported; all specs green
+help/help_test.go::test::TestFullHelpStylesColumnPadding	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+help/help_test.go::test::TestFullHelpStylesColumnPaddingSkipsDisabledBindings	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+help/help_test.go::test::TestShortHelpFitsWidth	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 internal/memoization/memoization.go::method::HInt.Hash	method	ported	-	ported; all specs green
 internal/memoization/memoization.go::method::HString.Hash	method	ported	-	ported; all specs green
 internal/memoization/memoization.go::method::T].Capacity	method	ported	-	ported; all specs green
@@ -172,6 +180,10 @@ list/list_test.go::test::TestStatusBarItemName	test	ported	-	ported; all specs g
 list/list_test.go::test::TestStatusBarWithoutItems	test	ported	-	ported; all specs green
 list/style.go::func::DefaultStyles	func	ported	-	ported; all specs green
 list/style.go::struct::Styles	struct	ported	-	ported; all specs green
+list/list_test.go::test::TestDefaultKeyMapQuit	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+list/list_test.go::test::TestFilterMatchedIndexesAreRunePositions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+list/list_test.go::test::TestRemoveItemWithFilter	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+list/list_test.go::test::TestTitleViewWithoutStatusMessageDoesNotTruncate	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 paginator/paginator.go::const::Arabic	const	ported	-	ported; all specs green
 paginator/paginator.go::const::Dots	const	ported	-	ported; all specs green
 paginator/paginator.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
@@ -198,6 +210,9 @@ paginator/paginator_test.go::test::TestOnFirstPage	test	ported	-	ported; all spe
 paginator/paginator_test.go::test::TestOnLastPage	test	ported	-	ported; all specs green
 paginator/paginator_test.go::test::TestPrevPage	test	ported	-	ported; all specs green
 paginator/paginator_test.go::test::TestSetTotalPages	test	ported	-	ported; all specs green
+paginator/paginator_test.go::test::TestSetTotalPagesCalculatesPages	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+paginator/paginator_test.go::test::TestSetTotalPagesInvalidPageSizeIsNoOp	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+paginator/paginator_test.go::test::TestSetTotalPagesNonpositiveItemsPreserveState	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 progress/progress.go::const::DefaultEmptyCharBlock	const	ported	-	ported; all specs green
 progress/progress.go::const::DefaultFullCharFullBlock	const	ported	-	ported; all specs green
 progress/progress.go::const::DefaultFullCharHalfBlock	const	ported	-	ported; all specs green
@@ -227,6 +242,8 @@ progress/progress.go::struct::Model	struct	ported	-	ported; all specs green
 progress/progress.go::type::ColorFunc	type	ported	-	ported; all specs green
 progress/progress.go::type::Option	type	ported	-	ported; all specs green
 progress/progress_test.go::test::TestBlend	test	ported	-	ported; all specs green
+progress/progress_test.go::test::TestNaNAnimationRecovery	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+progress/progress_test.go::test::TestPercentBounds	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 spinner/spinner.go::func::New	func	ported	src/bubbles/spinner.cr:121-130	Exact Go logic with variadic options
 spinner/spinner.go::func::WithSpinner	func	ported	src/bubbles/spinner.cr:133-135	Returns Option that sets spinner
 spinner/spinner.go::func::WithStyle	func	ported	src/bubbles/spinner.cr:137-139	Returns Option that sets style
@@ -256,6 +273,12 @@ stopwatch/stopwatch.go::struct::ResetMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::struct::TickMsg	struct	ported	-	ported; all specs green
 stopwatch/stopwatch.go::type::Option	type	ported	-	ported; all specs green
+stopwatch/stopwatch_test.go::test::TestElapsedAdvancesWithTimeWhileRunning	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestNewDefaultInterval	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestPauseFreezesElapsed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestResetClearsElapsed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestTagDebounceRejectsForeignTags	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+stopwatch/stopwatch_test.go::test::TestViewAlignsToInterval	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 table/table.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
 table/table.go::func::DefaultStyles	func	ported	-	ported; all specs green
 table/table.go::func::New	func	ported	-	ported; all specs green
@@ -309,6 +332,18 @@ table/table_test.go::test::TestModel_View	test	ported	-	ported; all specs green
 table/table_test.go::test::TestModel_View_CenteredInABox	test	skipped	-	skipped in Go upstream
 table/table_test.go::test::TestNew	test	ported	-	ported; all specs green
 table/table_test.go::test::TestTableAlignment	test	ported	-	ported; all specs green
+table/cursor_shrink_test.go::test::TestSetRows_CursorClampsOnShrink	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/cursor_shrink_test.go::test::TestSetRows_CursorClampsToZeroOnEmpty	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestModel_FromValues_MoreValuesThanColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestModel_RenderRow_MoreCellsThanColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestModel_SetRows_NoColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestMoveDownAfterUpsKeepsViewport	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestMoveUpFromBottomKeepsViewport	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestNew_RowsWithoutColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestRenderRowConfiguredColumns	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestRenderRowDoesNotDiscardExtraData	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestSetCursor_TabJumpVisible	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+table/table_test.go::test::TestSetCursor_ViewportVisibility	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 textarea/textarea.go::func::Blink	func	ported	-	ported; all specs green
 textarea/textarea.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 textarea/textarea.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
@@ -361,6 +396,20 @@ textarea/textarea.go::struct::Model	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::PromptInfo	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::StyleState	struct	ported	-	ported; all specs green
 textarea/textarea.go::struct::Styles	struct	ported	-	ported; all specs green
+textarea/selection.go::method::Model.BeginSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.ClearSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.EndSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.ExtendSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.HasSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.PositionAt	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.SelectAll	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.SelectedText	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::method::Model.Selection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/selection.go::struct::Position	struct	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/textarea.go::method::Model.CopySelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/textarea.go::method::Model.DeleteSelection	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/textarea.go::method::copyErrMsg.Unwrap	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
+textarea/textarea.go::method::pasteErrMsg.Unwrap	method	missing	-	v2.2.2: selection/copy support; phase-2-textarea
 textarea/textarea_test.go::test::TestCanHandleEmoji	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterGrow	test	ported	spec/textarea_spec.cr:204-220	v2.1.0
 textarea/textarea_test.go::test::TestDynamicHeight_CursorPositionAfterPaste	test	ported	spec/textarea_spec.cr:244-256	v2.1.0
@@ -391,6 +440,65 @@ textarea/textarea_test.go::test::TestVerticalScrolling	test	ported	-	ported; all
 textarea/textarea_test.go::test::TestView	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestWord	test	ported	-	ported; all specs green
 textarea/textarea_test.go::test::TestWordWrapOverflowing	test	ported	-	ported; all specs green
+textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesEmojiSequenceWhole	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestBackspaceRemovesMarkWithoutConsonant	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestClickMapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestDeleteWordLeftKeepsSpaceGrapheme	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestIndicConjunctIsOneGrapheme	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestSetCursorColumnSnapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestTransposeSwapsGraphemes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestTypingComposesBeforeExistingText	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestVerticalCursorSnapsToGraphemeStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestVerticalCursorUsesGraphemeWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestWordOperationsAdvanceOverGraphemes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_cursor_test.go::test::TestWrapKeepsGraphemesWhole	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_test.go::test::TestGraphemeNavigationKeepsASCIIStepsAndSkipsEmojiCluster	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/grapheme_test.go::test::TestThaiGraphemeNavigationAndDeletion	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestClearSelectionAPI	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestClickWithoutDragMakesNoSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestExtendSelectionRequiresBegin	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestKeyPressClearsSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestPositionAt	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestPositionAtAccountsForGutter	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectAllAPI	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectedTextAcrossLines	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectedTextBackwardDrag	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectedTextSingleLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectionEmptyBuffer	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectionRange	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectionRendersWithSelectionStyle	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/selection_test.go::test::TestSelectionSurvivesSoftWrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestAutoResizeKeepsFirstSoftWrappedRowVisible	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestBackspaceDeletesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestCharLimitWideRunes	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestClearSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestCopyErrMsgUnwrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestDeleteForwardDeletesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestDeleteSelectionMultiLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestMaxContentHeight_Insertion	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestMaxContentHeight_SingleRuneAtLimit	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestNewlineReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestPasteErrMsgUnwrap	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestPasteReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectAll	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionCharacterBackward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionCharacterForward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionClearedOnMovement	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionClearedOnType	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionMultiLine	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionRangeOrdering	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionRendering	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSelectionWordForward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSetValueViewportReposition	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSetWidthDoesNotExpandToMaximum	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSetWidthHonorsUsableMaximum	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestSetWidth_MaxWidthBelowReservedWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestTypingLastWordFillsWidthDoesNotReflow	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestTypingReplacesSelection	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestVerticalNavigationThroughSoftWraps	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestWordLeftStopsAtStart	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
+textarea/textarea_test.go::test::TestWrapLastWordFillsWidth	test	missing	-	v2.2.2: textarea selection/copy tests; phase-2-textarea
 textinput/styles.go::func::DefaultDarkStyles	func	ported	-	ported; all specs green
 textinput/styles.go::func::DefaultLightStyles	func	ported	-	ported; all specs green
 textinput/styles.go::func::DefaultStyles	func	ported	-	ported; all specs green
@@ -432,10 +540,23 @@ textinput/textinput.go::struct::KeyMap	struct	ported	-	ported; all specs green
 textinput/textinput.go::struct::Model	struct	ported	-	ported; all specs green
 textinput/textinput.go::type::EchoMode	type	ported	-	ported; all specs green
 textinput/textinput.go::type::ValidateFunc	type	ported	-	ported; all specs green
+textinput/textinput.go::method::pasteErrMsg.Unwrap	method	missing	-	v2.2.2: upstream delta; phase-3-minor
 textinput/textinput_test.go::test::TestChinesePlaceholder	test	skipped	-	flaky in Go upstream
 textinput/textinput_test.go::test::TestPlaceholderTruncate	test	skipped	-	flaky in Go upstream
 textinput/textinput_test.go::test::Test_CurrentSuggestion	test	ported	-	ported; all specs green
 textinput/textinput_test.go::test::Test_SlicingOutsideCap	test	ported	-	ported; all specs green
+textinput/textinput_test.go::test::TestAcceptSuggestionAfterSetValue	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestDeleteWordForwardAtWordEnd	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestPasteErrMsgUnwrap	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestPlaceholderFullRenderWithoutWidth	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestSetValueDoesNotCompleteUnmatchedInput	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestSetValueRefreshesSuggestions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestShiftBackspaceDeletesCharacterBackward	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::TestTypedPrefixStillAcceptsSuggestion	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::Test_CurrentSuggestionAfterPrevious	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::Test_CursorPositionWithScrolledValue	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::Test_CursorPositionWithWideCharacters	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+textinput/textinput_test.go::test::Test_ViewRespectsWidthWithSuggestions	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
 timer/timer.go::func::New	func	ported	-	ported; all specs green
 timer/timer.go::func::WithInterval	func	ported	-	ported; all specs green
 timer/timer.go::method::Model.ID	method	ported	-	ported; all specs green
@@ -452,6 +573,111 @@ timer/timer.go::struct::StartStopMsg	struct	ported	-	ported; all specs green
 timer/timer.go::struct::TickMsg	struct	ported	-	ported; all specs green
 timer/timer.go::struct::TimeoutMsg	struct	ported	-	ported; all specs green
 timer/timer.go::type::Option	type	ported	-	ported; all specs green
+timer/timer_test.go::test::TestDoubleStartDoesNotSpeedUpTimer	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestDoubleStopDoesNotCauseIssues	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestDuplicateTickStreamDoesNotPermanentlyDoubleSpeed	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestIDReturnsCorrectID	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestInitStartsTimer	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestRunningReturnsFalseWhenTimedOut	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestStartReturnsNilWhenTimedOut	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestStartStopMsgFromDifferentTimerIsIgnored	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestTagPreventsStaleTicks	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestTickMsgFromDifferentTimerIsIgnored	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestTickMsgHandling	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestTimeoutMsgSentOnLastTick	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestToggleBehavior	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestUpdateHandlesStartStopMsg	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+timer/timer_test.go::test::TestViewReturnsTimeoutString	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+tree/node.go::func::NewNode	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::func::Root	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.AllNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Child	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.ChildNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Children	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Close	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Enumerator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.EnumeratorStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.EnumeratorStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.GivenValue	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Height	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Hidden	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Indenter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.IndenterStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.IndenterStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Indicator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.IsOpen	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.IsSelected	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.ItemStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.ItemStyleFunc	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.LineOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Open	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.RootStyle	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.SetHidden	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.SetValue	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Size	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.String	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.Value	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Node.YOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Nodes.At	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::method::Nodes.Length	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::struct::Node	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node.go::type::Nodes	type	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/styles.go::func::DefaultDarkStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/styles.go::func::DefaultLightStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/styles.go::func::DefaultStyles	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/styles.go::struct::Styles	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/styles.go::type::StyleFunc	type	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::func::DefaultKeyMap	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::func::New	func	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.AllNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.CloseCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Down	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Enumerator	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.FullHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.GoToBottom	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.GoToTop	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.HalfPageDown	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.HalfPageUp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Height	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Indenter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Node	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.NodeAtCurrentOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.OpenCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.PageDown	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.PageUp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Root	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetAdditionalFullHelpKeys	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetAdditionalShortHelpKeys	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetClosedCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetCursorCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetHeight	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetNodes	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetOpenCharacter	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetScrollOff	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetShowHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetSize	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetStyles	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetViewportYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetWidth	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.SetYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.ShortHelp	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.ToggleCurrentNode	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Up	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Update	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.View	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.ViewportYOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.Width	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::method::Model.YOffset	method	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::struct::KeyMap	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/tree.go::struct::Model	struct	missing	-	v2.2.2: new tree bubble; phase-1-tree
+tree/node_value_test.go::test::TestNodeSetValue	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/node_value_test.go::test::TestTreeSetChildValue	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestSetNodesNil	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestSetNodesPreservesSuppliedNode	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestSetNodesRendersReplacement	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestTree	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestTreeAdditionalHelp	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
+tree/tree_test.go::test::TestTreeMultiLineNodes	test	missing	-	v2.2.2: tree bubble tests; phase-1-tree
 viewport/keymap.go::func::DefaultKeyMap	func	ported	-	ported; all specs green
 viewport/keymap.go::struct::KeyMap	struct	ported	-	ported; all specs green
 viewport/viewport.go::func::New	func	ported	-	ported; all specs green
@@ -508,3 +734,6 @@ viewport/viewport_test.go::test::TestSetHorizontalStep	test	ported	-	ported; all
 viewport/viewport_test.go::test::TestSetInitialValues	test	ported	-	ported; all specs green
 viewport/viewport_test.go::test::TestSizing	test	ported	-	ported; all specs green
 viewport/viewport_test.go::test::TestVisibleLines	test	ported	-	ported; all specs green
+viewport/viewport_test.go::test::TestMatchesToHighlights_ANSI	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+viewport/viewport_test.go::test::TestPageScrollWithFrame	test	missing	-	v2.2.2: upstream test delta; phase-3-minor
+viewport/viewport_test.go::test::TestScrollPercentWithFrame	test	missing	-	v2.2.2: upstream test delta; phase-3-minor

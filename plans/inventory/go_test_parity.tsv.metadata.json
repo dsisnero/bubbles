@@ -1,0 +1,10 @@
+{
+  "base": "/Volumes/extreme_ssd/repos/github.com/dsisnero/bubbles/vendor/bubbles",
+  "parser_requested": "regex",
+  "backend": "regex",
+  "binary": null,
+  "include_paths": [
+    "."
+  ],
+  "exclude_patterns": []
+}
